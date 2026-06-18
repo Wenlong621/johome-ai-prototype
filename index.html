@@ -85,7 +85,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
 <body>
 <div class="page-title"><h1>⛳ Johome AI Buying Agent · 交互原型</h1><p>手机端 AI agent 选区助手 · 点选项或直接打字即可体验</p></div>
 <div id="jhp">
-<div class="jhp-cap"><i class="ti ti-hand-finger"></i><span>点下面的选项，或直接在输入框打字。走到社区/商圈/学区卡可点进详情看推荐房源；顶部「我的档案」查看并修改偏好。</span></div>
+<div class="jhp-cap"><i class="ti ti-hand-finger"></i><span>点选项或直接打字（说得越细，AI 自动记录的偏好越多，比如「130万、Downtown上班、4岁孩子、想要安静近天车的3房townhouse」）。顶部「我的档案」查看记录到的偏好。</span></div>
 <div class="ph"><div class="scr">
   <div class="sb"><span>9:41</span><span class="ri"><i class="ti ti-signal-4g"></i><i class="ti ti-wifi"></i><i class="ti ti-battery-3"></i></span></div>
   <div class="stage">
@@ -113,13 +113,56 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   var inp=root.querySelector('.inp');
   var sendBtn=root.querySelector('.send');
   var initHTML=list.innerHTML;
-  var profile={purpose:'',anchor:'',area:'',district:'',dest:'',time:'',budget:'',htype:'',invGoal:'',school:''};
+  var profile={purpose:'',anchor:'',area:'',district:'',dest:'',mode:'',time:'',budget:'',htype:'',beds:'',baths:'',sqftMin:'',age:'',parking:'',nearTransit:'',features:'',pet:'',family:'',kids:'',firstTime:'',vibe:'',amenities:'',safety:'',lifeSvc:'',invGoal:'',yield:'',rentability:'',hold:'',timeline:'',preApproved:'',downPay:'',school:''};
   var answer=null,lastResult=null,stack=[],profileEdit=false;
   var BUD=[{label:'80–120万'},{label:'120–160万'},{label:'>160万'}];
   var TYP=[{label:'Townhouse'},{label:'Condo'},{label:'独立屋'}];
   var TIM=[{label:'30分钟'},{label:'45分钟'},{label:'60分钟'}];
   var INV=[{label:'现金流'},{label:'增值'},{label:'都要'}];
-  var FIELDS=[{k:'purpose',label:'购房目的'},{k:'anchor',label:'找房方式'},{k:'area',label:'目标城市/区域'},{k:'district',label:'目标商圈'},{k:'school',label:'目标学校'},{k:'dest',label:'通勤目的地'},{k:'invGoal',label:'投资目标',edit:INV},{k:'budget',label:'预算',edit:BUD},{k:'htype',label:'房型',edit:TYP},{k:'time',label:'可接受通勤',edit:TIM}];
+  var MODE=[{label:'开车'},{label:'公交'},{label:'步行'}];
+  var BEDS=[{label:'1室'},{label:'2室'},{label:'3室'},{label:'4室+'}];
+  var BATHS=[{label:'1浴'},{label:'2浴'},{label:'3浴+'}];
+  var AGE=[{label:'全新'},{label:'楼花'},{label:'二手'},{label:'不限'}];
+  var PARK=[{label:'1车位'},{label:'2车位+'}];
+  var KIDS=[{label:'学龄前'},{label:'小学'},{label:'中学'},{label:'暂无'}];
+  var VIBE=[{label:'热闹'},{label:'安静'}];
+  var TLINE=[{label:'尽快'},{label:'3个月内'},{label:'半年内'},{label:'一年内'},{label:'再看看'}];
+  var PREAP=[{label:'已预批'},{label:'未预批'}];
+  var YN=[{label:'是'},{label:'否'}];
+  var FIELDS=[
+    {k:'purpose',label:'购房目的',group:'基本'},
+    {k:'anchor',label:'找房方式',group:'基本'},
+    {k:'area',label:'目标城市/区域',group:'基本'},
+    {k:'district',label:'目标商圈',group:'基本'},
+    {k:'school',label:'目标学校',group:'基本'},
+    {k:'dest',label:'通勤目的地',group:'基本'},
+    {k:'mode',label:'通勤方式',group:'基本',edit:MODE},
+    {k:'time',label:'可接受通勤',group:'基本',edit:TIM},
+    {k:'budget',label:'预算',group:'基本',edit:BUD},
+    {k:'htype',label:'房型',group:'基本',edit:TYP},
+    {k:'beds',label:'卧室数',group:'房源条件',edit:BEDS},
+    {k:'baths',label:'浴室数',group:'房源条件',edit:BATHS},
+    {k:'sqftMin',label:'最小面积',group:'房源条件'},
+    {k:'age',label:'房龄偏好',group:'房源条件',edit:AGE},
+    {k:'parking',label:'车位',group:'房源条件',edit:PARK},
+    {k:'nearTransit',label:'近轨道交通',group:'房源条件'},
+    {k:'features',label:'必备配置',group:'房源条件'},
+    {k:'pet',label:'宠物友好',group:'房源条件'},
+    {k:'family',label:'家庭结构',group:'家庭与学校'},
+    {k:'kids',label:'孩子学段',group:'家庭与学校',edit:KIDS},
+    {k:'firstTime',label:'首次购房',group:'家庭与学校',edit:YN},
+    {k:'vibe',label:'氛围偏好',group:'生活偏好',edit:VIBE},
+    {k:'amenities',label:'周边设施',group:'生活偏好'},
+    {k:'safety',label:'看重安全',group:'生活偏好'},
+    {k:'lifeSvc',label:'生活服务',group:'生活偏好'},
+    {k:'invGoal',label:'投资目标',group:'投资',edit:INV},
+    {k:'yield',label:'目标回报',group:'投资'},
+    {k:'rentability',label:'出租优先',group:'投资'},
+    {k:'hold',label:'持有年限',group:'投资'},
+    {k:'timeline',label:'购房时间线',group:'时间线与资金',edit:TLINE},
+    {k:'preApproved',label:'贷款预批',group:'时间线与资金',edit:PREAP},
+    {k:'downPay',label:'首付比例',group:'时间线与资金'}
+  ];
 
   function esc(s){return (''+s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
   function scroll(){list.scrollTop=list.scrollHeight;}
@@ -195,15 +238,45 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   function crow(l,a,b,hi){var s='color:#0F6E56;font-weight:500';return '<tr><td class="muted" style="padding:9px 2px;border-top:0.5px solid var(--color-border-tertiary)">'+l+'</td><td style="text-align:center;border-top:0.5px solid var(--color-border-tertiary);'+(hi==1?s:'')+'">'+a+'</td><td style="text-align:center;border-top:0.5px solid var(--color-border-tertiary);'+(hi==2?s:'')+'">'+b+'</td></tr>';}
   function openCompare(){openPage(dhd('社区对比')+'<div class="dscroll"><table style="width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px"><tr><td style="width:34%"></td><td style="text-align:center;padding:6px 4px"><div style="font-weight:500">Brentwood</div><div style="color:#0F6E56;font-weight:500;font-size:13px">88</div></td><td style="text-align:center;padding:6px 4px"><div style="font-weight:500">Lougheed</div><div style="color:#0F6E56;font-weight:500;font-size:13px">85</div></td></tr>'+crow('预算覆盖率','64%','71%',2)+crow('目标房型','31 套','24 套',1)+crow('通勤时间','28 min','33 min',1)+crow('学校评分','7.8','7.5',1)+crow('市场热度','中','中',0)+crow('主要风险','高峰拥堵','配套稍弱',0)+'</table><div class="cc" style="background:#E1F5EE;border-color:#9FE1CB"><div style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;color:#0F6E56;margin-bottom:5px"><i class="ti ti-sparkles"></i>Agent 总结</div><div style="font-size:12px;line-height:1.55;color:#085041">通勤优先、要更多目标房源 → 选 Brentwood；想要更低单价、预算覆盖更高 → 选 Lougheed。</div></div></div><div class="inbar"><button class="btn">让 Johome 顾问帮我确认</button></div>');}
 
-  function profilePage(){var rows='',cnt=0;for(var i=0;i<FIELDS.length;i++){var f=FIELDS[i],val=profile[f.k];if(!val)continue;cnt++;if(profileEdit&&f.edit){var chips='';for(var j=0;j<f.edit.length;j++){var o=f.edit[j];chips+='<button class="q'+(o.label===val?' on':'')+'" data-field="'+f.k+'" data-val="'+o.label+'">'+o.label+'</button>';}rows+='<div class="cc"><div style="font-size:11.5px;color:var(--color-text-secondary);margin-bottom:8px">'+f.label+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+chips+'</div></div>';}else{rows+='<div class="cc" style="display:flex;align-items:center;gap:10px"><div style="font-size:11.5px;color:var(--color-text-secondary);flex:none;width:88px">'+f.label+'</div><div style="font-size:13px;font-weight:500;flex:1">'+val+'</div></div>';}}
-   if(cnt===0)return dhd2('我的购房偏好')+'<div class="dscroll"><div class="cc" style="text-align:center;color:var(--color-text-secondary);font-size:12.5px;padding:28px 14px;line-height:1.6"><i class="ti ti-user-search" style="font-size:26px;color:var(--color-text-tertiary);display:block;margin-bottom:8px"></i>还没有记录到偏好。<br>先和 AI 聊几句，这里会自动出现你的购房偏好。</div></div><div class="inbar"><button class="btn" id="profSave" style="background:var(--color-background-secondary);color:var(--color-text-primary)">返回对话</button></div>';
-   var note=profileEdit?'点下面的选项即可修改，改完点「保存并重新匹配」。':'这些是 Johome AI 通过对话记录的偏好；没问到、你也没提过的不会显示。';
+  function profilePage(){var GR=['基本','房源条件','家庭与学校','生活偏好','投资','时间线与资金'];var html='',cnt=0;for(var gi=0;gi<GR.length;gi++){var g=GR[gi],block='';for(var i=0;i<FIELDS.length;i++){var f=FIELDS[i];if(f.group!==g)continue;var val=profile[f.k];if(!val)continue;cnt++;if(profileEdit&&f.edit){var chips='';for(var j=0;j<f.edit.length;j++){var o=f.edit[j];chips+='<button class="q'+(o.label===val?' on':'')+'" data-field="'+f.k+'" data-val="'+o.label+'">'+o.label+'</button>';}block+='<div class="cc"><div style="font-size:11.5px;color:var(--color-text-secondary);margin-bottom:8px">'+f.label+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+chips+'</div></div>';}else{block+='<div class="cc" style="display:flex;align-items:center;gap:10px"><div style="font-size:11.5px;color:var(--color-text-secondary);flex:none;width:84px">'+f.label+'</div><div style="font-size:13px;font-weight:500;flex:1">'+val+'</div></div>';}}if(block)html+='<div style="font-size:11px;color:var(--color-text-tertiary);font-weight:500;margin:6px 2px 1px">'+g+'</div>'+block;}
+   if(cnt===0)return dhd2('我的购房偏好')+'<div class="dscroll"><div class="cc" style="text-align:center;color:var(--color-text-secondary);font-size:12.5px;padding:28px 14px;line-height:1.6"><i class="ti ti-user-search" style="font-size:26px;color:var(--color-text-tertiary);display:block;margin-bottom:8px"></i>还没有记录到偏好。<br>先和 AI 聊几句（说得越细，记录越丰富），这里会自动出现你的购房偏好。</div></div><div class="inbar"><button class="btn" id="profSave" style="background:var(--color-background-secondary);color:var(--color-text-primary)">返回对话</button></div>';
+   var note=profileEdit?'点下面的选项即可修改，改完点「保存并重新匹配」。':'这些是 Johome AI 通过对话记录的偏好；说得越细记录越丰富，没提到的不会显示。';
    var btn=profileEdit?'<button class="btn" id="profSave">保存并重新匹配</button>':'<button class="btn" id="profEdit"><i class="ti ti-pencil"></i>修改偏好</button>';
-   return dhd2('我的购房偏好')+'<div class="dscroll"><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.55">'+note+'</div>'+rows+'</div><div class="inbar">'+btn+'</div>';}
+   return dhd2('我的购房偏好')+'<div class="dscroll"><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.55">'+note+'</div>'+html+'</div><div class="inbar">'+btn+'</div>';}
   function openProfile(){profileEdit=false;openPage(profilePage());}
   function profileSave(){profileEdit=false;showChat();if(lastResult){addAI('已按你在档案里更新的偏好重新匹配：');lastResult();}}
 
-  function doSend(){var t=inp.value.trim();if(!t)return;inp.value='';if(answer!==null){addUser(t);clearLive();var f=answer;answer=null;f(t,true);}else{addUser(t);typing(function(){addAI('我先记下了。你也可以点上面的选项继续，或问我任何关于这些社区/房源的问题。');});}}
+  function extract(t){if(!t)return;var s=t;
+    var dp=s.match(/首付\s*(\d{1,3})\s*(万|%|成)/);if(dp)profile.downPay=dp[1]+dp[2];
+    var sb=s.replace(/首付\s*\d{1,3}\s*(万|%|成)/,'');var mm=sb.match(/(\d{2,4})\s*万/);if(mm){var n=parseInt(mm[1],10);if(n>=40&&n<=2000)profile.budget=n<120?'80–120万':(n<=160?'120–160万':'>160万');}
+    if(/townhouse|镇屋|联排|town\s*house/i.test(s))profile.htype='Townhouse';else if(/独立屋|detached/i.test(s))profile.htype='独立屋';else if(/condo|公寓|apartment/i.test(s))profile.htype='Condo';
+    var cn={'一':1,'两':2,'二':2,'三':3,'四':4,'五':5};var bd=s.match(/([1-6])\s*(室|房|卧|bed)/i);if(bd)profile.beds=bd[1]+'室';else{var bc=s.match(/([一两二三四五])\s*(室|房|卧)/);if(bc)profile.beds=cn[bc[1]]+'室';}
+    var ba=s.match(/([1-4])\s*(浴|卫|bath)/i);if(ba)profile.baths=ba[1]+'浴';
+    var sq=s.match(/(\d{3,4})\s*(尺|呎|sqft|平方尺)/i);if(sq)profile.sqftMin=sq[1]+' sqft 起';
+    if(/天车|地铁|轨道|skytrain|近站|车站|transit/i.test(s))profile.nearTransit='近轨道交通';
+    if(/楼花|pre-?sale|presale/i.test(s))profile.age='楼花';else if(/全新|新房|brand\s*new/i.test(s))profile.age='全新';else if(/二手/.test(s))profile.age='二手';
+    if(/车位|车库|停车|garage|parking/i.test(s))profile.parking=/(2|两|双)\s*个?\s*车?(位|库)/.test(s)?'2车位+':'1车位';
+    if(/宠物|养狗|养猫|有狗|有猫|pet/i.test(s))profile.pet='宠物友好';
+    var fe=[];if(/后院|院子|backyard|yard/i.test(s))fe.push('后院');if(/地下室|basement/i.test(s))fe.push('地下室');if(/车库|garage/i.test(s))fe.push('车库');if(/电梯|elevator/i.test(s))fe.push('电梯');if(fe.length)profile.features=fe.join('、');
+    if(/安静|清静|quiet/i.test(s))profile.vibe='安静';else if(/热闹|繁华|lively/i.test(s))profile.vibe='热闹';
+    var kid=s.match(/(\d{1,2})\s*岁/);if(kid){var a=parseInt(kid[1],10);profile.kids=a<=5?'学龄前':(a<=11?'小学':(a<=18?'中学':''));if(profile.kids)profile.family='有孩子';}
+    if(/孩子|小孩|娃|宝宝|kid|child/i.test(s)&&!profile.family)profile.family='有孩子';
+    if(/夫妻|两口|二人世界|新婚|配偶/.test(s)&&!profile.family)profile.family='夫妻两口';
+    if(/单身|一个人住|自己住/.test(s))profile.family='单身';
+    if(/三代|和父母|带老人|养老/.test(s))profile.family='三代同堂';
+    if(/首次|第一次买|first\s*time|刚需/i.test(s))profile.firstTime='是';
+    if(/尽快|越快越好|很急|马上买/.test(s))profile.timeline='尽快';else if(/(3|三)\s*个月/.test(s))profile.timeline='3个月内';else if(/半年|(6|六)\s*个月/.test(s))profile.timeline='半年内';else if(/一年|12\s*个月/.test(s))profile.timeline='一年内';else if(/看看|不急|慢慢看/.test(s))profile.timeline='再看看';
+    if(/预批|pre-?approv|批了贷款/i.test(s))profile.preApproved='已预批';
+    if(/开车|自驾|drive/i.test(s))profile.mode='开车';else if(/公交|坐车|公共交通|transit/i.test(s))profile.mode='公交';else if(/走路|步行|walk/i.test(s))profile.mode='步行';
+    if(/(downtown|市中心)/i.test(s)&&!profile.dest)profile.dest='Downtown';if(/ubc/i.test(s)&&!profile.dest)profile.dest='UBC';
+    if(/中文|华人|国语|粤语|中超|中餐|双语/.test(s))profile.lifeSvc='中文生活服务';
+    if(/治安|安全|safe/i.test(s))profile.safety='看重安全';
+    var am=[];if(/超市|grocery|买菜/i.test(s))am.push('超市');if(/餐饮|餐厅|美食|吃饭/.test(s))am.push('餐饮');if(/公园|park/i.test(s))am.push('公园');if(/健身|gym/i.test(s))am.push('健身');if(/医院|诊所|医疗/.test(s))am.push('医疗');if(am.length)profile.amenities=am.join('、');
+    if(/现金流|cash\s*flow/i.test(s))profile.invGoal='现金流';else if(/增值|升值|appreciation/i.test(s))profile.invGoal='增值';
+    if(/好出租|易出租|出租快|租得快|租金高/.test(s))profile.rentability='易出租优先';
+    var yr=s.match(/持有\s*(\d{1,2})\s*年/);if(yr)profile.hold=yr[1]+' 年';
+    pref();}
+  function doSend(){var t=inp.value.trim();if(!t)return;inp.value='';extract(t);if(answer!==null){addUser(t);clearLive();var f=answer;answer=null;f(t,true);}else{addUser(t);typing(function(){addAI('已记到你的档案里。可以继续补充，或点顶部「我的档案」查看；也可以点选项继续。');});}}
   sendBtn.onclick=doSend;inp.addEventListener('keydown',function(e){if(e.key==='Enter')doSend();});
   root.querySelector('#profStrip').onclick=openProfile;
 
