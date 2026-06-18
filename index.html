@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<title>Johome 选区助手 · 交互原型</title>
+<meta name="description" content="Johome Community Buying AI 选区助手手机端可交互原型"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.0/dist/tabler-icons.min.css"/>
+<style>
+:root{
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f4f3ee;
+  --color-background-tertiary:#faf9f5;
+  --color-text-primary:#1d1d1a;
+  --color-text-secondary:#6b6a63;
+  --color-text-tertiary:#9b998f;
+  --color-border-tertiary:rgba(0,0,0,0.10);
+  --color-border-secondary:rgba(0,0,0,0.18);
+  --color-background-info:#e6f1fb;--color-text-info:#0c447c;
+  --color-background-warning:#faeeda;--color-text-warning:#854f0b;
+  --color-background-success:#e1f5ee;--color-text-success:#0f6e56;
+  --border-radius-md:8px;--border-radius-lg:12px;
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-primary);padding:22px 12px 40px;-webkit-font-smoothing:antialiased}
+.page-title{max-width:330px;margin:0 auto 14px;text-align:center}
+.page-title h1{font-size:18px;font-weight:500;margin:0 0 4px}
+.page-title p{font-size:12.5px;color:var(--color-text-secondary);margin:0;line-height:1.5}
+#jhp{max-width:330px;margin:0 auto}
+.jhp-cap{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--color-text-secondary);margin:0 0 12px 2px;line-height:1.45}
+.jhp-cap i{color:#0F6E56;font-size:16px;margin-top:2px}
+.ph{width:300px;margin:0 auto;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:30px;padding:7px;box-shadow:0 8px 30px rgba(0,0,0,0.10)}
+.scr{height:632px;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-background-tertiary)}
+.sb{display:flex;justify-content:space-between;align-items:center;padding:8px 18px 4px;font-size:11px;color:var(--color-text-primary);background:var(--color-background-primary);flex:none}
+.sb .ri{display:flex;gap:5px;font-size:13px}
+.stage{flex:1;min-height:0;position:relative}
+.view-chat{display:flex;flex-direction:column;height:100%}
+.view-detail{display:none;flex-direction:column;height:100%}
+.hd{display:flex;align-items:center;gap:9px;padding:7px 12px 9px;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);flex:none}
+.bk{font-size:20px;color:var(--color-text-secondary);cursor:pointer}
+.hav{width:30px;height:30px;border-radius:50%;background:#0F6E56;display:flex;align-items:center;justify-content:center;flex:none}
+.hav i{font-size:16px;color:#fff}
+.pref{display:flex;align-items:center;gap:7px;padding:8px 12px;background:#E1F5EE;border-bottom:0.5px solid #9FE1CB;flex:none;cursor:pointer}
+.pc{font-size:11.5px;color:#0F6E56;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.editbtn{display:flex;align-items:center;gap:2px;font-size:11.5px;color:#0F6E56;white-space:nowrap}
+.chat,.dscroll{flex:1;min-height:0;overflow-y:auto;padding:12px 11px;display:flex;flex-direction:column;gap:11px}
+.dscroll{gap:11px;background:var(--color-background-tertiary)}
+.row{display:flex;gap:7px;align-items:flex-start}
+.row.me{justify-content:flex-end}
+.av{width:26px;height:26px;border-radius:50%;background:#0F6E56;display:flex;align-items:center;justify-content:center;flex:none}
+.av i{font-size:14px;color:#fff}
+.bub{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:14px;border-top-left-radius:4px;padding:9px 11px;font-size:12.5px;line-height:1.55;max-width:215px}
+.ubub{background:#0F6E56;color:#fff;border-radius:14px;border-top-right-radius:4px;padding:9px 11px;font-size:12.5px;line-height:1.55;max-width:210px}
+.qr{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;padding-left:33px}
+.q{padding:6px 11px;border-radius:999px;font-size:12px;border:0.5px solid #1D9E75;color:#0F6E56;background:transparent;display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.q:hover{background:#E1F5EE}
+.q.on{background:#0F6E56;color:#fff;border-color:#0F6E56}
+.inbar{display:flex;align-items:center;gap:8px;padding:9px 11px;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);flex:none}
+.inp{flex:1;height:36px;border-radius:999px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);padding:0 14px;font-size:12.5px;color:var(--color-text-primary);outline:none}
+.send{width:34px;height:34px;border-radius:50%;background:#0F6E56;border:none;display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer;padding:0}
+.send i{color:#fff;font-size:18px}
+.cc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:11px}
+.cc[data-tap],.cc[data-more]{cursor:pointer}
+.cc[data-tap]:hover,.cc[data-more]:hover{border-color:#1D9E75}
+.score{width:34px;height:34px;border-radius:50%;background:#E1F5EE;border:1.5px solid #1D9E75;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}
+.score b{font-size:14px;font-weight:500;color:#0F6E56;line-height:1}
+.score s{font-size:8px;color:#0F6E56;text-decoration:none}
+.met{background:var(--color-background-secondary);border-radius:6px;padding:6px 8px}
+.met .v{font-size:13px;font-weight:500}
+.met .l{font-size:10.5px;color:var(--color-text-secondary)}
+.thumb{width:54px;height:48px;border-radius:8px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;flex:none;color:var(--color-text-tertiary)}
+.tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:10.5px}
+.muted{color:var(--color-text-secondary)}
+.sec{font-size:12.5px;font-weight:500;margin:0 0 7px}
+.field{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;border:0.5px solid var(--color-border-secondary);border-radius:8px;padding:10px;font-size:12.5px;color:var(--color-text-primary)}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border-radius:8px;font-size:13px;font-weight:500;background:#0F6E56;color:#fff;border:none;cursor:pointer}
+.dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--color-text-tertiary);margin:0 1px;animation:jblink 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes jblink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.rst{display:block;margin:14px auto 0;font-size:12px;color:var(--color-text-secondary);background:transparent;border:0.5px solid var(--color-border-secondary);border-radius:999px;padding:6px 14px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="page-title"><h1>⛳ Johome 选区助手 · 交互原型</h1><p>手机端 AI agent 选区助手 · 点选项或直接打字即可体验</p></div>
+<div id="jhp">
+<div class="jhp-cap"><i class="ti ti-hand-finger"></i><span>点下面的选项，或直接在输入框打字。走到社区/商圈/学区卡可点进详情看推荐房源；顶部「我的档案」查看并修改偏好。</span></div>
+<div class="ph"><div class="scr">
+  <div class="sb"><span>9:41</span><span class="ri"><i class="ti ti-signal-4g"></i><i class="ti ti-wifi"></i><i class="ti ti-battery-3"></i></span></div>
+  <div class="stage">
+    <div class="view-chat">
+      <div class="hd"><i class="ti ti-arrow-left bk"></i><div class="hav"><i class="ti ti-sparkles"></i></div><div style="flex:1"><div style="font-size:13.5px;font-weight:500">Johome 选区助手</div><div style="font-size:10.5px;color:#1D9E75">在线 · 帮你选社区</div></div><i class="ti ti-dots muted" style="font-size:20px"></i></div>
+      <div class="pref" id="profStrip"><i class="ti ti-adjustments" style="color:#0F6E56;font-size:15px"></i><span class="pc">AI 会边聊边记录你的偏好</span><span class="editbtn">我的档案<i class="ti ti-chevron-right" style="font-size:14px"></i></span></div>
+      <div class="chat">
+        <div class="row"><div class="av"><i class="ti ti-sparkles"></i></div><div class="bub">你好，我是 Johome 选区助手。直接说说你的情况，或先选一项 —— 你买这套房主要是？</div></div>
+        <div class="qr live"><button class="q" data-v="自住">自住</button><button class="q" data-v="投资">投资</button><button class="q" data-v="两者都考虑">两者都考虑</button></div>
+      </div>
+      <div class="inbar"><input class="inp" placeholder="用自然语言告诉我你的需求…"/><i class="ti ti-microphone muted" style="font-size:19px"></i><button class="send"><i class="ti ti-arrow-up"></i></button></div>
+    </div>
+    <div class="view-detail"></div>
+  </div>
+</div></div>
+<button class="rst"><i class="ti ti-refresh" style="font-size:13px;vertical-align:-2px"></i> 重新开始演示</button>
+</div>
+<script>
+(function(){
+  var root=document.getElementById('jhp');
+  var list=root.querySelector('.chat');
+  var pc=root.querySelector('.pc');
+  var chatView=root.querySelector('.view-chat');
+  var detail=root.querySelector('.view-detail');
+  var inp=root.querySelector('.inp');
+  var sendBtn=root.querySelector('.send');
+  var initHTML=list.innerHTML;
+  var profile={purpose:'',anchor:'',area:'',district:'',dest:'',time:'',budget:'',htype:'',invGoal:'',school:''};
+  var answer=null,lastResult=null,stack=[],profileEdit=false;
+  var BUD=[{label:'80–120万'},{label:'120–160万'},{label:'>160万'}];
+  var TYP=[{label:'Townhouse'},{label:'Condo'},{label:'独立屋'}];
+  var TIM=[{label:'30分钟'},{label:'45分钟'},{label:'60分钟'}];
+  var INV=[{label:'现金流'},{label:'增值'},{label:'都要'}];
+  var FIELDS=[{k:'purpose',label:'购房目的'},{k:'anchor',label:'找房方式'},{k:'area',label:'目标城市/区域'},{k:'district',label:'目标商圈'},{k:'school',label:'目标学校'},{k:'dest',label:'通勤目的地'},{k:'invGoal',label:'投资目标',edit:INV},{k:'budget',label:'预算',edit:BUD},{k:'htype',label:'房型',edit:TYP},{k:'time',label:'可接受通勤',edit:TIM}];
+
+  function esc(s){return (''+s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function scroll(){list.scrollTop=list.scrollHeight;}
+  function addAI(html){var r=document.createElement('div');r.className='row';r.innerHTML='<div class="av"><i class="ti ti-sparkles"></i></div><div class="bub">'+html+'</div>';list.appendChild(r);scroll();}
+  function addUser(t){var r=document.createElement('div');r.className='row me';r.innerHTML='<div class="ubub">'+esc(t)+'</div>';list.appendChild(r);scroll();}
+  function clearLive(){var n=list.querySelectorAll('.qr.live');for(var i=0;i<n.length;i++)n[i].remove();}
+  function quick(opts){var w=document.createElement('div');w.className='qr live';opts.forEach(function(o){var b=document.createElement('button');b.className='q';b.innerHTML=(o.icon?'<i class="ti '+o.icon+'"></i>':'')+o.label;b.onclick=function(){pick(o.label);};w.appendChild(b);});list.appendChild(w);scroll();}
+  function quickAct(opts){var w=document.createElement('div');w.className='qr';opts.forEach(function(o){var b=document.createElement('button');b.className='q';b.innerHTML=(o.icon?'<i class="ti '+o.icon+'"></i>':'')+o.label;b.onclick=o.fn;w.appendChild(b);});list.appendChild(w);scroll();}
+  function pick(v){if(answer===null)return;addUser(v);clearLive();var f=answer;answer=null;f(v,false);}
+  function typing(cb){var r=document.createElement('div');r.className='row';r.innerHTML='<div class="av"><i class="ti ti-sparkles"></i></div><div class="bub"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';list.appendChild(r);scroll();setTimeout(function(){r.remove();cb();},600);}
+  function ask(html,opts,resolver){typing(function(){addAI(html);if(opts)quick(opts);answer=resolver;});}
+  function askInput(html,examples,resolver){typing(function(){addAI(html);if(examples)quick(examples);answer=resolver;inp.focus();});}
+  function addBlock(html,tapFn){var r=document.createElement('div');r.className='row';r.innerHTML='<div class="av"><i class="ti ti-sparkles"></i></div>';var d=document.createElement('div');d.style.flex='1';d.style.minWidth='0';d.innerHTML=html;r.appendChild(d);list.appendChild(r);if(tapFn){var n=d.querySelectorAll('[data-tap]');for(var i=0;i<n.length;i++){(function(el){el.addEventListener('click',function(){tapFn(el.getAttribute('data-tap'));});})(n[i]);}}scroll();}
+  function pref(){var cnt=0;for(var i=0;i<FIELDS.length;i++){if(profile[FIELDS[i].k])cnt++;}pc.textContent=cnt?('已记录 '+cnt+' 项偏好'):'AI 会边聊边记录你的偏好';}
+  function askBudget(next){ask('预算大概多少？',BUD,function(v){profile.budget=v;pref();next();});}
+  function askType(next){ask('想要什么房型？',TYP,function(v){profile.htype=v;pref();next();});}
+
+  function ncard(name,sub,sc,line,m1,m1l,m2,m2l){return '<div class="cc" data-tap="'+name+'" style="width:192px;flex:none"><div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:7px"><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">'+name+'</div><div class="muted" style="font-size:11px">'+sub+'</div></div><div class="score"><b>'+sc+'</b><s>匹配</s></div></div><div style="font-size:11.5px;color:var(--color-text-secondary);line-height:1.45;margin-bottom:8px">'+line+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div class="met"><div class="v">'+m1+'</div><div class="l">'+m1l+'</div></div><div class="met"><div class="v">'+m2+'</div><div class="l">'+m2l+'</div></div></div><div style="font-size:12px;color:#0F6E56;font-weight:500">查看详情 <i class="ti ti-chevron-right"></i></div></div>';}
+  function citycard(name,sub,m1,m1l,m2,m2l){return '<div class="cc" data-tap="'+name+'" style="width:192px;flex:none"><div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><i class="ti ti-building-skyscraper" style="font-size:18px;color:#0F6E56"></i><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">'+name+'</div><div class="muted" style="font-size:11px">'+sub+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div class="met"><div class="v">'+m1+'</div><div class="l">'+m1l+'</div></div><div class="met"><div class="v" style="color:#0F6E56">'+m2+'</div><div class="l">'+m2l+'</div></div></div><div style="font-size:12px;color:#0F6E56;font-weight:500">看该市社区 <i class="ti ti-chevron-right"></i></div></div>';}
+  function districtcard(name,landmark,line,m1,m1l,m2,m2l){return '<div class="cc" data-tap="'+name+'" style="width:198px;flex:none"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><i class="ti ti-building-store" style="font-size:18px;color:#0F6E56"></i><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">'+name+'</div><div class="muted" style="font-size:11px">'+landmark+'</div></div></div><div style="font-size:11.5px;color:var(--color-text-secondary);line-height:1.45;margin-bottom:8px">'+line+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div class="met"><div class="v">'+m1+'</div><div class="l">'+m1l+'</div></div><div class="met"><div class="v">'+m2+'</div><div class="l">'+m2l+'</div></div></div><div style="font-size:12px;color:#0F6E56;font-weight:500">查看详情 <i class="ti ti-chevron-right"></i></div></div>';}
+  function schoolcard(name,sub,sc){return '<div class="cc" data-tap="'+name+'" style="width:192px;flex:none"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="ti ti-school" style="font-size:18px;color:#0F6E56"></i><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500">'+name+'</div><div class="muted" style="font-size:11px">'+sub+'</div></div></div><div class="met"><div class="v">'+sc+'</div><div class="l">Fraser 评分</div></div><div style="font-size:12px;color:#0F6E56;font-weight:500;margin-top:8px">查看详情 <i class="ti ti-chevron-right"></i></div></div>';}
+  function lcard(price,spec,tg){return '<div class="cc" data-tap="'+price+'" style="display:flex;gap:9px;align-items:center;padding:9px;margin-bottom:8px"><div class="thumb"><i class="ti ti-photo" style="font-size:19px"></i></div><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:500">'+price+'</div><div class="muted" style="font-size:11px">'+spec+'</div>'+(tg?'<span class="tag" style="background:var(--color-background-info);color:var(--color-text-info);margin-top:3px">'+tg+'</span>':'')+'</div><i class="ti ti-chevron-right muted"></i></div>';}
+  function hlcard(price,spec){return '<div class="cc" data-tap="'+price+'" style="width:142px;flex:none;padding:0;overflow:hidden"><div style="height:82px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary)"><i class="ti ti-photo" style="font-size:22px"></i></div><div style="padding:8px 9px"><div style="font-size:13px;font-weight:500">'+price+'</div><div class="muted" style="font-size:10.5px;margin-top:2px">'+spec+'</div></div></div>';}
+
+  function section(t,inner){return '<div><div class="sec">'+t+'</div>'+inner+'</div>';}
+  function metGrid(a){var c='';for(var i=0;i<a.length;i++)c+='<div class="met" style="padding:8px 9px"><div class="v" style="font-size:15px">'+a[i][0]+'</div><div class="l">'+a[i][1]+'</div></div>';return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">'+c+'</div>';}
+  function fitcard(t){return '<div class="cc" style="background:#E1F5EE;border-color:#9FE1CB"><div style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;color:#0F6E56;margin-bottom:5px"><i class="ti ti-sparkles"></i>为你而选</div><div style="font-size:12px;line-height:1.5;color:#085041">'+t+'</div></div>';}
+  function riskcard(t){return '<div class="cc"><div class="sec" style="margin-bottom:7px"><i class="ti ti-alert-triangle" style="color:var(--color-text-warning);font-size:13px;vertical-align:-2px"></i> 风险与权衡</div><div style="font-size:12px;line-height:1.5;color:var(--color-text-secondary)">'+t+'</div></div>';}
+  function bottomBar(){return '<div class="inbar" style="gap:9px"><button class="btn" style="flex:none;width:46px;padding:10px;background:var(--color-background-secondary);color:var(--color-text-primary)"><i class="ti ti-heart"></i></button><button class="btn" style="flex:1;width:auto">联系经纪</button></div>';}
+  var LSTSHORT=[['$142万','3床2浴·TH'],['$148万','3床3浴·近天车'],['$135万','3床2浴·学区'],['$129万','2+den·公寓'],['$156万','3床·新盘'],['$138万','3床2浴·角位'],['$162万','4床·半独立'],['$125万','2床·好出租'],['$151万','3床·带车库'],['$144万','3床·南向']];
+  function listingsScroll(label,count){var cards='';for(var i=0;i<LSTSHORT.length;i++)cards+=hlcard(LSTSHORT[i][0],LSTSHORT[i][1]);cards+='<div class="cc" data-more="1" style="width:104px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center"><i class="ti ti-arrow-right" style="font-size:22px;color:#0F6E56"></i><span style="font-size:11.5px;line-height:1.35;color:#0F6E56">看更多<br>全部 '+count+' 套</span></div>';return '<div><div style="display:flex;align-items:baseline;margin-bottom:8px"><span class="sec" style="margin:0">'+label+'</span><span class="muted" style="font-size:11px;margin-left:auto">共 '+count+' 套</span></div><div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:4px">'+cards+'</div></div>';}
+  function listingsListHtml(){var rows='',d=[['$142万','3 床 2 浴 · Townhouse · 1,450 sqft','新上架'],['$148万','3 床 3 浴 · Townhouse · 近天车站',''],['$135万','3 床 2 浴 · 学区内 · 1,380 sqft',''],['$129万','2+den · 公寓 · 高层江景',''],['$156万','3 床 · 新盘 · 2024 入伙','新上架'],['$138万','3 床 2 浴 · 角位 · 带后院',''],['$162万','4 床 · 半独立 · 双车位',''],['$144万','3 床 2 浴 · 南向 · 近公园','']];for(var i=0;i<d.length;i++)rows+=lcard(d[i][0],d[i][1],d[i][2]);return dhd('房源列表')+'<div style="display:flex;gap:7px;padding:8px 12px;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);flex:none;overflow-x:auto"><span class="tag" style="background:#0F6E56;color:#fff;padding:5px 11px;white-space:nowrap">符合我的条件</span><span class="tag" style="background:var(--color-background-secondary);color:var(--color-text-secondary);padding:5px 11px;white-space:nowrap">价格</span><span class="tag" style="background:var(--color-background-secondary);color:var(--color-text-secondary);padding:5px 11px;white-space:nowrap">房型</span><span class="tag" style="background:var(--color-background-secondary);color:var(--color-text-secondary);padding:5px 11px;white-space:nowrap">排序</span></div><div class="dscroll">'+rows+'</div>';}
+  function openListingsList(){openPage(listingsListHtml());}
+
+  function listingsBlock(invest){addBlock(lcard('$142万','3 床 2 浴 · Townhouse · 1,450 sqft','新上架')+lcard('$148万','3 床 3 浴 · 近天车站','')+lcard('$135万','3 床 2 浴 · 学区内',''),function(p){openListing(p,invest);});}
+  function listings(intro,invest){lastResult=function(){listings(intro,invest);};typing(function(){addAI(intro||'符合条件的房源：');listingsBlock(invest);quickAct([{label:'看全部房源',icon:'ti-list',fn:openListingsList}]);});}
+  function renderNCards(tapFn){addBlock('<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">'+ncard('Brentwood','Burnaby · 社区',88,'通勤 28min · Townhouse 供给足','28min','通勤','64%','预算覆盖')+ncard('Lougheed','Burnaby · 社区',85,'通勤 33min · 单价更友好','33min','通勤','71%','预算覆盖')+'</div>',tapFn);}
+
+  function resultNeighbourhoods(){lastResult=resultNeighbourhoods;typing(function(){addAI('按你的条件圈出最合适的社区，已按匹配度排序：');renderNCards(openCommunity);quickAct([{label:'对比这些',icon:'ti-arrows-left-right',fn:openCompare}]);});}
+  function resultCities(){lastResult=resultCities;typing(function(){addAI('先帮你定城市，这两个最符合你的预算和家庭：');addBlock('<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">'+citycard('Burnaby','大温 · 核心区','$118万','中位价','+5.1%','近一年')+citycard('Richmond','大温 · 南','$132万','中位价','+3.4%','近一年')+'</div>',openCity);});}
+  function openCity(name){profile.area=name;pref();typing(function(){addAI(name+' 内为你推荐这些社区：');renderNCards(openCommunity);});}
+  function resultDistricts(){lastResult=resultDistricts;typing(function(){addAI('按你想要的氛围，这两个商圈最贴合：');addBlock('<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">'+districtcard('Metrotown 商圈','以 Metropolis 商场为中心','成熟商圈 · 天车直达 · 配套密集','7min','步行到中心','24 套','范围内房源')+districtcard('Brentwood 商圈','The Amazing Brentwood','年轻潮流 · 新盘多','9min','步行到中心','18 套','范围内房源')+'</div>',openDistrictPage);});}
+  function resultDistrictListings(){lastResult=resultDistrictListings;listings(profile.district+' 范围内符合条件的房源：',false);}
+  function resultSchools(){lastResult=resultSchools;typing(function(){addAI('这两所高分校符合要求，点开看详情与 catchment 内房源：');addBlock('<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">'+schoolcard('Forest Grove Elem','公立 · 小学','7.8')+schoolcard('Burnaby North Sec','公立 · 中学','8.1')+'</div>',openSchoolPage);});}
+  function resultCatchment(){lastResult=resultCatchment;listings('已定位「'+(profile.school||'目标学校')+'」的 catchment，范围内符合预算的房源：',false);}
+  function resultInvestCities(){lastResult=resultInvestCities;typing(function(){addAI('按投资回报，这两个区最值得看（点开下钻到社区、房源）：');addBlock('<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">'+citycard('Burnaby','投资 · 大温核心','4.1%','平均租售比','+5.1%','近一年涨幅')+citycard('Surrey','投资 · 高增长','4.6%','平均租售比','+6.3%','近一年涨幅')+'</div>',openInvestCity);});}
+  function openInvestCity(name){profile.area=name;pref();typing(function(){addAI(name+' 内回报较好的社区：');addBlock('<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">'+ncard('Metrotown',name+' · 社区',84,'租售比 4.3% · 流动性好','4.3%','租售比','3.1%','净现金回报')+ncard('Edmonds',name+' · 社区',80,'单价低 · 出租快','4.8%','租售比','3.6%','净现金回报')+'</div>',function(nm){openListing('$92万 · '+nm,true);});});}
+  function resultAreaListings(){lastResult=resultAreaListings;listings(profile.area+'：近 30 天微涨、库存适中，符合你条件的房源：',false);}
+
+  function stepAnchor(){ask('关于住哪，你更接近哪种情况？',[{label:'通勤方便',icon:'ti-train'},{label:'进某所名校',icon:'ti-school'},{label:'商圈附近',icon:'ti-building-store'},{label:'已知想住哪区',icon:'ti-map-2'},{label:'没头绪帮我推荐',icon:'ti-help-circle'}],function(v){if(v.indexOf('通勤')>=0){profile.anchor='通勤型';pref();brDest();}else if(v.indexOf('商圈')>=0){profile.anchor='商圈型';pref();brDistrict();}else if(v.indexOf('名校')>=0||v.indexOf('学')>=0){profile.anchor='学区型';pref();brSchool();}else if(v.indexOf('已知')>=0){profile.anchor='区域明确';pref();brArea();}else{profile.anchor='迷茫型';pref();brLost();}});}
+  function brDest(){askInput('你的通勤目的地在哪？直接打地址，或选一个：',[{label:'Downtown'},{label:'Metrotown'},{label:'UBC'}],function(v){profile.dest=v;pref();brTime();});}
+  function brTime(){ask('单程通勤最多能接受多久？',TIM,function(v){profile.time=v;pref();askBudget(function(){askType(resultNeighbourhoods);});});}
+  function brLost(){askBudget(function(){askType(function(){ask('最看重什么？',[{label:'学区'},{label:'通勤'},{label:'生活便利'}],function(){pref();resultCities();});});});}
+  function brDistrict(){ask('你已经有想去的商圈了吗？',[{label:'已有目标商圈'},{label:'还没定，帮我推荐'}],function(v){if(v.indexOf('已有')>=0){askInput('好的，想靠近哪个商圈？直接打出来，或选示例：',[{label:'Metrotown 商圈'},{label:'Brentwood 商圈'},{label:'Oakridge 商圈'}],function(d){profile.district=d;profile.anchor='商圈型 · 已定商圈';pref();askBudget(resultDistrictListings);});}else{profile.anchor='商圈型 · 未定商圈';pref();ask('想要什么氛围？',[{label:'成熟商圈'},{label:'年轻潮流'},{label:'安静生活'}],function(a){profile.district=a;pref();resultDistricts();});}});}
+  function brSchool(){ask('你是已有目标学校，还是要我帮你找高分校？',[{label:'已有目标学校'},{label:'帮我找高分校'}],function(v){if(v.indexOf('已有')>=0){profile.anchor='学区型 · 已定校';pref();askInput('好的，目标学校叫什么？直接打出来，或选示例：',[{label:'University Hill Sec'},{label:'Burnaby North Sec'}],function(s){profile.school=s;pref();askBudget(resultCatchment);});}else{profile.anchor='学区型 · 找校';pref();askBudget(resultSchools);}});}
+  function brArea(){ask('你已经定到哪一步了？',[{label:'社区也定了'},{label:'只定了城市'}],function(v){if(v.indexOf('社区也定')>=0){profile.anchor='区域明确 · 社区已定';askInput('哪个社区？直接打出来，或选示例：',[{label:'Brentwood'},{label:'Metrotown'},{label:'Kerrisdale'}],function(s){profile.area=s;pref();askBudget(resultAreaListings);});}else{profile.anchor='区域明确 · 社区未定';askInput('哪个城市？直接打出来，或选示例：',[{label:'Burnaby'},{label:'Richmond'},{label:'Coquitlam'}],function(c){profile.area=c;pref();askBudget(function(){askType(resultNeighbourhoods);});});}});}
+  function brInvest(){ask('投资上你更要现金流还是增值？',INV,function(g){profile.invGoal=g;pref();askBudget(resultInvestCities);});}
+  function purposeResolver(v,typed){if(typed&&v.length>6){profile.anchor='直接看房';pref();listings('明白，我把你这句话当成一次房源筛选，直接给你符合条件的房源（示例 18 套，按上架时间排）：',false);return;}profile.purpose=v;if(v.indexOf('投资')>=0){profile.anchor='投资型';pref();brInvest();return;}pref();stepAnchor();}
+
+  function dhd(t){return '<div class="hd"><i class="ti ti-arrow-left bk"></i><div style="flex:1;font-size:14px;font-weight:500">'+t+'</div><i class="ti ti-heart muted" style="font-size:19px"></i></div>';}
+  function dhd2(t){return '<div class="hd"><i class="ti ti-arrow-left bk"></i><div style="flex:1;font-size:14px;font-weight:500">'+t+'</div></div>';}
+  function openPage(html){if(detail.style.display==='flex')stack.push(detail.innerHTML);detail.innerHTML=html;detail.style.display='flex';chatView.style.display='none';wirePage();}
+  function replacePage(html){detail.innerHTML=html;wirePage();}
+  function backPage(){if(stack.length){detail.innerHTML=stack.pop();wirePage();}else{showChat();}}
+  function showChat(){stack=[];detail.style.display='none';chatView.style.display='flex';scroll();}
+  function wirePage(){var i,n;n=detail.querySelectorAll('.bk');for(i=0;i<n.length;i++)n[i].onclick=backPage;n=detail.querySelectorAll('.cc[data-tap]');for(i=0;i<n.length;i++){(function(el){el.onclick=function(){openListing(el.getAttribute('data-tap'),false);};})(n[i]);}n=detail.querySelectorAll('[data-more]');for(i=0;i<n.length;i++)n[i].onclick=openListingsList;var pe=detail.querySelector('#profEdit');if(pe)pe.onclick=function(){profileEdit=true;replacePage(profilePage());};var sv=detail.querySelector('#profSave');if(sv)sv.onclick=profileSave;n=detail.querySelectorAll('.q[data-field]');for(i=0;i<n.length;i++){(function(el){el.onclick=function(){profile[el.getAttribute('data-field')]=el.getAttribute('data-val');pref();replacePage(profilePage());};})(n[i]);}}
+
+  function heroBlock(icon,tagL,tagR){return '<div style="position:relative;height:120px;background:var(--color-background-secondary);border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none"><i class="ti '+icon+'" style="font-size:28px;color:#1D9E75"></i><div style="position:absolute;bottom:9px;left:9px;display:flex;gap:6px"><span class="tag" style="background:#E1F5EE;color:#0F6E56;padding:4px 9px">'+tagL+'</span><span class="tag" style="background:var(--color-background-primary);color:var(--color-text-secondary);padding:4px 9px">'+tagR+'</span></div></div>';}
+  function openCommunity(name){openPage(dhd(name)+'<div class="dscroll">'+heroBlock('ti-map-pin','与你匹配 88','Burnaby')+fitcard('按你的预算和通勤偏好，这里 Townhouse 供给充足、到 Downtown 约 28 分钟，是通勤与空间的平衡点。')+section('市场快照',metGrid([['$128万','中位价'],['21天','成交 DOM'],['86','在售'],['+4.2%','近一年']]))+riskcard('· 高峰期主干道拥堵，自驾波动大<br>· 近年新盘多，部分户型单价偏高')+listingsScroll('该社区内推荐房源',31)+'</div>'+bottomBar());}
+  function openDistrictPage(name){openPage(dhd(name)+'<div class="dscroll">'+heroBlock('ti-building-store','商圈中心','步行 10 分钟生活圈')+fitcard('你想要的氛围这里都有：天车直达、商场与餐饮密集，步行 10 分钟生活全覆盖。')+section('商圈快照',metGrid([['7min','步行到中心'],['95','步行指数'],['24 套','范围内房源'],['天车×2','轨道交通']]))+listingsScroll('该商圈范围内推荐房源',24)+'</div>'+bottomBar());}
+  function openSchoolPage(name){openPage(dhd(name)+'<div class="dscroll">'+heroBlock('ti-school','Fraser 7.8','公立 · 中学')+fitcard('该校提供 IB 课程，catchment 覆盖 3 个社区；下面是 catchment 内符合你预算的房源。')+section('学校信息',metGrid([['7.8','Fraser 评分'],['IB','特色课程'],['3','覆盖社区'],['公立','类型']]))+listingsScroll('该校 catchment 内推荐房源',16)+'</div>'+bottomBar());}
+  function openListing(label,invest){var m=invest?'<div class="met"><div class="v">4.5%</div><div class="l">Cap Rate</div></div><div class="met"><div class="v">$2,650</div><div class="l">预估月租</div></div><div class="met"><div class="v">12天</div><div class="l">平均 DOM</div></div><div class="met"><div class="v" style="color:#0F6E56">+5.1%</div><div class="l">近一年涨幅</div></div>':'<div class="met"><div class="v">2018</div><div class="l">建成年份</div></div><div class="met"><div class="v">$3,980</div><div class="l">地税/年</div></div><div class="met"><div class="v">400m</div><div class="l">距天车站</div></div><div class="met"><div class="v">7.8</div><div class="l">学区评分</div></div>';var why=invest?'租售比 4.5%、近一年涨幅 5.1%、流动性好（DOM 12 天），符合你「'+(profile.invGoal||'回报')+'」的投资目标。':'符合你「'+(profile.budget||'预算')+' · '+(profile.htype||'房型')+'」的硬条件，距天车站近、在好学区内。';var cta=invest?'看回报测算':'预约看房';var spec=invest?'1+den · Condo · 适合出租':'3 床 2 浴 · Townhouse · Richmond';openPage(dhd(label)+'<div class="dscroll"><div style="height:148px;background:var(--color-background-secondary);border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none"><i class="ti ti-photo" style="font-size:30px;color:var(--color-text-tertiary)"></i></div><div><div style="font-size:20px;font-weight:500">'+label+'</div><div class="muted" style="font-size:12.5px">'+spec+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">'+m+'</div>'+fitcard(why).replace('为你而选','为什么推给你')+'</div><div class="inbar" style="gap:9px"><div class="field">'+cta+'</div><button class="btn" style="width:auto;padding:10px 16px">问 AI</button></div>');}
+  function crow(l,a,b,hi){var s='color:#0F6E56;font-weight:500';return '<tr><td class="muted" style="padding:9px 2px;border-top:0.5px solid var(--color-border-tertiary)">'+l+'</td><td style="text-align:center;border-top:0.5px solid var(--color-border-tertiary);'+(hi==1?s:'')+'">'+a+'</td><td style="text-align:center;border-top:0.5px solid var(--color-border-tertiary);'+(hi==2?s:'')+'">'+b+'</td></tr>';}
+  function openCompare(){openPage(dhd('社区对比')+'<div class="dscroll"><table style="width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px"><tr><td style="width:34%"></td><td style="text-align:center;padding:6px 4px"><div style="font-weight:500">Brentwood</div><div style="color:#0F6E56;font-weight:500;font-size:13px">88</div></td><td style="text-align:center;padding:6px 4px"><div style="font-weight:500">Lougheed</div><div style="color:#0F6E56;font-weight:500;font-size:13px">85</div></td></tr>'+crow('预算覆盖率','64%','71%',2)+crow('目标房型','31 套','24 套',1)+crow('通勤时间','28 min','33 min',1)+crow('学校评分','7.8','7.5',1)+crow('市场热度','中','中',0)+crow('主要风险','高峰拥堵','配套稍弱',0)+'</table><div class="cc" style="background:#E1F5EE;border-color:#9FE1CB"><div style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;color:#0F6E56;margin-bottom:5px"><i class="ti ti-sparkles"></i>Agent 总结</div><div style="font-size:12px;line-height:1.55;color:#085041">通勤优先、要更多目标房源 → 选 Brentwood；想要更低单价、预算覆盖更高 → 选 Lougheed。</div></div></div><div class="inbar"><button class="btn">让 Johome 顾问帮我确认</button></div>');}
+
+  function profilePage(){var rows='',cnt=0;for(var i=0;i<FIELDS.length;i++){var f=FIELDS[i],val=profile[f.k];if(!val)continue;cnt++;if(profileEdit&&f.edit){var chips='';for(var j=0;j<f.edit.length;j++){var o=f.edit[j];chips+='<button class="q'+(o.label===val?' on':'')+'" data-field="'+f.k+'" data-val="'+o.label+'">'+o.label+'</button>';}rows+='<div class="cc"><div style="font-size:11.5px;color:var(--color-text-secondary);margin-bottom:8px">'+f.label+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+chips+'</div></div>';}else{rows+='<div class="cc" style="display:flex;align-items:center;gap:10px"><div style="font-size:11.5px;color:var(--color-text-secondary);flex:none;width:88px">'+f.label+'</div><div style="font-size:13px;font-weight:500;flex:1">'+val+'</div></div>';}}
+   if(cnt===0)return dhd2('我的购房偏好')+'<div class="dscroll"><div class="cc" style="text-align:center;color:var(--color-text-secondary);font-size:12.5px;padding:28px 14px;line-height:1.6"><i class="ti ti-user-search" style="font-size:26px;color:var(--color-text-tertiary);display:block;margin-bottom:8px"></i>还没有记录到偏好。<br>先和 AI 聊几句，这里会自动出现你的购房偏好。</div></div><div class="inbar"><button class="btn" id="profSave" style="background:var(--color-background-secondary);color:var(--color-text-primary)">返回对话</button></div>';
+   var note=profileEdit?'点下面的选项即可修改，改完点「保存并重新匹配」。':'这些是 Johome AI 通过对话记录的偏好；没问到、你也没提过的不会显示。';
+   var btn=profileEdit?'<button class="btn" id="profSave">保存并重新匹配</button>':'<button class="btn" id="profEdit"><i class="ti ti-pencil"></i>修改偏好</button>';
+   return dhd2('我的购房偏好')+'<div class="dscroll"><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.55">'+note+'</div>'+rows+'</div><div class="inbar">'+btn+'</div>';}
+  function openProfile(){profileEdit=false;openPage(profilePage());}
+  function profileSave(){profileEdit=false;showChat();if(lastResult){addAI('已按你在档案里更新的偏好重新匹配：');lastResult();}}
+
+  function doSend(){var t=inp.value.trim();if(!t)return;inp.value='';if(answer!==null){addUser(t);clearLive();var f=answer;answer=null;f(t,true);}else{addUser(t);typing(function(){addAI('我先记下了。你也可以点上面的选项继续，或问我任何关于这些社区/房源的问题。');});}}
+  sendBtn.onclick=doSend;inp.addEventListener('keydown',function(e){if(e.key==='Enter')doSend();});
+  root.querySelector('#profStrip').onclick=openProfile;
+
+  function wireInit(){answer=purposeResolver;var c=list.querySelectorAll('.qr.live .q');for(var i=0;i<c.length;i++){(function(b){b.onclick=function(){pick(b.getAttribute('data-v'));};})(c[i]);}}
+  root.querySelector('.rst').onclick=function(){list.innerHTML=initHTML;list=root.querySelector('.chat');for(var k in profile)profile[k]='';lastResult=null;profileEdit=false;pref();showChat();wireInit();};
+  wireInit();
+})();
+</script>
+</body>
+</html>
