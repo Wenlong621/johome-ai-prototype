@@ -28,8 +28,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
 .view{display:flex;flex-direction:column;height:100%}
 .hd{display:flex;align-items:center;gap:9px;padding:7px 12px 9px;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);flex:none}
 .bk{font-size:20px;color:var(--color-text-secondary);cursor:pointer}
-.hav{width:30px;height:30px;border-radius:50%;background:#0F6E56;display:flex;align-items:center;justify-content:center;flex:none}
-.hav i{font-size:16px;color:#fff}
+.hav{width:30px;height:30px;border-radius:50%;background:#0F6E56;display:flex;align-items:center;justify-content:center;flex:none}.hav i{font-size:16px;color:#fff}
 .pref{display:flex;align-items:center;gap:7px;padding:8px 12px;background:#E1F5EE;border-bottom:0.5px solid #9FE1CB;flex:none;cursor:pointer}
 .pc{font-size:11.5px;color:#0F6E56;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
 .chat,.dscroll{flex:1;min-height:0;overflow-y:auto;padding:12px 11px;display:flex;flex-direction:column;gap:11px}
@@ -47,7 +46,6 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
 .score{width:34px;height:34px;border-radius:50%;background:#E1F5EE;border:1.5px solid #1D9E75;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}
 .score b{font-size:14px;font-weight:500;color:#0F6E56;line-height:1}.score s{font-size:8px;color:#0F6E56;text-decoration:none}
 .met{background:var(--color-background-secondary);border-radius:6px;padding:6px 8px}.met .v{font-size:13px;font-weight:500}.met .l{font-size:10.5px;color:var(--color-text-secondary)}
-.thumb{width:54px;height:48px;border-radius:8px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;flex:none;color:var(--color-text-tertiary)}
 .tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:10.5px}
 .muted{color:var(--color-text-secondary)}.sec{font-size:12.5px;font-weight:500;margin:0 0 7px}
 .btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border-radius:8px;font-size:13px;font-weight:500;background:#0F6E56;color:#fff;border:none;cursor:pointer}
@@ -79,7 +77,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
           <option value="claude-haiku-4-5">Claude Haiku 4.5（最快/最省）</option>
         </select></div>
         <button class="btn" id="startBtn">开始对话</button>
-        <div class="muted" style="font-size:11px;line-height:1.5">没有 Key？在 platform.claude.com 创建。本页为演示原型，推荐数据由模型即时生成、仅供参考。</div>
+        <div class="muted" style="font-size:11px;line-height:1.5">没有 Key？在 platform.claude.com → Settings → API Keys 创建（需绑卡/充值）。推荐数据由模型即时生成、仅供参考。</div>
       </div>
     </div>
     <div class="view" id="vChat" style="display:none">
@@ -89,6 +87,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
       <div class="inbar"><input class="inp" id="inp" placeholder="用自然语言告诉 AI 你的购房需求…"/><button class="send" id="sendBtn"><i class="ti ti-arrow-up"></i></button></div>
     </div>
     <div class="view" id="vProfile" style="display:none"></div>
+    <div class="view" id="vDetail" style="display:none"></div>
   </div>
 </div></div>
 <button class="rst" id="reset"><i class="ti ti-refresh" style="font-size:13px;vertical-align:-2px"></i> 清空对话</button>
@@ -96,17 +95,17 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
 <script>
 (function(){
   var $=function(id){return document.getElementById(id);};
-  var vSetup=$('vSetup'),vChat=$('vChat'),vProfile=$('vProfile'),chat=$('chat'),inp=$('inp'),pc=$('profStrip').querySelector('.pc');
+  var vSetup=$('vSetup'),vChat=$('vChat'),vProfile=$('vProfile'),vDetail=$('vDetail'),chat=$('chat'),inp=$('inp'),pc=$('profStrip').querySelector('.pc');
   var API_KEY=localStorage.getItem('jh_key')||'',MODEL=localStorage.getItem('jh_model')||'claude-opus-4-8';
-  var messages=[],profileObj={},pendingToolUseId=null,busy=false;
+  var messages=[],profileObj={},pendingToolUseId=null,busy=false,stack=[];
 
   var SYSTEM="你是 Johome AI Buying Agent，服务大温哥华(Greater Vancouver)地区的 C 端买房用户。任务：用对话理解需求、判断买家锚点、用最少追问澄清、抽取结构化偏好，并生成结果卡片帮用户决策。全程用简体中文，语气专业友好，每条回复 1-3 句。你必须每一轮都调用 render_ui 工具来回复。\n"+
   "【流程】先用 1-2 问判断：Q1 自住/投资/两者；Q2(自住) 已知想住哪区(E)/必须进名校(F)/想住某商圈(C)/主要看通勤(B)/没头绪帮我推荐(A)。每轮在 quick_replies 给 2-5 个贴合的快捷选项。只有在确认了关键硬约束(预算+房型+区域或目标)后才出 cards，一次 3-5 张。\n"+
-  "【锚点→卡片】A 迷茫→先 city 卡(推荐大温城市)再下钻 neighbourhood、listing；B 通勤→问通勤目的地+方式+可接受时长→等时圈内 neighbourhood 卡；C 商圈→见下方决策树→district 卡；D 投资→问现金流/增值+预算→带投资指标的 city/neighbourhood，房源 listing 的 tag 写 cap rate；E 区域明确→社区未定出 neighbourhood，社区已定出 listing；F 学区→已有目标校直接出 catchment 内 listing，要找校出 school 卡。用户点了卡片或快捷选项就当成其输入继续推进；点社区/商圈/学校卡时给该处详情并在范围内推荐几套 listing。\n"+
+  "【锚点→卡片】A 迷茫→先 city 卡(推荐大温城市)再下钻 neighbourhood、listing；B 通勤→问通勤目的地+方式+可接受时长→等时圈内 neighbourhood 卡；C 商圈→见下方决策树→district 卡；D 投资→问现金流/增值+预算→带投资指标的 city/neighbourhood，房源 listing 的 tag 写 cap rate；E 区域明确→社区未定出 neighbourhood，社区已定出 listing；F 学区→已有目标校直接出 catchment 内 listing，要找校出 school 卡。\n"+
   "【大温城市(A/B/D 参考)】Vancouver(West Side 富/学区, East 性价比, Downtown 繁华)、Burnaby(Metrotown/Brentwood/Lougheed 天车便利)、Richmond(亚洲美食/Steveston 渔村)、Coquitlam/Port Moody(性价比/海边)、Surrey(高增长/性价比)、North/West Vancouver(自然/高端)、New Westminster(河景性价比)、Langley/Maple Ridge(远/便宜)。\n"+
   "【商圈决策树(C)】先问生活调性(5选)：①都市繁华夜生活→Yaletown/Coal Harbour(温Downtown)、Metrotown、Brentwood、Surrey City Centre；②文艺独立小店→Gastown、Main St/Mount Pleasant、Kitsilano、Port Moody、Lower Lonsdale；③成熟商场+天车→Metrotown、Lougheed/Coquitlam Centre、Oakridge；④海边/自然安静→West Van Ambleside、Steveston、White Rock、Lynn Valley、New West Quay；⑤多元美食/生活服务→Richmond 三号路、Metrotown/Crystal Mall、Commercial Drive、Surrey Newton、Marpole。\n"+
   "【学区(F)·找高分校】中学公立顶尖 West Van Sec/Sentinel/University Hill/Lord Byng/Eric Hamber；IB 公立 Sir Winston Churchill/Moscrop/Richmond Sec/Gleneagle；私立 St. George's/Crofton House/York House/Mulgrave；小学高分多在 West Van、Vancouver 西区、Richmond、Burnaby。\n"+
-  "【卡片字段】city: title=城市名, subtitle=所属大区, metrics=[{中位价},{涨幅}]；neighbourhood: title=社区, subtitle='城市 · 社区', score=匹配分0-100, line=一句话理由, metrics=[{通勤/中位价},{预算覆盖}]；district: title=商圈名, subtitle=中心地标, line=氛围, metrics=[{步行到中心},{范围内房源}]；school: title=学校名, subtitle='学段·公/私立', score=Fraser评分(0-10取整或保留一位写进 line)；listing: title=价格(如 $138万), subtitle=户型描述(如 3床2浴·Townhouse·Richmond), tag=可选(如 新上架 或 cap rate 4.5%)。\n"+
+  "【卡片字段】city: title=城市名, subtitle=所属大区, metrics=[{中位价},{涨幅}]；neighbourhood: title=社区, subtitle='城市 · 社区', score=匹配分0-100, line=一句话理由, metrics=[{通勤/中位价},{预算覆盖}]；district: title=商圈名, subtitle=中心地标, line=氛围, metrics=[{步行到中心},{范围内房源}]；school: title=学校名, subtitle='学段·公/私立', score=Fraser评分(整数0-10), line=特色/课程；listing: title=价格(如 $138万), subtitle=户型描述(如 3床2浴·Townhouse·Richmond), tag=可选(如 新上架 或 cap rate 4.5%)。\n"+
   "【偏好抽取 profile】每条用户消息尽量抽取：购房目的/锚点/目标城市/目标商圈/目标学校/通勤目的地/通勤方式/可接受通勤/预算/房型/卧室数/浴室数/房龄/车位/近天车/家庭结构/孩子学段/氛围/购房时间线/贷款预批/投资目标 等，放进 profile(数组，每项{key,value}，键用中文，只放本轮新增或变化的)。\n"+
   "【合规】不要用'最适合华人/最安全/最好'等绝对说法或按族裔贴标签；商圈美食按菜系/生活服务描述。数据为示例，必要时提示上线前需本地核对。";
 
@@ -118,89 +117,105 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
       cards:{type:"array",items:{type:"object",properties:{
         type:{type:"string",enum:["city","neighbourhood","district","school","listing"]},
         title:{type:"string"},subtitle:{type:"string"},line:{type:"string"},
-        score:{type:"integer",description:"匹配分0-100(社区)，学校可不填"},tag:{type:"string"},
+        score:{type:"integer",description:"匹配分0-100(社区)/Fraser评分(学校)"},tag:{type:"string"},
         metrics:{type:"array",items:{type:"object",properties:{value:{type:"string"},label:{type:"string"}},required:["value","label"]}}
       },required:["type","title"]}}
     },required:["reply"]}};
 
-  function esc(s){return (''+s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function esc(s){return (''+(s==null?'':s)).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function escA(s){return (''+(s==null?'':s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function scroll(){chat.scrollTop=chat.scrollHeight;}
   function addAI(t){var r=document.createElement('div');r.className='row';r.innerHTML='<div class="av"><i class="ti ti-sparkles"></i></div><div class="bub">'+esc(t)+'</div>';chat.appendChild(r);scroll();}
   function addUser(t){var r=document.createElement('div');r.className='row me';r.innerHTML='<div class="ubub">'+esc(t)+'</div>';chat.appendChild(r);scroll();}
   function typingShow(){var r=document.createElement('div');r.className='row';r.id='typing';r.innerHTML='<div class="av"><i class="ti ti-sparkles"></i></div><div class="bub"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';chat.appendChild(r);scroll();}
-  function typingHide(){var t=document.getElementById('typing');if(t)t.remove();}
+  function typingHide(){var t=$('typing');if(t)t.remove();}
   function quick(opts){if(!opts||!opts.length)return;var w=document.createElement('div');w.className='qr';opts.forEach(function(o){var b=document.createElement('button');b.className='q';b.textContent=o;b.onclick=function(){sendUser(o);};w.appendChild(b);});chat.appendChild(w);scroll();}
-  function addBlock(html,tapFn){var r=document.createElement('div');r.className='row';r.innerHTML='<div class="av"><i class="ti ti-sparkles"></i></div>';var d=document.createElement('div');d.style.flex='1';d.style.minWidth='0';d.innerHTML=html;r.appendChild(d);chat.appendChild(r);if(tapFn){var n=d.querySelectorAll('[data-tap]');for(var i=0;i<n.length;i++){(function(el){el.style.cursor='pointer';el.onclick=function(){tapFn(el.getAttribute('data-tap'));};})(n[i]);}}scroll();}
+  function addBlock(html){var r=document.createElement('div');r.className='row';r.innerHTML='<div class="av"><i class="ti ti-sparkles"></i></div>';var d=document.createElement('div');d.style.flex='1';d.style.minWidth='0';d.innerHTML=html;r.appendChild(d);chat.appendChild(r);scroll();return d;}
 
-  function citycard(name,sub,m1,m1l,m2,m2l){return '<div class="cc" data-tap="'+esc(name)+'" style="width:190px;flex:none"><div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><i class="ti ti-building-skyscraper" style="font-size:18px;color:#0F6E56"></i><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">'+esc(name)+'</div><div class="muted" style="font-size:11px">'+esc(sub)+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div class="met"><div class="v">'+esc(m1)+'</div><div class="l">'+esc(m1l)+'</div></div><div class="met"><div class="v" style="color:#0F6E56">'+esc(m2)+'</div><div class="l">'+esc(m2l)+'</div></div></div><div style="font-size:12px;color:#0F6E56;font-weight:500">看该市社区 ›</div></div>';}
-  function ncard(name,sub,sc,line,m1,m1l,m2,m2l){return '<div class="cc" data-tap="'+esc(name)+'" style="width:192px;flex:none"><div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:7px"><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">'+esc(name)+'</div><div class="muted" style="font-size:11px">'+esc(sub)+'</div></div>'+(sc?'<div class="score"><b>'+esc(sc)+'</b><s>匹配</s></div>':'')+'</div><div style="font-size:11.5px;color:var(--color-text-secondary);line-height:1.45;margin-bottom:8px">'+esc(line)+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div class="met"><div class="v">'+esc(m1)+'</div><div class="l">'+esc(m1l)+'</div></div><div class="met"><div class="v">'+esc(m2)+'</div><div class="l">'+esc(m2l)+'</div></div></div><div style="font-size:12px;color:#0F6E56;font-weight:500">查看详情 ›</div></div>';}
-  function districtcard(name,landmark,line,m1,m1l,m2,m2l){return '<div class="cc" data-tap="'+esc(name)+'" style="width:198px;flex:none"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><i class="ti ti-building-store" style="font-size:18px;color:#0F6E56"></i><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">'+esc(name)+'</div><div class="muted" style="font-size:11px">'+esc(landmark)+'</div></div></div><div style="font-size:11.5px;color:var(--color-text-secondary);line-height:1.45;margin-bottom:8px">'+esc(line)+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div class="met"><div class="v">'+esc(m1)+'</div><div class="l">'+esc(m1l)+'</div></div><div class="met"><div class="v">'+esc(m2)+'</div><div class="l">'+esc(m2l)+'</div></div></div><div style="font-size:12px;color:#0F6E56;font-weight:500">查看详情 ›</div></div>';}
-  function schoolcard(name,sub,sc,line){return '<div class="cc" data-tap="'+esc(name)+'" style="width:192px;flex:none"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="ti ti-school" style="font-size:18px;color:#0F6E56"></i><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500">'+esc(name)+'</div><div class="muted" style="font-size:11px">'+esc(sub)+'</div></div></div>'+(sc?'<div class="met"><div class="v">'+esc(sc)+'</div><div class="l">Fraser 评分</div></div>':'')+'<div style="font-size:11.5px;color:var(--color-text-secondary);line-height:1.45;margin-top:7px">'+esc(line)+'</div><div style="font-size:12px;color:#0F6E56;font-weight:500;margin-top:7px">看 catchment 内房源 ›</div></div>';}
-  function lmini(price,spec,tag){return '<div class="cc" data-tap="'+esc(price)+'" style="width:158px;flex:none;padding:0;overflow:hidden"><div style="height:80px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary)"><i class="ti ti-photo" style="font-size:22px"></i></div><div style="padding:8px 9px"><div style="font-size:13px;font-weight:500">'+esc(price)+'</div><div class="muted" style="font-size:10.5px;margin-top:2px;line-height:1.35">'+esc(spec)+'</div>'+(tag?'<span class="tag" style="background:var(--color-background-info);color:var(--color-text-info);margin-top:4px">'+esc(tag)+'</span>':'')+'</div></div>';}
+  function da(c,sub,tag){return 'data-tap="'+escA(c.title)+'" data-type="'+escA(c.type)+'" data-sub="'+escA(sub||'')+'"'+(tag?(' data-tag="'+escA(tag)+'"'):'');}
+  function citycard(c){var m=c.metrics||[],m1=m[0]||{},m2=m[1]||{};return '<div class="cc" '+da(c,c.subtitle)+' style="width:190px;flex:none"><div style="display:flex;align-items:center;gap:7px;margin-bottom:8px"><i class="ti ti-building-skyscraper" style="font-size:18px;color:#0F6E56"></i><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">'+esc(c.title)+'</div><div class="muted" style="font-size:11px">'+esc(c.subtitle)+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div class="met"><div class="v">'+esc(m1.value)+'</div><div class="l">'+esc(m1.label)+'</div></div><div class="met"><div class="v" style="color:#0F6E56">'+esc(m2.value)+'</div><div class="l">'+esc(m2.label)+'</div></div></div><div style="font-size:12px;color:#0F6E56;font-weight:500">看该市社区 ›</div></div>';}
+  function ncard(c){var m=c.metrics||[],m1=m[0]||{},m2=m[1]||{},sc=c.score?(''+c.score):'';return '<div class="cc" '+da(c,c.subtitle)+' style="width:192px;flex:none"><div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:7px"><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">'+esc(c.title)+'</div><div class="muted" style="font-size:11px">'+esc(c.subtitle)+'</div></div>'+(sc?'<div class="score"><b>'+esc(sc)+'</b><s>匹配</s></div>':'')+'</div><div style="font-size:11.5px;color:var(--color-text-secondary);line-height:1.45;margin-bottom:8px">'+esc(c.line)+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div class="met"><div class="v">'+esc(m1.value)+'</div><div class="l">'+esc(m1.label)+'</div></div><div class="met"><div class="v">'+esc(m2.value)+'</div><div class="l">'+esc(m2.label)+'</div></div></div><div style="font-size:12px;color:#0F6E56;font-weight:500">查看详情 ›</div></div>';}
+  function districtcard(c){var m=c.metrics||[],m1=m[0]||{},m2=m[1]||{};return '<div class="cc" '+da(c,c.subtitle)+' style="width:198px;flex:none"><div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><i class="ti ti-building-store" style="font-size:18px;color:#0F6E56"></i><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">'+esc(c.title)+'</div><div class="muted" style="font-size:11px">'+esc(c.subtitle)+'</div></div></div><div style="font-size:11.5px;color:var(--color-text-secondary);line-height:1.45;margin-bottom:8px">'+esc(c.line)+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><div class="met"><div class="v">'+esc(m1.value)+'</div><div class="l">'+esc(m1.label)+'</div></div><div class="met"><div class="v">'+esc(m2.value)+'</div><div class="l">'+esc(m2.label)+'</div></div></div><div style="font-size:12px;color:#0F6E56;font-weight:500">查看详情 ›</div></div>';}
+  function schoolcard(c){var sc=c.score?(''+c.score):'';return '<div class="cc" '+da(c,c.subtitle)+' style="width:192px;flex:none"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="ti ti-school" style="font-size:18px;color:#0F6E56"></i><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500">'+esc(c.title)+'</div><div class="muted" style="font-size:11px">'+esc(c.subtitle)+'</div></div></div>'+(sc?'<div class="met"><div class="v">'+esc(sc)+'</div><div class="l">Fraser 评分</div></div>':'')+'<div style="font-size:11.5px;color:var(--color-text-secondary);line-height:1.45;margin-top:7px">'+esc(c.line)+'</div><div style="font-size:12px;color:#0F6E56;font-weight:500;margin-top:7px">看 catchment 内房源 ›</div></div>';}
+  function lmini(c){return '<div class="cc" '+da(c,c.subtitle,c.tag)+' style="width:158px;flex:none;padding:0;overflow:hidden"><div style="height:80px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary)"><i class="ti ti-photo" style="font-size:22px"></i></div><div style="padding:8px 9px"><div style="font-size:13px;font-weight:500">'+esc(c.title)+'</div><div class="muted" style="font-size:10.5px;margin-top:2px;line-height:1.35">'+esc(c.subtitle)+'</div>'+(c.tag?'<span class="tag" style="background:var(--color-background-info);color:var(--color-text-info);margin-top:4px">'+esc(c.tag)+'</span>':'')+'</div></div>';}
+  function cardHTML(c){if(c.type==='city')return citycard(c);if(c.type==='district')return districtcard(c);if(c.type==='school')return schoolcard(c);if(c.type==='listing')return lmini(c);return ncard(c);}
+  function cardsRow(cards){var h='<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">';cards.forEach(function(c){h+=cardHTML(c);});return h+'</div>';}
+  function wireTaps(container){var n=container.querySelectorAll('[data-tap]');for(var i=0;i<n.length;i++){(function(el){el.onclick=function(){var c={type:el.getAttribute('data-type'),title:el.getAttribute('data-tap'),subtitle:el.getAttribute('data-sub')||'',tag:el.getAttribute('data-tag')||''};if(c.type==='listing')openListing(c);else openDetail(c);};})(n[i]);}}
 
-  function cardHTML(c){var m=c.metrics||[],m1=m[0]||{},m2=m[1]||{};var sc=c.score?(''+c.score):'';
-    if(c.type==='city')return citycard(c.title,c.subtitle||'',m1.value||'',m1.label||'',m2.value||'',m2.label||'');
-    if(c.type==='district')return districtcard(c.title,c.subtitle||'',c.line||'',m1.value||'',m1.label||'',m2.value||'',m2.label||'');
-    if(c.type==='school')return schoolcard(c.title,c.subtitle||'',sc,c.line||'');
-    if(c.type==='listing')return lmini(c.title,c.subtitle||'',c.tag||'');
-    return ncard(c.title,c.subtitle||'',sc,c.line||'',m1.value||'',m1.label||'',m2.value||'',m2.label||'');}
-
-  function renderTurn(inputObj){
-    if(inputObj.reply)addAI(inputObj.reply);
-    if(inputObj.profile&&inputObj.profile.length){inputObj.profile.forEach(function(p){if(p&&p.key)profileObj[p.key]=p.value;});updatePref();}
-    if(inputObj.cards&&inputObj.cards.length){
-      var html='<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">';
-      inputObj.cards.forEach(function(c){html+=cardHTML(c);});html+='</div>';
-      addBlock(html,function(title){sendUser('我想了解「'+title+'」，给我它的详情，并在范围内推荐几套房源');});
-    }
-    if(inputObj.quick_replies&&inputObj.quick_replies.length)quick(inputObj.quick_replies);
+  function renderTurn(o){
+    if(o.reply)addAI(o.reply);
+    if(o.profile&&o.profile.length){o.profile.forEach(function(p){if(p&&p.key)profileObj[p.key]=p.value;});updatePref();}
+    if(o.cards&&o.cards.length){var holder=addBlock(cardsRow(o.cards));wireTaps(holder);}
+    if(o.quick_replies&&o.quick_replies.length)quick(o.quick_replies);
   }
   function updatePref(){var n=Object.keys(profileObj).length;pc.textContent=n?('已记录 '+n+' 项偏好'):'AI 会边聊边记录你的偏好';}
 
+  function findToolUse(content){content=content||[];for(var i=0;i<content.length;i++)if(content[i].type==='tool_use')return content[i];return null;}
+  async function postMessages(msgs){
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:1024,system:SYSTEM,tools:[TOOL],tool_choice:{type:'tool',name:'render_ui'},messages:msgs})});
+    var data=await res.json();if(!res.ok||data.type==='error')throw new Error((data.error&&data.error.message)||('HTTP '+res.status));return data;
+  }
   async function callAgent(){
     if(busy)return;busy=true;typingShow();
-    try{
-      var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{
-        'content-type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'
-      },body:JSON.stringify({model:MODEL,max_tokens:1024,system:SYSTEM,tools:[TOOL],tool_choice:{type:'tool',name:'render_ui'},messages:messages})});
-      var data=await res.json();typingHide();busy=false;
-      if(!res.ok||data.type==='error'){var m=(data.error&&data.error.message)||('HTTP '+res.status);addAI('（请求出错：'+m+'）。可点右上角设置检查 Key / 模型。');return;}
-      var tu=null,content=data.content||[];for(var i=0;i<content.length;i++){if(content[i].type==='tool_use'){tu=content[i];break;}}
-      messages.push({role:'assistant',content:content});
-      if(tu){pendingToolUseId=tu.id;renderTurn(tu.input||{});}
-      else{var t='';content.forEach(function(b){if(b.type==='text')t+=b.text;});addAI(t||'（无回复）');}
-    }catch(e){typingHide();busy=false;addAI('（网络/请求异常：'+e.message+'）');}
+    try{var data=await postMessages(messages);typingHide();busy=false;var content=data.content||[],tu=findToolUse(content);messages.push({role:'assistant',content:content});if(tu){pendingToolUseId=tu.id;renderTurn(tu.input||{});}else{var t='';content.forEach(function(b){if(b.type==='text')t+=b.text;});addAI(t||'（无回复）');}}
+    catch(e){typingHide();busy=false;addAI('（请求出错：'+e.message+'）。可点右上角设置检查 Key / 模型 / 额度。');}
   }
-  function sendUser(text){
-    if(busy)return;addUser(text);
-    var content;
-    if(pendingToolUseId){content=[{type:'tool_result',tool_use_id:pendingToolUseId,content:'已展示给用户'},{type:'text',text:text}];pendingToolUseId=null;}
-    else content=text;
-    messages.push({role:'user',content:content});callAgent();
-  }
+  function sendUser(text){if(busy)return;addUser(text);var content;if(pendingToolUseId){content=[{type:'tool_result',tool_use_id:pendingToolUseId,content:'已展示给用户'},{type:'text',text:text}];pendingToolUseId=null;}else content=text;messages.push({role:'user',content:content});callAgent();}
   function doSend(){var t=inp.value.trim();if(!t)return;inp.value='';sendUser(t);}
 
-  function startChat(){
-    vSetup.style.display='none';vProfile.style.display='none';vChat.style.display='flex';
-    $('modelTag').textContent='在线 · '+MODEL.replace('claude-','').replace('-',' ');
-    if(!messages.length){chat.innerHTML='';addAI('你好，我是 Johome AI Buying Agent。说说你的购房想法，或先选一个 —— 你买这套房主要是？');quick(['自住','投资','两者都考虑']);}
+  function profText(){var k=Object.keys(profileObj);return k.length?k.map(function(x){return x+'：'+profileObj[x];}).join('；'):'（暂无）';}
+  function typeName(t){return t==='city'?'城市':t==='district'?'商圈':t==='school'?'学校':'社区';}
+  function drillTitle(c){return c.type==='city'?'该市推荐社区':c.type==='district'?'该商圈范围内推荐房源':c.type==='school'?'该校 catchment 内推荐房源':'范围内推荐房源';}
+  function heroFor(c){var icon=c.type==='city'?'ti-building-skyscraper':c.type==='district'?'ti-building-store':c.type==='school'?'ti-school':'ti-map-pin';return '<div style="position:relative;height:118px;background:var(--color-background-secondary);border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none"><i class="ti '+icon+'" style="font-size:28px;color:#1D9E75"></i><div style="position:absolute;bottom:9px;left:9px;display:flex;gap:6px">'+(c.score?'<span class="tag" style="background:#E1F5EE;color:#0F6E56;padding:4px 9px">与你匹配 '+esc(c.score)+'</span>':'')+(c.subtitle?'<span class="tag" style="background:var(--color-background-primary);color:var(--color-text-secondary);padding:4px 9px">'+esc(c.subtitle)+'</span>':'')+'</div></div>';}
+  function metricsBlock(c){var m=c.metrics||[];if(!m.length)return '';var cells='';m.slice(0,4).forEach(function(x){cells+='<div class="met" style="padding:8px 9px"><div class="v" style="font-size:15px">'+esc(x.value)+'</div><div class="l">'+esc(x.label)+'</div></div>';});return '<div><div class="sec">关键数据</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">'+cells+'</div></div>';}
+
+  function openDetail(c){
+    var html='<div class="hd"><i class="ti ti-arrow-left bk"></i><div style="flex:1;font-size:14px;font-weight:500">'+esc(c.title)+'</div><i class="ti ti-heart muted" style="font-size:19px"></i></div>'
+      +'<div class="dscroll">'+heroFor(c)+metricsBlock(c)
+      +'<div class="cc" style="background:#E1F5EE;border-color:#9FE1CB"><div style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;color:#0F6E56;margin-bottom:5px"><i class="ti ti-sparkles"></i>为你而选</div><div id="detFit" style="font-size:12px;line-height:1.5;color:#085041"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>'
+      +'<div><div class="sec">'+drillTitle(c)+'</div><div id="detDrill"><div class="muted" style="font-size:12px">正在为你生成…</div></div></div>'
+      +'</div><div class="inbar"><button class="btn" id="detAsk">在对话里继续问</button></div>';
+    openPage(html);
+    var a=$('detAsk');if(a)a.onclick=function(){detailToChat('我想再聊聊「'+c.title+'」');};
+    detailFetch(c);
   }
+  async function detailFetch(c){
+    var um='【用户已确认偏好】'+profText()+'\n【用户点开了卡片】类型='+c.type+' 名称='+c.title+(c.subtitle?('（'+c.subtitle+'）'):'')+'。请只调用 render_ui：reply=结合该用户偏好、对这个'+typeName(c.type)+'的一段详情(2-3句，可含市场/生活/通勤/学校等要点)；cards=下钻推荐——city→该市 3-4 个最合适社区(neighbourhood 卡，含匹配分与1-2个指标)；neighbourhood/district→范围内 4-6 套房源(listing 卡)；school→该校 catchment 内 4-6 套房源(listing 卡)；不要返回 quick_replies。';
+    try{var data=await postMessages([{role:'user',content:um}]);var tu=findToolUse(data.content);var fit=$('detFit'),drill=$('detDrill');var o=(tu&&tu.input)||{};
+      if(fit)fit.textContent=o.reply||'（暂无详情）';
+      if(o.profile&&o.profile.length){o.profile.forEach(function(p){if(p&&p.key)profileObj[p.key]=p.value;});updatePref();}
+      if(drill){if(o.cards&&o.cards.length){drill.innerHTML=cardsRow(o.cards);wireTaps(drill);}else drill.innerHTML='<div class="muted" style="font-size:12px">（暂无更细推荐）</div>';}
+    }catch(e){var f=$('detFit');if(f)f.textContent='（拿不到详情：'+e.message+'）';var d=$('detDrill');if(d)d.innerHTML='';}
+  }
+  function openListing(c){
+    var why='符合你「'+(profileObj['预算']||'预算')+(profileObj['房型']?(' · '+profileObj['房型']):'')+'」的条件'+(c.tag?('；'+c.tag):'')+'。';
+    var html='<div class="hd"><i class="ti ti-arrow-left bk"></i><div style="flex:1;font-size:14px;font-weight:500">'+esc(c.title)+'</div><i class="ti ti-heart muted" style="font-size:19px"></i></div>'
+      +'<div class="dscroll"><div style="height:148px;background:var(--color-background-secondary);border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none"><i class="ti ti-photo" style="font-size:30px;color:var(--color-text-tertiary)"></i></div>'
+      +'<div><div style="font-size:20px;font-weight:500">'+esc(c.title)+'</div><div class="muted" style="font-size:12.5px">'+esc(c.subtitle||'房源')+'</div>'+(c.tag?'<div style="margin-top:5px"><span class="tag" style="background:var(--color-background-info);color:var(--color-text-info)">'+esc(c.tag)+'</span></div>':'')+'</div>'
+      +'<div class="cc" style="background:#E1F5EE;border-color:#9FE1CB"><div style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;color:#0F6E56;margin-bottom:5px"><i class="ti ti-sparkles"></i>为什么推给你</div><div style="font-size:12px;line-height:1.5;color:#085041">'+esc(why)+'</div></div></div>'
+      +'<div class="inbar" style="gap:9px"><div class="cc" style="flex:1;text-align:center;padding:10px;font-size:12.5px">预约看房</div><button class="btn" style="width:auto;padding:10px 16px" id="lAsk">问 AI</button></div>';
+    openPage(html);var a=$('lAsk');if(a)a.onclick=function(){detailToChat('帮我分析下房源「'+c.title+'」');};
+  }
+
+  function openPage(html){if(vDetail.style.display==='flex'){stack.push(vDetail.innerHTML);}vDetail.innerHTML=html;vChat.style.display='none';vProfile.style.display='none';vSetup.style.display='none';vDetail.style.display='flex';wireDetail();}
+  function backPage(){if(stack.length){vDetail.innerHTML=stack.pop();wireDetail();}else{vDetail.style.display='none';vChat.style.display='flex';scroll();}}
+  function wireDetail(){var b=vDetail.querySelectorAll('.bk');for(var i=0;i<b.length;i++)b[i].onclick=backPage;wireTaps(vDetail);var da=vDetail.querySelector('#detAsk'),la=vDetail.querySelector('#lAsk');var t=vDetail.querySelector('.hd div');if(da)da.onclick=function(){detailToChat('我想再聊聊「'+(t?t.textContent:'')+'」');};if(la)la.onclick=function(){detailToChat('帮我分析下房源「'+(t?t.textContent:'')+'」');};}
+  function detailToChat(msg){stack=[];vDetail.style.display='none';vProfile.style.display='none';vChat.style.display='flex';sendUser(msg);}
+
   function openProfile(){
     var rows='';var keys=Object.keys(profileObj);
     if(!keys.length)rows='<div class="cc" style="text-align:center;color:var(--color-text-secondary);font-size:12.5px;padding:26px 14px;line-height:1.6">还没有记录到偏好。<br>先和 AI 聊几句，这里会自动出现。</div>';
     else keys.forEach(function(k){rows+='<div class="cc" style="display:flex;align-items:center;gap:10px"><div style="font-size:11.5px;color:var(--color-text-secondary);flex:none;width:96px">'+esc(k)+'</div><div style="font-size:13px;font-weight:500;flex:1">'+esc(profileObj[k])+'</div></div>';});
     vProfile.innerHTML='<div class="hd"><i class="ti ti-arrow-left bk" id="pbk"></i><div style="flex:1;font-size:14px;font-weight:500">我的购房偏好</div></div><div class="dscroll"><div style="font-size:12px;color:var(--color-text-secondary)">这些是 AI 从对话里实时抽取的偏好（只读演示）。</div>'+rows+'</div>';
-    vChat.style.display='none';vProfile.style.display='flex';$('pbk').onclick=function(){vProfile.style.display='none';vChat.style.display='flex';scroll();};
+    vChat.style.display='none';vDetail.style.display='none';vProfile.style.display='flex';$('pbk').onclick=function(){vProfile.style.display='none';vChat.style.display='flex';scroll();};
   }
-  function showSetup(){$('keyIn').value=API_KEY;$('modelIn').value=MODEL;vChat.style.display='none';vProfile.style.display='none';vSetup.style.display='flex';}
+  function showSetup(){$('keyIn').value=API_KEY;$('modelIn').value=MODEL;vChat.style.display='none';vProfile.style.display='none';vDetail.style.display='none';vSetup.style.display='flex';}
+  function startChat(){vSetup.style.display='none';vProfile.style.display='none';vDetail.style.display='none';vChat.style.display='flex';$('modelTag').textContent='在线 · '+MODEL.replace('claude-','').replace('-',' ');if(!messages.length){chat.innerHTML='';addAI('你好，我是 Johome AI Buying Agent。说说你的购房想法，或先选一个 —— 你买这套房主要是？');quick(['自住','投资','两者都考虑']);}}
 
   $('startBtn').onclick=function(){var k=$('keyIn').value.trim();if(!k){$('keyIn').focus();return;}API_KEY=k;MODEL=$('modelIn').value;localStorage.setItem('jh_key',API_KEY);localStorage.setItem('jh_model',MODEL);startChat();};
-  $('gear').onclick=showSetup;
-  $('profStrip').onclick=openProfile;
-  $('sendBtn').onclick=doSend;
+  $('gear').onclick=showSetup;$('profStrip').onclick=openProfile;$('sendBtn').onclick=doSend;
   inp.addEventListener('keydown',function(e){if(e.key==='Enter')doSend();});
-  $('reset').onclick=function(){messages=[];profileObj={};pendingToolUseId=null;updatePref();if(API_KEY)startChat();};
-
+  $('reset').onclick=function(){messages=[];profileObj={};pendingToolUseId=null;stack=[];updatePref();if(API_KEY)startChat();};
   if(API_KEY)startChat();else showSetup();
 })();
 </script>
