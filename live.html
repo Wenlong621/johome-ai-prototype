@@ -108,6 +108,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   "【卡片字段】city: title=城市名, subtitle=所属大区, metrics=[{中位价},{涨幅}]；neighbourhood: title=社区, subtitle='城市 · 社区', score=匹配分0-100, line=一句话理由, metrics=[{通勤/中位价},{预算覆盖}]；district: title=商圈名, subtitle=中心地标, line=氛围, metrics=[{步行到中心},{范围内房源}]；school: title=学校名, subtitle='学段·公/私立', score=Fraser评分(整数0-10), line=特色/课程；listing: title=价格(如 $138万), subtitle=户型描述(如 3床2浴·Townhouse·Richmond), tag=可选(如 新上架 或 cap rate 4.5%)。\n"+
   "【偏好抽取 profile】每条用户消息尽量抽取：购房目的/锚点/目标城市/目标商圈/目标学校/通勤目的地/通勤方式/可接受通勤/预算/房型/卧室数/浴室数/房龄/车位/近天车/家庭结构/孩子学段/氛围/购房时间线/贷款预批/投资目标 等，放进 profile(数组，每项{key,value}，键用中文，只放本轮新增或变化的)。即使在出过卡片之后，用户每句话也要继续抽取并更新 profile（如新说的预算/景观/学区等），别只回复“已记录”。\n"+
   "【主动推荐】当用户主动要求推荐某类卡片(社区/房源/商圈/学校/城市)时，直接按其当下条件给约 3 张该类 cards，并在 reply 里说明依据；不要只回应'已记录'。条件买不起/冲突时，照样给最接近的 3 个并提示权衡。\n"+
+  "【出卡后追问】每次出完一组 cards 后，reply 末尾紧接着问一句“你觉得哪个X更适合你？”，并把 quick_replies 设成这些卡片的名称(如 Richmond / Surrey / Vancouver)，方便用户点名选择(这算本轮唯一的问题)。\n"+
   "【合规】不要用'最适合华人/最安全/最好'等绝对说法或按族裔贴标签；商圈美食按菜系/生活服务描述。数据为示例，必要时提示上线前需本地核对。";
 
   var TOOL={name:"render_ui",description:"渲染本轮 Agent 回复：聊天文字 + 可选的快捷选项 / 抽取偏好 / 结果卡片。每一轮都必须调用。",
