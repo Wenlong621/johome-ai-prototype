@@ -137,7 +137,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   var inp=root.querySelector('.inp');
   var sendBtn=root.querySelector('.send');
   var initHTML=list.innerHTML;
-  var profile={purpose:'',anchor:'',area:'',district:'',dest:'',mode:'',time:'',budget:'',htype:'',beds:'',baths:'',sqftMin:'',age:'',parking:'',nearTransit:'',features:'',pet:'',family:'',kids:'',firstTime:'',vibe:'',amenities:'',safety:'',lifeSvc:'',invGoal:'',yield:'',rentability:'',hold:'',timeline:'',preApproved:'',downPay:'',school:''};
+  var profile={purpose:'',anchor:'',area:'',district:'',dest:'',mode:'',time:'',budget:'',htype:'',beds:'',baths:'',sqftMin:'',age:'',parking:'',nearTransit:'',features:'',pet:'',family:'',kids:'',firstTime:'',vibe:'',view:'',amenities:'',safety:'',lifeSvc:'',invGoal:'',yield:'',rentability:'',hold:'',timeline:'',preApproved:'',downPay:'',school:''};
   var answer=null,lastResult=null,stack=[],profileEdit=false;
   var BUD=[{label:'80–120万'},{label:'120–160万'},{label:'>160万'}];
   var TYP=[{label:'Townhouse'},{label:'Condo'},{label:'独立屋'}];
@@ -176,6 +176,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
     {k:'kids',label:'孩子学段',group:'家庭与学校',edit:KIDS},
     {k:'firstTime',label:'首次购房',group:'家庭与学校',edit:YN},
     {k:'vibe',label:'氛围偏好',group:'生活偏好',edit:VIBE},
+    {k:'view',label:'景观偏好',group:'生活偏好'},
     {k:'amenities',label:'周边设施',group:'生活偏好'},
     {k:'safety',label:'看重安全',group:'生活偏好'},
     {k:'lifeSvc',label:'生活服务',group:'生活偏好'},
@@ -400,7 +401,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
 
   function extract(t){if(!t)return;var s=t;
     var dp=s.match(/首付\s*(\d{1,3})\s*(万|%|成)/);if(dp)profile.downPay=dp[1]+dp[2];
-    var sb=s.replace(/首付\s*\d{1,3}\s*(万|%|成)/,'');var mm=sb.match(/(\d{2,4})\s*万/);if(mm){var n=parseInt(mm[1],10);if(n>=40&&n<=2000)profile.budget=n<120?'80–120万':(n<=160?'120–160万':'>160万');}
+    var sb=s.replace(/首付\s*\d{1,3}\s*(万|%|成)/,'');var mm=sb.match(/(\d{2,4})\s*(万|[wW])/);if(mm){var n=parseInt(mm[1],10);if(n>=30&&n<=2000)profile.budget=(n<80?('约 '+n+' 万'):(n<120?'80–120万':(n<=160?'120–160万':'>160万')));}
     if(/townhouse|镇屋|联排|town\s*house/i.test(s))profile.htype='Townhouse';else if(/独立屋|detached/i.test(s))profile.htype='独立屋';else if(/condo|公寓|apartment/i.test(s))profile.htype='Condo';
     var cn={'一':1,'两':2,'二':2,'三':3,'四':4,'五':5};var bd=s.match(/([1-6])\s*(室|房|卧|bed)/i);if(bd)profile.beds=bd[1]+'室';else{var bc=s.match(/([一两二三四五])\s*(室|房|卧)/);if(bc)profile.beds=cn[bc[1]]+'室';}
     var ba=s.match(/([1-4])\s*(浴|卫|bath)/i);if(ba)profile.baths=ba[1]+'浴';
@@ -427,8 +428,23 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
     if(/现金流|cash\s*flow/i.test(s))profile.invGoal='现金流';else if(/增值|升值|appreciation/i.test(s))profile.invGoal='增值';
     if(/好出租|易出租|出租快|租得快|租金高/.test(s))profile.rentability='易出租优先';
     var yr=s.match(/持有\s*(\d{1,2})\s*年/);if(yr)profile.hold=yr[1]+' 年';
+    if(/海景|海边|sea\s*view|ocean/i.test(s))profile.view='海景';else if(/江景|河景|water\s*view/i.test(s))profile.view='江/河景';else if(/山景|mountain\s*view/i.test(s))profile.view='山景';
     pref();}
-  function doSend(){var t=inp.value.trim();if(!t)return;inp.value='';extract(t);if(answer!==null){addUser(t);clearLive();var f=answer;answer=null;f(t,true);}else{addUser(t);typing(function(){addAI('已记到你的档案里。可以继续补充，或点顶部「我的档案」查看；也可以点选项继续。');});}}
+  var NBTHEME={
+    '海景':[['Ambleside','West Vancouver · 海景',88,'海湾步行商街 · 一线海景','$280万','中位价','+5.0%','近一年'],['Steveston','Richmond · 海景',85,'渔人码头 · 海鲜 · 海景','$155万','中位价','+3.5%','近一年'],['Lower Lonsdale','North Vancouver · 海景',84,'码头市集 · 海景 · 海上巴士','$120万','中位价','+4.2%','近一年']],
+    '学区':[['Kerrisdale','Vancouver West · 学区',88,'名校云集 · 成熟安静','$320万','中位价','+5.0%','近一年'],['Edgemont','North Vancouver · 学区',85,'好学区 · 精致小镇','$240万','中位价','+4.2%','近一年'],['Burnaby North','Burnaby · 学区',83,'近 SFU · Moscrop 学区','$130万','中位价','+5.1%','近一年']],
+    '通勤':[['Brentwood','Burnaby · 通勤',88,'天车上盖 · 约 28min 进城','28min','到Downtown','$98万','中位价'],['Metrotown','Burnaby · 通勤',86,'天车 · 大商场 · 便利','24min','到Downtown','$95万','中位价'],['Joyce-Collingwood','Vancouver East · 通勤',84,'天车 · 进城快 · 性价比','18min','到Downtown','$88万','中位价']],
+    '自然':[['Lynn Valley','North Vancouver · 自然',87,'森林徒步 · 家庭友好','$165万','中位价','+4.2%','近一年'],['Deep Cove','North Vancouver · 自然',85,'海湾 · 皮划艇 · 安静','$210万','中位价','+4.0%','近一年'],['Burke Mountain','Coquitlam · 自然',82,'新区 · 公园 · 独立屋','$130万','中位价','+5.5%','近一年']],
+    '性价比':[['Surrey City Centre','Surrey · 性价比',86,'天车 · 高增长 · 友好','$62万','中位价','+6.3%','近一年'],['Coquitlam Centre','Coquitlam · 性价比',84,'天车 · 商场 · 家庭','$58万','中位价','+5.5%','近一年'],['New West Quay','New Westminster · 性价比',82,'河景 · 天车 · 流动性好','$70万','中位价','+4.0%','近一年']],
+    '繁华':[['Yaletown','Vancouver West · 繁华',88,'时尚 · 餐饮 · 夜生活','$115万','中位价','+3.0%','近一年'],['Downtown / Robson','Vancouver West · 繁华',86,'核心 · 购物 · 步行','$110万','中位价','+3.0%','近一年'],['Metrotown','Burnaby · 繁华',84,'大商场 · 天车 · 便利','$95万','中位价','+5.0%','近一年']],
+    '_def':[['Brentwood','Burnaby · 社区',86,'天车上盖 · 新盘多','28min','到Downtown','64%','预算覆盖'],['Metrotown','Burnaby · 社区',85,'大商场 · 最便利','24min','到Downtown','58%','预算覆盖'],['Lougheed','Burnaby · 社区',83,'天车交汇 · 性价比','33min','到Downtown','71%','预算覆盖']]
+  };
+  function distCardsTheme(theme){var map={'海景':[['Ambleside','Marine Dr','海景·步行商街'],['Steveston','渔人码头','渔村·海鲜·海景'],['Lower Lonsdale','Shipyards','码头市集·海景']],'繁华':[['Downtown / Robson','Robson St','繁华核心·购物'],['Yaletown','Mainland St','时尚·夜生活'],['Metrotown','Metropolis','大商场·天车']]},arr=map[theme]||[['Metrotown','Metropolis 商场','成熟商圈·天车'],['Brentwood','The Amazing Brentwood','年轻潮流·新盘'],['Lougheed','Lougheed Town Centre','天车交汇·性价比']],h='<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">',i;for(i=0;i<arr.length;i++)h+=districtcard(arr[i][0],arr[i][1],arr[i][2],(5+i*2)+'min','步行到中心',(20-i*2)+' 套','范围内房源');return h+'</div>';}
+  function cityCardsTheme(theme){var map={'海景':[['West Vancouver','北岸·海景高端','$305万','中位价','+7.5%','近一年'],['Richmond','海岛·渔村风情','$132万','中位价','+3.4%','近一年'],['North Vancouver','山海自然','$155万','中位价','+4.2%','近一年']],'性价比':[['Surrey','高增长·友好','$95万','中位价','+6.3%','近一年'],['Coquitlam','天车·性价比','$110万','中位价','+5.5%','近一年'],['Langley','新区·便宜','$88万','中位价','+5.0%','近一年']]},arr=map[theme]||[['Burnaby','大温核心','$118万','中位价','+5.1%','近一年'],['Richmond','亚洲美食','$132万','中位价','+3.4%','近一年'],['Vancouver West','名校·便利','$135万','中位价','+3.5%','近一年']];return citycardsHTML(arr);}
+  function cntProfile(){var c=0,i;for(i=0;i<FIELDS.length;i++)if(profile[FIELDS[i].k])c++;return c;}
+  function isRec(t){return /推荐|有没有|帮我(找|推荐|看|挑)|给我(推荐|几个|几套|来|挑)|更适合|想找|找个|找一个|找几个|介绍|哪些|哪个|有什么/.test(t)&&/社区|小区|房源|房子|套房|商圈|学校|名校|学区|城市|区域|地方|地段|盘/.test(t);}
+  function freeRecommend(t){var type=/几套|套房|房源|房子|listing/.test(t)?'listing':/商圈/.test(t)?'district':((/学校|名校/.test(t)||(/学区/.test(t)&&!/社区|小区/.test(t)))?'school':(/城市|哪个市|哪个城/.test(t)?'city':'nb'));var theme=/海景|海边|江景|河景|水景|sea|ocean|water/i.test(t)?'海景':/学区|名校/.test(t)?'学区':/通勤|上班|天车|地铁|近站|近车/.test(t)?'通勤':/安静|清静|自然|公园|远离喧嚣/.test(t)?'自然':/性价比|便宜|实惠|预算紧|划算/.test(t)?'性价比':/热闹|繁华|夜生活|市中心/.test(t)?'繁华':'';lastResult=function(){freeRecommend(t);};var tn={listing:'房源',district:'商圈',school:'学校',city:'城市',nb:'社区'}[type],cond=[];if(theme)cond.push(theme);if(profile.budget)cond.push('预算 '+profile.budget);if(profile.htype)cond.push(profile.htype);typing(function(){addAI('根据你说的'+(cond.length?('（'+cond.join(' · ')+'）'):'')+'，给你挑了 3 个'+tn+'，按匹配度排序，点开看详情：');if(type==='nb')addBlock(nbScroll((NBTHEME[theme]||NBTHEME._def).slice(0,3)),openCommunity);else if(type==='listing')listingsBlock(false);else if(type==='district')addBlock(distCardsTheme(theme),openDistrictPage);else if(type==='school')addBlock('<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">'+schoolcard('West Bay Elementary','公立 · 小学','9.0','近海 · 顶级学区')+schoolcard('Sentinel Secondary','公立 · 中学','8.8','AP · 名校')+schoolcard('University Hill Sec','公立 · 中学','8.7','UBC 旁 · 高分')+'</div>',openSchoolPage);else addBlock(cityCardsTheme(theme),openCityPage);var m=(profile.budget||'').match(/约 (\d{1,3}) 万/);if(theme==='海景'&&m&&parseInt(m[1],10)<90)addAI('提示：海景社区整体偏贵，'+profile.budget+'在这些区主要能买到公寓/小户型——点进社区看「社区内在售房源」会按你的预算排。');});}
+  function doSend(){var t=inp.value.trim();if(!t)return;inp.value='';extract(t);if(answer!==null){addUser(t);clearLive();var f=answer;answer=null;f(t,true);return;}addUser(t);if(isRec(t)){freeRecommend(t);}else{typing(function(){var n=cntProfile();addAI('已记到你的档案'+(n?('（共 '+n+' 项）'):'')+'。想让我直接给建议，可以说「推荐几个海景社区」「给我几套预算内的房源」；也可以点选项继续。');});}}
   sendBtn.onclick=doSend;inp.addEventListener('keydown',function(e){if(e.key==='Enter')doSend();});
   root.querySelector('#profStrip').onclick=openProfile;
 
