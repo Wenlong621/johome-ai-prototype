@@ -240,7 +240,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   function stepAnchor(){ask('关于住哪，你更接近哪种情况？',[{label:'通勤方便',icon:'ti-train'},{label:'进某所名校',icon:'ti-school'},{label:'商圈附近',icon:'ti-building-store'},{label:'已知想住哪区',icon:'ti-map-2'},{label:'没头绪帮我推荐',icon:'ti-help-circle'}],function(v){if(v.indexOf('通勤')>=0){profile.anchor='通勤型';pref();brDest();}else if(v.indexOf('商圈')>=0){profile.anchor='商圈型';pref();brDistrict();}else if(v.indexOf('名校')>=0||v.indexOf('学')>=0){profile.anchor='学区型';pref();brSchool();}else if(v.indexOf('已知')>=0){profile.anchor='区域明确';pref();brArea();}else{profile.anchor='明确型';pref();brLost();}});}
   function brDest(){askInput('你的通勤目的地在哪？直接打地址，或选一个：',[{label:'Downtown'},{label:'Metrotown'},{label:'UBC'}],function(v){profile.dest=v;pref();brTime();});}
   function brTime(){ask('单程通勤最多能接受多久？',TIM,function(v){profile.time=v;pref();askBudget(function(){askType(resultNeighbourhoods);});});}
-  function brLost(){ask('先了解下，谁会一起住？',[{label:'单身/情侣'},{label:'夫妻两口'},{label:'带娃家庭'},{label:'三代同堂'}],function(fam){profile.family=fam;pref();ask('想要的生活感觉更偏向？',[{label:'繁华都市'},{label:'安静自然'},{label:'成熟便利'},{label:'文艺小资'},{label:'多元美食'}],function(v){profile.vibe=(v.indexOf('安静')>=0?'安静':'热闹');pref();ask('最看重哪一点？',[{label:'学区'},{label:'通勤方便'},{label:'生活便利'},{label:'自然环境'},{label:'高性价比'}],function(p){ask('日常出行主要靠？',[{label:'开车'},{label:'公交/天车'}],function(md){profile.mode=md;pref();resultCitiesByFocus(p);});});});});}
+  function brLost(){ask('先了解下，谁会一起住？',[{label:'单身'},{label:'情侣/夫妻两口'},{label:'带孩子家庭'},{label:'三代同堂'}],function(fam){profile.family=fam;pref();ask('想要的生活感觉更偏向？',[{label:'繁华都市'},{label:'安静自然'},{label:'成熟便利'},{label:'文艺小资'},{label:'多元美食'}],function(v){profile.vibe=(v.indexOf('安静')>=0?'安静':'热闹');pref();ask('最看重哪一点？',[{label:'学区'},{label:'通勤方便'},{label:'生活便利'},{label:'自然环境'},{label:'高性价比'}],function(p){ask('日常出行主要靠？',[{label:'开车'},{label:'公交/天车'}],function(md){profile.mode=md;pref();resultCitiesByFocus(p);});});});});}
   function citycardsHTML(arr){var h='<div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:3px">';for(var i=0;i<arr.length;i++){var a=arr[i];h+=citycard(a[0],a[1],a[2],a[3],a[4],a[5]);}return h+'</div>';}
   function resultCitiesByFocus(p){lastResult=function(){resultCitiesByFocus(p);};var M={
     '学区':[['West Vancouver','北岸 · 顶级学区','$300万+','中位价','+7.5%','近一年'],['Vancouver West','Dunbar/Kerrisdale 名校学区','$320万','中位价','+5.0%','近一年'],['Burnaby','好学区 + 天车','$118万','中位价','+5.1%','近一年']],
@@ -412,9 +412,9 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
     if(/宠物|养狗|养猫|有狗|有猫|pet/i.test(s))profile.pet='宠物友好';
     var fe=[];if(/后院|院子|backyard|yard/i.test(s))fe.push('后院');if(/地下室|basement/i.test(s))fe.push('地下室');if(/车库|garage/i.test(s))fe.push('车库');if(/电梯|elevator/i.test(s))fe.push('电梯');if(fe.length)profile.features=fe.join('、');
     if(/安静|清静|quiet/i.test(s))profile.vibe='安静';else if(/热闹|繁华|lively/i.test(s))profile.vibe='热闹';
-    var kid=s.match(/(\d{1,2})\s*岁/);if(kid){var a=parseInt(kid[1],10);profile.kids=a<=5?'学龄前':(a<=11?'小学':(a<=18?'中学':''));if(profile.kids)profile.family='有孩子';}
-    if(/孩子|小孩|娃|宝宝|kid|child/i.test(s)&&!profile.family)profile.family='有孩子';
-    if(/夫妻|两口|二人世界|新婚|配偶/.test(s)&&!profile.family)profile.family='夫妻两口';
+    var kid=s.match(/(\d{1,2})\s*岁/);if(kid){var a=parseInt(kid[1],10);profile.kids=a<=5?'学龄前':(a<=11?'小学':(a<=18?'中学':''));if(profile.kids)profile.family='带孩子家庭';}
+    if(/孩子|小孩|娃|宝宝|kid|child/i.test(s)&&!profile.family)profile.family='带孩子家庭';
+    if(/情侣|恋人|夫妻|两口|二人世界|新婚|配偶/.test(s)&&!profile.family)profile.family='情侣/夫妻两口';
     if(/单身|一个人住|自己住/.test(s))profile.family='单身';
     if(/三代|和父母|带老人|养老/.test(s))profile.family='三代同堂';
     if(/首次|第一次买|first\s*time|刚需/i.test(s))profile.firstTime='是';
