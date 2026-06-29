@@ -388,7 +388,33 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   var NB2CITY=null;
   function nbCity(name){if(!NB2CITY){NB2CITY={};var c;for(c in CITY){if(CITY[c]&&CITY[c].nbs)CITY[c].nbs.forEach(function(n){NB2CITY[n[0]]=c;});}for(c in CX){if(c!=='_def'&&CX[c]&&CX[c].comm)CX[c].comm.forEach(function(n){NB2CITY[n]=c;});}}if(NB2CITY[name])return NB2CITY[name];var toks=['West Vancouver','North Vancouver','New West','Port Coquitlam','Port Moody','Coquitlam','Burnaby','Richmond','Surrey','Langley','Maple Ridge','Vancouver West','Vancouver East'];for(var i=0;i<toks.length;i++)if(name.indexOf(toks[i])>=0)return toks[i]==='New West'?'New Westminster':toks[i];return 'Vancouver West';}
   function nbData(name){var city=nbCity(name),cd=cityData(city),r=crng(chash('nb'+name)),cmed=parseFloat((''+cd.mk[0][0]).replace(/[^0-9.]/g,''))||120,med=Math.round(cmed*(0.8+r()*0.35)),gain=Math.round((3+r()*4)*10)/10,active=20+Math.round(r()*45),dom=15+Math.round(r()*16);return {city:city,img:(CX[city]||CX._def).img,med:med,gain:gain,active:active,dom:dom};}
-  function nbIntro(name,nb){var V=['成熟社区、生活配套完善','通勤便利、近天车或主干道','安静宜居、家庭友好','新盘较多、年轻活力','性价比突出、租客需求稳定'];return name+' 属于 '+nb.city+'，'+V[chash(name)%V.length]+'；社区中位价约 $'+nb.med+'万、近一年 +'+nb.gain+'%。（社区描述为示例，上线接社区画像数据）';}
+  var NBDESC={
+    'Lower Lonsdale':'北温海滨文艺社区，由旧造船厂 Shipyards 改造而来、保留工业风历史建筑；Lonsdale Quay 市场、海滨步道与精酿酒馆密集，SeaBus 约 12 分钟到市中心，海景与生活气息兼具。',
+    'Central Lonsdale':'北温成熟商业生活带，Lonsdale 大道贯穿；医院、商铺、餐饮与公交便利，生活配套完善、节奏适中。',
+    'Lynn Valley':'北温被森林环抱的家庭社区，临近 Lynn Canyon 吊桥与多条徒步道；商场、图书馆与公园齐全，安静自然、适合带娃。',
+    'Edgemont':'北温精致小镇式社区，Edgemont Village 街区历史悠久；独立小店、咖啡馆与好学校，安静高端、社区感强。',
+    'Deep Cove':'北温海湾度假风小镇，以皮划艇与 Quarry Rock 徒步闻名；小巧的村中心与海滨公园，安静自然、周末热门。',
+    'Kitsilano':'温西海滩社区（俗称 Kits），嬉皮文化发源、如今以健康生活和年轻专业人士为主；Kits Beach、West 4th 小店餐厅与瑜伽馆云集，临海宜居。',
+    'Kerrisdale':'温西百年成熟社区，绿树成荫、氛围安静；41 街传统商业街、名校与教堂林立，家庭与长居型买家偏爱。',
+    'Dunbar':'温西安静住宅区，以独立屋与好学校著称；沿街小商业、临近 Pacific Spirit 公园与 UBC，家庭氛围浓。',
+    'Point Grey':'温西高端临海社区，邻近 UBC 与 Spanish Banks 海滩；以独立屋为主、街区安静，自然与名校资源突出。',
+    'Oakridge':'温西 Cambie 走廊核心，Oakridge Park 高端商场正大规模重建；Canada Line 直达、学区优良，绿地与社区设施持续升级。',
+    'Yaletown':'温哥华 Downtown 时尚社区，由旧仓库区改造、红砖 loft 与玻璃高层并存；餐厅夜生活、海滨 David Lam 公园与 Roundhouse 社区中心，年轻专业人士聚集。',
+    'Metrotown':'本拿比核心商圈，围绕 Metropolis 大型购物中心发展；天车 Expo 线直达、高层公寓密集，餐饮购物一站式，生活最为便利。',
+    'Brentwood':'本拿比新兴潮流社区，The Amazing Brentwood 综合体带动重建；新盘多、年轻活力，天车加商场餐饮，生活节奏快。',
+    'Lougheed':'本拿比东部交通枢纽，Expo 与 Millennium 两条天车线交汇；Lougheed Town Centre 商场，性价比较高，家庭与租客混居。',
+    'Edmonds':'本拿比南部多元社区，近 Highgate 商业区与社区中心；天车便利、价格亲民，生活配套完善。',
+    'Steveston':'列治文历史渔村，曾是北美最大渔港之一；渔人码头、海鲜直销与 Gulf of Georgia Cannery 历史遗址，海滨步道与家庭氛围浓厚。',
+    'Ambleside':'西温海滨核心，Marine Drive 步行商业街、海滨步道与 Ambleside Beach；成熟高端、山海景观，生活便利。',
+    'Dundarave':'西温安静高端海边社区，小而精致的村中心与海滨步道；独立小店与咖啡馆，适合追求安静与景观的买家。',
+    'Surrey City Centre':'素里市中心，SFU Surrey 与 Central City 商场带动的高增长新城；天车 Expo 线、新建高层多，年轻有活力、配套快速完善。',
+    'Coquitlam Centre':'高贵林核心，围绕 Coquitlam Centre 商场与 Evergreen 天车线；Lafarge 湖公园、商业与社区设施齐全，家庭友好。',
+    'Burquitlam':'高贵林近本拿比的天车新区，Evergreen 线带动大量新盘；配套快速完善、通勤便利，年轻家庭聚集。',
+    'Burke Mountain':'高贵林山麓新兴社区，以新建独立屋与联排为主；公园与登山道环绕，安静、家庭、适合改善型置业。',
+    'New West Quay':'新西敏河滨社区，River Market 市集与滨水步道；历史码头城、天车便利，河景与生活气息兼具。',
+    'City Centre':'城市核心商圈区域，商场、轨道与高层公寓集中；餐饮购物与公共设施齐全，生活便利、节奏较快。'
+  };
+  function nbIntro(name,nb){if(NBDESC[name])return NBDESC[name];var V=[['成熟社区、生活气息浓','超市、餐饮与公园步行可达'],['通勤便利、近天车或主干道','轨道与公交方便、生活节奏较快'],['安静宜居、家庭友好','公园、学校与社区中心齐全'],['新盘较多、年轻活力','新建公寓与商业配套不断完善'],['性价比突出、生活便利','本地小店、超市与餐饮丰富']];var t=V[chash(name)%V.length];return name+' 是 '+nb.city+' 的一个社区，'+t[0]+'；'+t[1]+'。（社区概况示例，上线接社区画像 / 编辑内容）';}
   function openCommunity(name){var nb=nbData(name),med=nb.med,mk=[['$'+med+'万','社区中位价'],['+'+nb.gain+'%','近一年'],[''+nb.active,'在售'],[nb.dom+'天','平均 DOM']];openPage(dhd(name)+'<div class="dscroll">'+'<div class="hero" style="height:150px"><img src="'+nb.img+'" alt="'+name+'" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover;display:block"/></div>'+infocard('社区描述',nbIntro(name,nb))+fitcard('按你「'+(profile.budget||'预算')+(profile.htype?(' · '+profile.htype):'')+'」的偏好，'+name+' 在通勤、供给与生活配套上比较平衡——下面是它的市场走势与在售房源。')+mktSnap(name,mk)+section('各房型中位价',metGrid([['$'+Math.round(med*0.6)+'万','Condo'],['$'+med+'万','Townhouse'],['$'+Math.round(med*1.9)+'万','独立屋'],[(50+med%20)+'%','吸纳率']]))+section('生活配套（步行可达）',chips(['超市 ×'+(6+med%8),'餐饮 ×'+(30+med%40),'咖啡 ×'+(8+med%10),'公园 ×'+(3+med%5),'健身 ×'+(3+med%6),'Walk '+(60+med%30)+' · Transit '+(60+med%28)]))+'<div id="schoolWrap" data-city="'+nb.city+'"></div>'+section('社区内在售房源（active · 左右滑动）',cityListings(name,med))+'</div>'+bottomBar());}
   function openDistrictPage(name){openPage(dhd(name)+'<div class="dscroll">'+heroBlock('ti-building-store','商圈中心','步行 10 分钟生活圈')+fitcard('你想要的氛围这里都有：天车直达、商场与餐饮密集，步行 10 分钟生活全覆盖。')+section('商圈快照',metGrid([['7min','步行到中心'],['95','步行指数'],['24 套','范围内房源'],['天车×2','轨道交通']]))+section('生活配套（步行可达）',chips(['商场 ×2','餐饮 ×120+','咖啡 ×20','超市 ×8','健身 ×7','酒吧 ×9']))+infocard('氛围 / 人群','成熟商圈，年轻租客与家庭混合；范围内以公寓为主，生活与餐饮服务多元。')+section('范围内中位价',metGrid([['$78万','Condo'],['$135万','Townhouse'],['28天','DOM'],['+5.0%','近一年']]))+listingsScroll('该商圈范围内推荐房源',24)+'</div>'+bottomBar());}
   function openSchoolPage(name){openPage(dhd(name)+'<div class="dscroll">'+heroBlock('ti-school','Fraser 7.8','公立 · 中学')+fitcard('该校提供 IB 课程，catchment 覆盖 3 个社区；下面是 catchment 内符合你预算的房源。')+section('学校信息',metGrid([['7.8','Fraser 评分'],['前 12%','全省排名'],['IB','特色课程'],['约 1,600','在校人数']]))+infocard('catchment 说明','该校学区覆盖 3 个社区；公立按 catchment 边界录取，购房地址须落在边界内（私校无 catchment，按通勤 / 距离推荐）。')+section('catchment 内市场',metGrid([['$132万','中位价'],['16 套','目标房源'],['62%','预算覆盖'],['24天','DOM']]))+section('家庭配套',chips(['公园 ×4','图书馆 ×1','社区中心 ×2','补习 ×8']))+listingsScroll('该校 catchment 内推荐房源',16)+'</div>'+bottomBar());}
