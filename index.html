@@ -563,18 +563,37 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
     'City Centre':'城市核心商圈区域，商场、轨道与高层公寓集中；餐饮购物与公共设施齐全，生活便利、节奏较快。'
   };
   function nbIntro(name,nb){if(NBDESC[name])return NBDESC[name];var V=[['成熟社区、生活气息浓','超市、餐饮与公园步行可达'],['通勤便利、近天车或主干道','轨道与公交方便、生活节奏较快'],['安静宜居、家庭友好','公园、学校与社区中心齐全'],['新盘较多、年轻活力','新建公寓与商业配套不断完善'],['性价比突出、生活便利','本地小店、超市与餐饮丰富']];var t=V[chash(name)%V.length];return name+' 是 '+nb.city+' 的一个社区，'+t[0]+'；'+t[1]+'。（社区概况示例，上线接社区画像 / 编辑内容）';}
-  function fitFor(name,city){var p=profile,pts=[],st=(city&&STATIONS[city]&&STATIONS[city].s)||[],rail=false,i;for(i=0;i<st.length;i++)if(st[i][1]!=='S')rail=true;
-    if(p.dest){var bt=p.mode&&/公交|天车|地铁/.test(p.mode);pts.push('你要通勤到 '+p.dest+(p.mode?('（'+p.mode+'）'):'')+'：'+(bt?(rail?(name+' 在天车沿线、进城快'):(name+' 公交接驳到那一带较顺')):(name+' 自驾到 '+p.dest+' 路线较通畅')));}
-    else if(p.mode&&/公交|天车/.test(p.mode)&&rail){pts.push('你日常坐公交 / 天车：'+name+' 在天车沿线、出行方便');}
-    if(p.tone)pts.push('你想要「'+p.tone+'」的调性：'+name+' 的气质与之契合');
-    else if(p.vibe)pts.push('你偏好'+p.vibe+'：'+name+(/安静/.test(p.vibe)?' 氛围安静、生活节奏舒缓':' 热闹、餐饮与配套丰富'));
-    if(p.view)pts.push('你想要'+p.view+'：'+name+' 有相应的临水 / 景观资源');
-    if(p.family&&/孩|娃|三代/.test(p.family))pts.push('你是'+p.family+'：这里公园、学校与家庭设施较友好');
-    if(p.school)pts.push('你看重学区（'+p.school+'）：'+name+' 在其可达 / catchment 范围内');
-    if(p.invGoal)pts.push('你以投资（'+p.invGoal+'）为主：'+name+(/现金流/.test(p.invGoal)?' 租客需求稳、租售比较好':' 增值与流动性较好'));
+  function areaTraits(name,city){var t={name:name,city:city,kind:'nb',tags:[],anchor:'',rail:false,railTxt:'',dt:'',med:0,school:''},z=(typeof ZONES!=='undefined')?ZONES[name]:null;
+    if(z){t.kind='zone';t.city=z.prim;t.tags=(z.tags||[]).slice();t.anchor=z.anchor||'';t.dt=z.dt||'';t.rail=!!z.rail;var zs=(typeof ZSTN!=='undefined'&&ZSTN[name])||[];t.railTxt=zs.length?(zs.slice(0,3).join(' / ')+' 站'):'';t.med=zoneData(name).med;t.school=cityData(z.prim).school;}
+    else if(CITY[name]||CX[name]){t.kind='city';var cd=cityData(name);t.tags=(cd.tag||'').split(' · ');t.med=parseFloat((''+cd.mk[0][0]).replace(/[^0-9.]/g,''))||120;t.school=cd.school;t.rail=hasRail(name);var ss=(STATIONS[name]&&STATIONS[name].s)||[];t.railTxt=ss.length?(ss.slice(0,3).map(function(s){return s[0];}).join(' / ')+(ss.length>3?(' 等 '+ss.length+' 站'):' 站')):'';t.anchor=((CX[name]||{}).intro||'');}
+    else{var nd=nbData(name,city);t.city=nd.city;t.med=nd.med;t.school=cityData(nd.city).school;t.rail=hasRail(nd.city);t.railTxt=distStations(name,'',nd.city);t.anchor=(NBDESC[name]||(DIST_META[name]&&DIST_META[name].desc)||'');if(typeof DFACTS!=='undefined'&&DFACTS[name])t.tags=t.tags.concat(DFACTS[name]);}
+    return t;}
+  var TONEKW={'繁华都市':['都市','夜生活','天车','商场','繁华','核心','购物'],'文艺小资':['文艺','咖啡','码头','市集','文创','小店','精酿','历史','艺术'],'多元烟火气':['美食','多元','烟火','市集','亚洲'],'安逸慢生活':['安静','海滨','渔村','家庭','公园','慢','宜居','湖','海岸','自然'],'精致高端':['高端','豪宅','学区','海景','精致']};
+  function snipTxt(s,n){s=(''+(s||'')).replace(/<[^>]*>/g,'');return s.length>n?(s.slice(0,n)+'…'):s;}
+  function fitFor(name,city){var p=profile,A=areaTraits(name,city),pts=[],hay=A.tags.join(' ')+' '+A.anchor;
+    if(p.dest){var bt=p.mode&&/公交|天车|地铁/.test(p.mode);pts.push('你要通勤到 '+p.dest+(p.mode?('（'+p.mode+'）'):'')+'：'+(bt?(A.rail?('这里在轨道沿线'+(A.railTxt?('（'+A.railTxt+'）'):'')+(A.dt?('，到 Downtown 约 '+A.dt):'')):('坦率说这里没有轨道站点、以公交接驳为主——通勤若是硬需求要留意')):('自驾进出线路成熟'+(A.dt?('，到 Downtown 约 '+A.dt):''))));}
+    else if(p.mode&&/公交|天车/.test(p.mode)){pts.push(A.rail?('你日常坐公交/天车：轨道就近'+(A.railTxt?('（'+A.railTxt+'）'):'')+(A.dt?('，到 Downtown 约 '+A.dt):'')):('你日常坐公交/天车：坦率说这里没有轨道站点，以公交/自驾为主——是其他匹配点把它排上来的'));}
+    if(p.priority){var pr=p.priority,e='';
+      if(/学区/.test(pr))e=A.school?('教育正是这里的招牌——'+A.school):'';
+      else if(/通勤/.test(pr))e=A.rail?('轨道就近'+(A.railTxt?('（'+A.railTxt+'）'):'')+(A.dt?('，到 Downtown 约 '+A.dt):'')):('这里无轨道、依赖自驾——是其他优势把它排上来的');
+      else if(/便利/.test(pr)){var m1=A.tags.filter(function(g){return /商场|商圈|便利|购物|美食|天车/.test(g);});e=m1.length?('配套是它的强项——'+m1.join('、')+(A.anchor?('；'+snipTxt(A.anchor,26)):'')):'';}
+      else if(/自然/.test(pr)){var m2=A.tags.filter(function(g){return /公园|海|山|自然|森林|湖|滨/.test(g);});e=m2.length?('自然底子好——'+m2.join('、')+(A.anchor?('；'+snipTxt(A.anchor,26)):'')):'';}
+      else if(/性价比/.test(pr))e=A.med?(A.med<=100?('售出中位价约 $'+A.med+'万，在大温属价格友好带'):('售出中位价约 $'+A.med+'万、不算便宜——推荐它更多靠其他匹配点，预算内主要看 Condo')):'';
+      pts.push('你最看重「'+pr+'」：'+(e||('这里在这一项整体达标，具体见页内数据')));}
+    if(p.tone){var kw=TONEKW[p.tone]||[],hit=kw.filter(function(k){return hay.indexOf(k)>=0;});
+      if(hit.length)pts.push('你想要「'+p.tone+'」的调性：对味——这里的关键词正是 '+hit.slice(0,3).join('、')+(A.anchor?('；'+snipTxt(A.anchor,30)):''));
+      else pts.push('你想要「'+p.tone+'」的调性：坦率说 '+name+' 更偏「'+(A.tags[0]||'安静成熟')+'」，调性不完全对口——它上榜主要靠'+(p.priority?('你的「'+p.priority+'」'):'其他条件')+'的权重，想要更对味的氛围可以让我换一批');}
+    else if(p.vibe)pts.push('你偏好'+p.vibe+'：'+(/安静/.test(p.vibe)?((hay.indexOf('安静')>=0||hay.indexOf('家庭')>=0)?'这里以居住为主、节奏舒缓':(name+' 相对热闹，安静街区要往里挑')):((hay.indexOf('商')>=0||hay.indexOf('美食')>=0)?'这里餐饮与配套密度高、烟火气足':(name+' 偏安静，热闹要去商圈一侧'))));
+    if(p.family&&/孩|娃|三代/.test(p.family))pts.push('你是'+p.family+'：'+(A.school?('学校有底子（'+snipTxt(A.school,26)+'）'):'学校资源中规中矩')+((hay.indexOf('公园')>=0||hay.indexOf('家庭')>=0)?'，公园与家庭设施密度也不错':''));
+    else if(p.family&&/单身|情侣|夫妻/.test(p.family)&&(A.rail||hay.indexOf('都市')>=0))pts.push('你是'+p.family+'：'+(A.rail?'轨道通勤 + ':'')+'紧凑生活半径，适合两口 / 单身的节奏');
+    var bm=parseBudgetMid(p.budget);
+    if(bm&&A.med){var condo=Math.round(A.med*0.6);pts.push('你的预算 '+p.budget+'：'+(bm>=A.med?('可以覆盖到联排（约 $'+A.med+'万）甚至更大空间'):(bm>=condo?('主要对应 Condo（约 $'+condo+'万起）；联排约 $'+A.med+'万需再加预算'):('距这里的 Condo 门槛（约 $'+condo+'万）还有差距——先当方向参考，或看周边价格更友好的区域'))));}
+    if(p.view)pts.push('你想要'+p.view+'：'+((hay.indexOf('海')>=0||hay.indexOf('湖')>=0||hay.indexOf('河')>=0)?('这里有真实的临水资源——'+(A.tags.filter(function(g){return /海|湖|河|滨/.test(g);}).join('、')||'见简介')):(name+' 的景观资源一般，看景要挑具体楼盘与朝向')));
+    if(p.school)pts.push('你锁定学校（'+p.school+'）：'+name+' 在其可达 / catchment 范围内'+(A.school?('；本地学校底子：'+snipTxt(A.school,24)):''));
+    if(p.invGoal)pts.push('你以投资（'+p.invGoal+'）为主：'+(/现金流/.test(p.invGoal)?((A.rail?'轨道沿线租客盘稳，':'')+'租售比与出租需求是这里的看点'):'看增值与供给稀缺——结合页内 SALR 与近一年走势判断'));
     if(p.vacaScene)pts.push('你要「'+p.vacaScene+'」的度假场景：'+name+' 与之契合'+(p.vacaRent&&/短租/.test(p.vacaRent)?'；闲置期短租政策见该市说明（以官方最新为准）':''));
-    var hard=[];if(p.budget)hard.push('预算 '+p.budget);if(p.htype)hard.push(p.htype);if(p.beds)hard.push(p.beds);if(p.parking)hard.push(p.parking);
-    if(hard.length)pts.push('你的硬条件「'+hard.join(' · ')+'」：这里有对应供给、能筛到符合的房');
+    var hard=[];if(p.htype)hard.push(p.htype);if(p.beds)hard.push(p.beds);if(p.parking)hard.push(p.parking);
+    if(hard.length)pts.push('你的硬条件「'+hard.join(' · ')+'」：范围内有对应供给（见页尾房源）');
     if(!pts.length)return name+' 在你目前给的条件上整体比较贴合——多说点偏好（预算 / 通勤 / 氛围），我能解释得更具体。';
     return '· '+pts.join('<br>· ');}
   function openCommunity(name,cityHint){var nb=nbData(name,cityHint),med=nb.med,mk=[['$'+med+'万','社区售出中位价'],['+'+nb.gain+'%','近一年'],[''+nb.active,'在售套数'],[nb.dom+'天','平均 DOM']];openPage(dhd(/社区$/.test(name)?name:name+' 社区')+'<div class="dscroll">'+'<div class="hero" style="height:150px"><img src="'+nb.img+'" alt="'+name+'" referrerpolicy="no-referrer" onerror="this.remove()" style="width:100%;height:100%;object-fit:cover;display:block"/></div>'+infocard('社区描述',nbIntro(name,nb))+fitcard(fitFor(name,nb.city))+poiBlock(name,districtCtr(nb.city,name))+'<div class="muted" style="font-size:10.5px;margin-top:-6px">步行指数 Walk '+(60+med%30)+' · 公交 Transit '+(60+med%28)+'（示例）</div>'+'<div><div class="sec">轨道交通（就近站点）</div><div class="cc" style="padding:10px 11px"><div style="font-size:13px;font-weight:500;line-height:1.5">'+distStations(name,'',nb.city)+'</div><div class="muted" style="font-size:10px;margin-top:4px">按社区就近匹配（示例，上线接 GTFS 实际站点距离）</div></div></div>'+mktSnap(name,mk,[['$'+Math.round(med*0.6)+'万','Condo'],['$'+med+'万','Townhouse'],['$'+Math.round(med*1.9)+'万','独立屋'],[(13+med%13)+'%','SALR 售出/在售比']])+'<div id="schoolWrap" data-city="'+nb.city+'" data-name="'+name+'"></div>'+cityListings(name,med,'该社区内推荐房源',nb.active)+'</div>'+bottomBar());}
