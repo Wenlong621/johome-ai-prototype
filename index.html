@@ -156,42 +156,42 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   var PREAP=[{label:'已预批'},{label:'未预批'}];
   var YN=[{label:'是'},{label:'否'}];
   var FIELDS=[
-    {k:'purpose',label:'购房目的',group:'基本'},
-    {k:'anchor',label:'找房方式',group:'基本'},
-    {k:'tCity',label:'目标城市',group:'基本'},
-    {k:'tZone',label:'目标片区',group:'基本'},
-    {k:'tNb',label:'目标社区',group:'基本'},
-    {k:'cityFocus',label:'选区侧重',group:'基本'},
-    {k:'priority',label:'最看重',group:'基本'},
-    {k:'recDim',label:'推荐维度',group:'基本'},
-    {k:'district',label:'目标商圈',group:'基本'},
-    {k:'school',label:'目标学校',group:'基本'},
-    {k:'dest',label:'通勤目的地',group:'基本'},
-    {k:'mode',label:'通勤方式',group:'基本',edit:MODE},
-    {k:'time',label:'可接受通勤',group:'基本',edit:TIM},
-    {k:'budget',label:'预算',group:'基本',edit:BUD},
-    {k:'htype',label:'房型',group:'基本',edit:TYP},
-    {k:'beds',label:'卧室数',group:'房源条件',edit:BEDS},
-    {k:'baths',label:'浴室数',group:'房源条件',edit:BATHS},
-    {k:'sqftMin',label:'最小面积',group:'房源条件'},
-    {k:'age',label:'房龄偏好',group:'房源条件',edit:AGE},
-    {k:'parking',label:'车位',group:'房源条件',edit:PARK},
-    {k:'nearTransit',label:'近轨道交通',group:'房源条件'},
-    {k:'features',label:'必备配置',group:'房源条件'},
-    {k:'pet',label:'宠物友好',group:'房源条件'},
+    {k:'purpose',label:'购房目的',group:'锚点与目的'},
+    {k:'anchor',label:'找房方式',group:'锚点与目的'},
+    {k:'recDim',label:'推荐维度',group:'锚点与目的'},
+    {k:'tCity',label:'目标城市',group:'目标区域与通勤'},
+    {k:'tZone',label:'目标片区',group:'目标区域与通勤'},
+    {k:'tNb',label:'目标社区',group:'目标区域与通勤'},
+    {k:'district',label:'目标商圈',group:'目标区域与通勤'},
+    {k:'school',label:'目标学校',group:'目标区域与通勤'},
+    {k:'dest',label:'通勤目的地',group:'目标区域与通勤'},
+    {k:'mode',label:'通勤方式',group:'目标区域与通勤',edit:MODE},
+    {k:'time',label:'可接受通勤',group:'目标区域与通勤',edit:TIM},
+    {k:'budget',label:'预算',group:'预算与房型',edit:BUD},
+    {k:'htype',label:'房型',group:'预算与房型',edit:TYP},
+    {k:'beds',label:'卧室数',group:'预算与房型',edit:BEDS},
+    {k:'baths',label:'浴室数',group:'预算与房型',edit:BATHS},
+    {k:'sqftMin',label:'最小面积',group:'预算与房型'},
+    {k:'age',label:'房龄偏好',group:'预算与房型',edit:AGE},
+    {k:'parking',label:'车位',group:'房源细节',edit:PARK},
+    {k:'nearTransit',label:'近轨道交通',group:'房源细节'},
+    {k:'features',label:'必备配置',group:'房源细节'},
+    {k:'pet',label:'宠物友好',group:'房源细节'},
     {k:'family',label:'家庭结构',group:'家庭与学校'},
     {k:'kids',label:'孩子学段',group:'家庭与学校',edit:KIDS},
     {k:'schoolPref',label:'学校类型/课程偏好',group:'家庭与学校'},
     {k:'firstTime',label:'首次购房',group:'家庭与学校',edit:YN},
+    {k:'priority',label:'最看重',group:'生活偏好'},
+    {k:'cityFocus',label:'选区侧重',group:'生活偏好'},
     {k:'tone',label:'社区调性',group:'生活偏好'},
     {k:'vibe',label:'氛围偏好',group:'生活偏好',edit:VIBE},
-    {k:'vacaScene',label:'度假场景',group:'生活偏好'},
-    {k:'vacaFreq',label:'度假频率',group:'生活偏好'},
-    {k:'vacaRent',label:'闲置期安排',group:'生活偏好'},
     {k:'view',label:'景观偏好',group:'生活偏好'},
     {k:'amenities',label:'周边设施',group:'生活偏好'},
     {k:'safety',label:'看重安全',group:'生活偏好'},
     {k:'lifeSvc',label:'生活服务',group:'生活偏好'},
+    {k:'vacaScene',label:'度假场景',group:'度假'},
+    {k:'vacaFreq',label:'度假频率',group:'度假'},
+    {k:'vacaRent',label:'闲置期安排',group:'度假'},
     {k:'invGoal',label:'投资目标',group:'投资',edit:INV},
     {k:'riskStyle',label:'投资风险偏好',group:'投资'},
     {k:'hold',label:'持有周期',group:'投资'},
@@ -705,7 +705,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   function crow(l,a,b,hi){var s='color:#0F6E56;font-weight:500';return '<tr><td class="muted" style="padding:9px 2px;border-top:0.5px solid var(--color-border-tertiary)">'+l+'</td><td style="text-align:center;border-top:0.5px solid var(--color-border-tertiary);'+(hi==1?s:'')+'">'+a+'</td><td style="text-align:center;border-top:0.5px solid var(--color-border-tertiary);'+(hi==2?s:'')+'">'+b+'</td></tr>';}
   function openCompare(){openPage(dhd('社区对比')+'<div class="dscroll"><table style="width:100%;table-layout:fixed;border-collapse:collapse;font-size:12px"><tr><td style="width:34%"></td><td style="text-align:center;padding:6px 4px"><div style="font-weight:500">Brentwood</div><div style="color:#0F6E56;font-weight:500;font-size:13px">88</div></td><td style="text-align:center;padding:6px 4px"><div style="font-weight:500">Lougheed</div><div style="color:#0F6E56;font-weight:500;font-size:13px">85</div></td></tr>'+crow('预算覆盖率','64%','71%',2)+crow('目标房型','31 套','24 套',1)+crow('通勤时间','28 min','33 min',1)+crow('学校评分','7.8','7.5',1)+crow('市场热度','中','中',0)+crow('主要风险','高峰拥堵','配套稍弱',0)+'</table><div class="cc" style="background:#E1F5EE;border-color:#9FE1CB"><div style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;color:#0F6E56;margin-bottom:5px"><i class="ti ti-sparkles"></i>Agent 总结</div><div style="font-size:12px;line-height:1.55;color:#085041">通勤优先、要更多目标房源 → 选 Brentwood；想要更低单价、预算覆盖更高 → 选 Lougheed。</div></div></div><div class="inbar"><button class="btn">让 Johome 顾问帮我确认</button></div>');}
 
-  function profilePage(){var GR=['基本','房源条件','家庭与学校','生活偏好','投资','时间线与资金'];var html='';for(var gi=0;gi<GR.length;gi++){var g=GR[gi],block='';for(var i=0;i<FIELDS.length;i++){var f=FIELDS[i];if(f.group!==g)continue;var val=profile[f.k]||'';if(profileEdit&&f.edit){var chips='';for(var j=0;j<f.edit.length;j++){var o=f.edit[j];chips+='<button class="q'+(o.label===val?' on':'')+'" data-field="'+f.k+'" data-val="'+o.label+'">'+o.label+'</button>';}block+='<div class="cc"><div style="font-size:11.5px;color:var(--color-text-secondary);margin-bottom:8px">'+f.label+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+chips+'</div></div>';}else{var disp;if((f.k==='tCity'||f.k==='tZone'||f.k==='tNb')&&val){disp='<div style="flex:1;display:flex;gap:5px;flex-wrap:wrap">'+val.split('、').map(function(it){return '<span class="tag" style="background:var(--color-background-secondary);color:var(--color-text-primary);padding:4px 8px;display:inline-flex;align-items:center;gap:4px">'+it+'<i class="ti ti-x" data-adel="'+it+'" data-akey="'+f.k+'" style="cursor:pointer;font-size:11px;color:var(--color-text-tertiary)"></i></span>';}).join('')+'</div>';}else disp=val?'<div style="font-size:13px;font-weight:500;flex:1">'+val+'</div>':'<div style="font-size:13px;color:var(--color-text-tertiary);flex:1">—</div>';block+='<div class="cc" style="display:flex;align-items:center;gap:10px"><div style="font-size:11.5px;color:var(--color-text-secondary);flex:none;width:84px">'+f.label+'</div>'+disp+'</div>';}}if(block)html+='<div style="font-size:11px;color:var(--color-text-tertiary);font-weight:500;margin:6px 2px 1px">'+g+'</div>'+block;}
+  function profilePage(){var GR=['锚点与目的','目标区域与通勤','预算与房型','房源细节','家庭与学校','生活偏好','度假','投资','时间线与资金'];var html='';for(var gi=0;gi<GR.length;gi++){var g=GR[gi],block='';for(var i=0;i<FIELDS.length;i++){var f=FIELDS[i];if(f.group!==g)continue;var val=profile[f.k]||'';if(profileEdit&&f.edit){var chips='';for(var j=0;j<f.edit.length;j++){var o=f.edit[j];chips+='<button class="q'+(o.label===val?' on':'')+'" data-field="'+f.k+'" data-val="'+o.label+'">'+o.label+'</button>';}block+='<div class="cc"><div style="font-size:11.5px;color:var(--color-text-secondary);margin-bottom:8px">'+f.label+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+chips+'</div></div>';}else{var disp;if((f.k==='tCity'||f.k==='tZone'||f.k==='tNb')&&val){disp='<div style="flex:1;display:flex;gap:5px;flex-wrap:wrap">'+val.split('、').map(function(it){return '<span class="tag" style="background:var(--color-background-secondary);color:var(--color-text-primary);padding:4px 8px;display:inline-flex;align-items:center;gap:4px">'+it+'<i class="ti ti-x" data-adel="'+it+'" data-akey="'+f.k+'" style="cursor:pointer;font-size:11px;color:var(--color-text-tertiary)"></i></span>';}).join('')+'</div>';}else disp=val?'<div style="font-size:13px;font-weight:500;flex:1">'+val+'</div>':'<div style="font-size:13px;color:var(--color-text-tertiary);flex:1">—</div>';block+='<div class="cc" style="display:flex;align-items:center;gap:10px"><div style="font-size:11.5px;color:var(--color-text-secondary);flex:none;width:84px">'+f.label+'</div>'+disp+'</div>';}}if(block)html+='<div style="font-size:11px;color:var(--color-text-tertiary);font-weight:500;margin:6px 2px 1px">'+g+'</div>'+block;}
    var note=profileEdit?'点下面的选项即可修改 / 补充，改完点「保存并重新匹配」。':'完整字段都列在这里；没获取到的暂时留空（说得越细，AI 自动填得越多）。';
    var btn=profileEdit?'<button class="btn" id="profSave">保存并重新匹配</button>':'<button class="btn" id="profEdit"><i class="ti ti-pencil"></i>修改偏好</button>';
    return dhd2('我的购房偏好')+'<div class="dscroll"><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.55">'+note+'</div>'+html+'</div><div class="inbar">'+btn+'</div>';}
@@ -741,7 +741,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
     if(/现金流|cash\s*flow/i.test(s))profile.invGoal='现金流';else if(/增值|升值|appreciation/i.test(s))profile.invGoal='增值';
     if(/好出租|易出租|出租快|租得快|租金高/.test(s))profile.rentability='易出租优先';
     var yr=s.match(/持有\s*(\d{1,2})\s*年/);if(yr)profile.hold=yr[1]+' 年';
-    if(/海景|海边|sea\s*view|ocean/i.test(s))profile.view='海景';else if(/江景|河景|water\s*view/i.test(s))profile.view='江/河景';else if(/山景|mountain\s*view/i.test(s))profile.view='山景';
+    if(/海景|海边|海滩|沙滩|靠海|临海|sea\s*view|ocean|beach/i.test(s))profile.view='海景';else if(/江景|河景|临河|河畔|河边|沿河|water\s*view|river|fraser/i.test(s))profile.view='江/河景';else if(/山景|临山|靠山|依山|mountain/i.test(s))profile.view='山景';else if(/湖景|临湖|湖边|湖畔|lake/i.test(s))profile.view='湖景';
     pref();}
   var NBTHEME={
     '海景':[['Ambleside','West Vancouver · 海景',88,'海湾步行商街 · 一线海景','$280万','中位价','+5.0%','近一年'],['Steveston','Richmond · 海景',85,'渔人码头 · 海鲜 · 海景','$155万','中位价','+3.5%','近一年'],['Lower Lonsdale','North Vancouver · 海景',84,'码头市集 · 海景 · 海上巴士','$120万','中位价','+4.2%','近一年']],
