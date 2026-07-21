@@ -780,13 +780,13 @@ const FACTS = {
     note: '联排 / 双拼(Townhouse · 1/2 Duplex):突出层数、物业月费与共有土地口径',
     items: [
       ['🛏','3','卧室'],
-      ['🛁','3<small>全</small>+1<small>半</small>','卫生间'],
-      ['📐','1,723<small> ft²</small>','室内面积'],
-      ['🚗','1','车位'],
-      ['🪜','3<small> 层</small>','层数'],
-      ['🏛','$0','物业月费(自维护)'],
-      ['🌳','36′×122′','土地 · 共有(4,392 ft²)'],
-      ['🏗','2026','建造年份'],
+      ['🛁','2<small>全</small>+1<small>半</small>','卫生间'],
+      ['📐','1,213<small> ft²</small>','室内面积'],
+      ['🚗','2<small>(1车库)</small>','车位'],
+      ['🪜','2<small> 层</small>','层数'],
+      ['🏛','$0','物业月费(自管)'],
+      ['🌳','30.6′×132′','土地 · 共有(4,039 ft²)'],
+      ['🏗','2012','建造年份'],
     ]
   },
   house: {
@@ -834,18 +834,19 @@ const FACTS = {
    chips = 从字段组合提炼的决策信号 */
 const DETAILS = {
   duplex: {
-    src: '样例 R3146279',
+    src: '样例 R3146640(Burnaby East · Edmonds)',
     tabs: [
       {t:'关键信息', chips:[['green','✓ 物业月费 $0:两户自管 strata,无管理开支,外部维护自理']],
-        kv:[['@','挂牌信息'],['MLS® 编号','R3146279'],['区域 / 社区','大温(GVR)· Vancouver West · Cambie'],['邮编','V5Y 2E5'],['挂牌日期 · DOM','07/14/2026 · 今天(第 1 天)'],['历史挂牌','02/2026 曾以 $2,700,000 挂牌后终止'],['@','物业概况'],['房屋类型','双拼(半户 · 1/2 Duplex)'],['产权','永久产权 · 共管(Freehold Strata)'],['室内面积','1,723 ft²(三层)'],['卧室','3'],['卫生间','3 全 + 1 半'],['停车','1(车库 · 后巷进出)'],['@','持有费用'],['物业月费','$0(自管)'],['地税','待评估(2026 新建)']],
+        kv:[['@','挂牌信息'],['MLS® 编号','R3146640'],['区域 / 社区','大温(GVR)· Burnaby East · Edmonds BE'],['地址','7240 Stride Avenue'],['邮编','V3N 1T9'],['挂牌日期 · DOM','07/15/2026 · 已挂 6 天'],['@','物业概况'],['房屋类型','双拼(半户 · 1/2 Duplex)'],['产权','永久产权 · 共管(Freehold Strata)'],['室内面积','1,213 ft²(两层)'],['卧室','3(均在上层)'],['卫生间','3(2 全 + 1 半)'],['厨房','1'],['停车','2(1 车库 · 后巷进出)'],['@','持有费用'],['物业月费','$0(自管)'],['地税','$3,984.18(2025 · 不含水电)']],
         note:'合规:挂牌到期日(Expiry Date)为 board 会员字段,公开端不展示。'},
-      {t:'房屋·空间', chips:[['gold','⌂ 主层 699 + 上层 680 + 顶层 344 ft²,三层布局,卧室全部在地上']],
-        kv:[['@','建筑'],['建造年份','2026(全新)'],['结构','木框架(Frame – Wood)'],['防雨幕','全(Full Rain Screen)'],['层数','3 层'],['外墙','纤维水泥板 · 铝(Fibre Cement · Aluminum)'],['屋顶','金属'],['壁炉','1(燃气)'],['供水','市政'],['排水','公共下水道'],['@','内部'],['供暖 / 制冷','辐射式地暖 · 空调'],['地下室','无(None)'],['厨房','1'],['@','外部'],['户外空间','庭院 · 露台(Patio)'],['景观(View)','—']],
-        areas:[['主层 (Main)','699 sqft'],['楼上 (Above)','680 sqft'],['顶层 (AbvMain2)','344 sqft'],['合计 (Grand Total)','1,723 sqft']],
-        rooms:[['客厅','主层','13′×11′4″'],['厨房','主层','17′1″×8′4″'],['餐厅','主层','13′10″×6′6″'],['办公室','主层','6′1″×5′3″'],['主卧室','上层','13′11″×12′8″'],['步入式衣橱','上层','8′9″×6′1″']],
-        baths:[['主层','2 件套(半卫)'],['上层','4 件套 · 含主卧套内'],['上层','4 件套'],['顶层','4 件套']]},
-      {t:'土地·物业', kv:[['Strata 单元数','2(两户自管)'],['Bylaws','宠物 / 出租无限制(自管)'],['占地面积(Lot Area)','<span class="uv" data-a="4,392 sqft" data-b="0.10 acres">4,392 sqft</span><button class="ubtn" data-u1="sqft" data-u2="acres" onclick="uSwap(this)">⇄ acres</button> · 与邻户共有'],['面宽(Frontage)','<span class="uv" data-a="36 ft" data-b="10.97 m">36 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'],['进深(Depth)','<span class="uv" data-a="122 ft" data-b="37.19 m">122 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'],['土地性质','R1-1'],['洪泛区','否'],['PID','032-765-088']],
-        legal:'STRATA LOT 1, DISTRICT LOT 526, GROUP 1, NEW WESTMINSTER DISTRICT, STRATA PLAN EPS12361…'},
+      {t:'房屋·空间', kv:[['@','建筑'],['建造年份','2012(楼龄 14 年)'],['结构','木框架(Frame – Wood)'],['层数','2(2 Storey)'],['地基','混凝土围护(Concrete Perimeter)'],['外墙','混合 · 乙烯(Mixed · Vinyl)'],['屋顶','沥青瓦'],['壁炉','1(天然气)'],['供水','市政(City/Municipal)'],['排水','市政(City/Municipal)'],['@','内部'],['供暖','热水循环 · 天然气(Hot Water · Natural Gas)'],['地面','强化地板(Laminate)'],['地下室','无(None)'],['含家电/设备','洗衣/烘干 · 冰箱 · 炉灶 · 洗碗机'],['房间总数','8'],['@','外部'],['户外空间','围栏庭院 · 露台(Fenced Yard · Patio)'],['景观(View)','无']],
+        areas:[['主层 (Main)','608 sqft'],['楼上 (Above)','605 sqft'],['合计 (Grand Total)','1,213 sqft']],
+        rooms:[['客厅','主层','16′×14′'],['餐厅','主层','10′×8′'],['厨房','主层','10′×9′'],['洗衣房','主层','4′×3′'],['设备间','主层','5′×3′'],['主卧室','上层','11′×10′'],['卧室','上层','10′×10′'],['卧室','上层','10′×10′']],
+        baths:[['主层','2 件套(半卫)'],['上层','4 件套'],['上层','4 件套 · 主卧套内']]},
+      {t:'土地·物业', kv:[['Bylaws','无限制(No Restrictions)'],['短租(<1 年)','不允许(No)'],['占地面积(Lot Area)','<span class="uv" data-a="4,039 sqft" data-b="0.09 acres">4,039 sqft</span><button class="ubtn" data-u1="sqft" data-u2="acres" onclick="uSwap(this)">⇄ acres</button> · 与邻户共有'],['面宽(Frontage)','<span class="uv" data-a="30.60 ft" data-b="9.33 m">30.60 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'],['进深(Depth)','<span class="uv" data-a="132 ft" data-b="40.23 m">132 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'],['土地性质','R1'],['地段特征','中心地段 · 私密庭院'],['PID','028-632-711']],
+        legal:'STRATA LOT 1, PLAN BCS4161, DISTRICT LOT 53, GROUP 1, NEW WESTMINSTER LAND DISTRICT'},
+      {t:'交易披露', kv:[['卖方权益(Seller Interest)','登记业主(Registered Owner)'],['产权披露(PDS)','有']],
+        note:'居住状态(Occupancy: Vacant)不对 C 端展示(空置涉安全);挂牌到期日为 board 会员字段,公开端不展示。'},
     ]
   },
   house: {
@@ -876,7 +877,7 @@ const DETAILS = {
         rooms:[['客厅','主层','12′×11′'],['厨房','主层','11′×10′'],['餐厅','主层','10′×9′'],['主卧室','上层','12′×11′6″'],['卧室 ×2','上层','10′×9′ / 9′6″×9′'],['入户 / 车库','下层','—']],
         baths:[['主层','2 件套(半卫)'],['上层','4 件套 · 主卧套内'],['上层','4 件套']]},
       {t:'物业', chips:[['green','✓ 允许出租(短租除外)· 宠物 2 只 · 无年龄限制 · 禁烟']],
-        kv:[['月费包含','物业管理 · 园艺 · 垃圾 · 除雪'],['小区单元数','78(Units in Development)'],['管理公司','示意物业管理公司'],['车位归属','车库私有 · 车道位 LCP(以 Form B 为准)'],['维修基金 / 折旧报告','见 Form B']]},
+        kv:[['短租(<1 年)','不允许(No)'],['月费包含','物业管理 · 园艺 · 垃圾 · 除雪'],['小区单元数','78(Units in Development)'],['管理公司','示意物业管理公司'],['车位归属','车库私有 · 车道位 LCP(以 Form B 为准)'],['维修基金 / 折旧报告','见 Form B']]},
     ]
   },
   apt: {
@@ -890,7 +891,7 @@ const DETAILS = {
         baths:[['主层','4 件套 · 主卧套内'],['主层','4 件套']],
         note:'所在楼层 12(单元号推断)· 楼栋共 21 层'},
       {t:'物业', chips:[['green','✓ 允许出租(短租不可)· 宠物 2 只(猫狗均可),无年龄限制']],
-        kv:[['月费包含','取暖 · 热水 · 物业管理 · 园艺 · 垃圾'],['楼内单元数','274(Tot Units in Strata)'],['储物柜','有(Locker: Yes)'],['车位 / 柜归属','LCP 或出租位,以 Form B 为准'],['管理公司','Profile Properties'],['议会 / 公园审批','无需(Council/Park Apprv)'],['维修基金 / 折旧报告','见 Form B'],['土地租约到期','不适用(Freehold)']],
+        kv:[['短租(<1 年)','不允许(No)'],['月费包含','取暖 · 热水 · 物业管理 · 园艺 · 垃圾'],['楼内单元数','274(Tot Units in Strata)'],['储物柜','有(Locker: Yes)'],['车位 / 柜归属','LCP 或出租位,以 Form B 为准'],['管理公司','Profile Properties'],['议会 / 公园审批','无需(Council/Park Apprv)'],['维修基金 / 折旧报告','见 Form B'],['土地租约到期','不适用(Freehold)']],
         legal:'STRATA LOT 238, PLAN BCS4294, SECTION 25, RANGE 1E, NEW WESTMINSTER DISTRICT…'},
       {t:'交易披露', kv:[['卖方权益(Seller Interest)','登记业主(Registered Owner)'],['产权披露(PDS)','有 · 卖方未居住过'],['租赁固定装置','无'],['移除固定装置','无']]},
     ]
