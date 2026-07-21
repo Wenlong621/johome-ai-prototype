@@ -120,7 +120,7 @@ const META = {
   duplex:{seg:'双拼 · R3146640', title:'R3146640 · 房源资料', price:'$999,900', addr:'Edmonds BE · Burnaby East', sample:false},
   house:{seg:'独立屋/移动屋 · R3143859', title:'R3143859 · 房源资料', price:'$340,000', addr:'Maillardville · Coquitlam', sample:false},
   town:{seg:'联排 · R3130583', title:'R3130583 · 房源资料', price:'$144,900', addr:'VLA · Prince George', sample:false},
-  apt:{seg:'公寓 · 示意', title:'公寓示意 · 房源资料', price:'$668,000', addr:'Metrotown · Burnaby South', sample:true},
+  apt:{seg:'公寓 · R3046098', title:'R3046098 · 房源资料', price:'$359,000', addr:'Forest Glen BS · Burnaby South', sample:false},
 };
 const DETAILS = {
   duplex: {
@@ -172,19 +172,19 @@ const DETAILS = {
     ]
   },
   apt: {
-    src: '公寓示意样例',
+    src: '样例 R3046098(Burnaby South · Forest Glen)',
     tabs: [
-      {t:'关键信息', kv:[['@','挂牌信息'],['MLS® / DOM','示意 · 第 8 天'],['区域 / 邮编','大温(GVR)· V5H XXX'],['挂牌日期','07/10/2026',{b:'fix'}],['累计在市(Property DOM)','128 天(含此前挂牌 · 示意)'],['到期日','10/10/2026',{ghost:'board 会员字段 · 公开端不展示(合规)'}],['@','物业概况'],['房屋类型','公寓(Apartment/Condo)'],['产权','永久产权 · 共管(Freehold Strata)'],['室内面积','905 ft²(单层)'],['卧室','2'],['卫生间','2 全'],['停车','1 位(带盖 1)'],['@','持有费用'],['物业月费','$512 / 月'],['地税','$2,214(2026 · 不含市政公用费)']],
+      {t:'关键信息', chips:[['gold','⚑ 合作社产权(Shares in Co-operative):购买的是公司股份而非独立产权,贷款渠道受限;建筑租约 1974 年起 998 年,以文件为准']],
+        kv:[['@','挂牌信息'],['MLS® 编号','R3046098'],['区域 / 社区','大温(GVR)· Burnaby South · Forest Glen BS'],['地址','106-5127 Irving Street'],['小区(Complex)','Irving Appartments Ltd.'],['邮编','V5H 1T6'],['挂牌日期 · DOM','09/08/2025 · 已挂 316 天',{b:'fix'}],['到期日','12/31/2026',{ghost:'board 会员字段 · 公开端不展示(合规)'}],['累计在市(Property DOM)','316 天'],['调价历史','$399,000 → $368,800 → 现价 $359,000'],['@','物业概况'],['房屋类型','公寓(Apartment/Condo)'],['产权','合作社股份(Shares in Co-operative)'],['室内面积','855 ft²(单层)'],['卧室','2'],['卫生间','1(1 全)'],['厨房','1'],['停车','1 位(带盖 1)'],['@','持有费用'],['物业月费','$304.10 / 月'],['地税','$1,857.49(2026 · 含市政公用费)']],
         note:'合规:挂牌到期日(Expiry Date)为 board 会员字段,公开端不展示。'},
-      {t:'房屋·空间', kv:[['@','建筑'],['建造年份','2019(楼龄 7 年)'],['建筑样式(Style of Home)','中间户(Inside Unit · 示意)'],['结构','混凝土(Concrete)'],['防雨幕','全(Full Rain Screen)'],['楼栋总层数','21(Storeys in Building)'],['电梯','有'],['@','内部'],['供暖','踢脚线电暖(Baseboard · Electric)',{b:'new'}],['厨房','1'],['房间总数','5'],['@','外部'],['朝向(Exposure)','东北'],['景观(View)','城市 · 山景'],['户外空间','阳台'],['车位形式','地下车库(Underground · 示意)'],['配套(Amenities)','健身房 · 储物室 · 访客停车 · 礼宾']],
-        areas:[['主层 (Main)','905 sqft'],['合计 (Grand Total)','905 sqft']],
-        rooms:[['客厅','主层','12′×11′'],['厨房','主层','10′×8′6″'],['主卧室','主层','11′6″×10′'],['卧室','主层','10′×9′2″'],['阳台','主层','8′×5′']],
-        baths:[['主层','4 件套 · 主卧套内'],['主层','4 件套']],
-        note:'所在楼层 12(单元号推断)· 楼栋共 21 层'},
-      {t:'物业', chips:[['green','✓ 允许出租(短租不可)· 宠物 2 只(猫狗均可),无年龄限制']],
-        kv:[['短租(<1 年)','不允许(No)'],['月费包含','取暖 · 热水 · 物业管理 · 园艺 · 垃圾'],['楼内单元数','274(Tot Units in Strata)'],['储物柜','有(Locker: Yes)'],['车位 / 柜归属','LCP 或出租位,以 Form B 为准'],['管理公司','Profile Properties'],['议会 / 公园审批','无需(Council/Park Apprv)'],['维修基金 / 折旧报告','见 Form B'],['土地租约到期','不适用(Freehold)']],
-        legal:'STRATA LOT 238, PLAN BCS4294, SECTION 25, RANGE 1E, NEW WESTMINSTER DISTRICT…'},
-      {t:'卖方披露', kv:[['房况声明(PDS)','有 · 卖方未居住过'],['租赁固定装置','无'],['移除固定装置','无']]},
+      {t:'房屋·空间', kv:[['@','建筑'],['建造年份','1968(楼龄 58 年)'],['建筑样式(Style of Home)','角户 · 首层单元(Corner Unit · Ground Level)'],['结构','木框架(Frame – Wood)'],['外墙','灰泥(Stucco)'],['地基','混凝土围护(Concrete Perimeter)'],['屋顶','火炬熔铺(Torch-On)'],['楼栋总层数','3(Storeys in Building)'],['电梯','有'],['供水','市政(City/Municipal)'],['排水','市政(City/Municipal)'],['@','内部'],['供暖','踢脚线 · 热水(Baseboard · Hot Water)'],['地面','乙烯/油毡 · 满铺地毯混合'],['含家电/设备','窗帘 · 冰箱 · 炉灶'],['房间总数','6'],['@','外部'],['朝向(Exposure)','西南(Southwest)'],['车位形式','楼下车库(Garage Underbuilding) · 后侧进出'],['户外空间','阳台(Balcony)'],['景观(View)','有 · 街景(Street View)']],
+        areas:[['主层 (Main)','855 sqft'],['合计 (Grand Total)','855 sqft']],
+        rooms:[['厨房','主层','7′×7′'],['餐厅','主层','9′×7′'],['客厅','主层','18′×12′'],['主卧室','主层','13′×10′'],['卧室','主层','11′×9′'],['门厅','主层','9′×3′4″']],
+        baths:[['主层','4 件套 · 套内']]},
+      {t:'物业', kv:[['章程限制(Bylaws)','年龄限制(30+) · 不允许宠物 · 出租允许(限 10%)· 吸烟限制'],['短租(<1 年)','不允许(No)'],['月费包含','园艺 · 燃气 · 暖气 · 热水 · 物业管理 · 除雪'],['Strata 总户数','29(Tot Units in Strata)'],['储物柜(Locker)','有'],['配套(Amenities)','电梯 · 共用洗衣 · 储物'],['管理公司','自管(Self Managed)']],
+        legal:'LOT 117, PLAN NWP32362, DISTRICT LOT 32, GROUP 1, NEW WESTMINSTER LAND DISTRICT, 2910-5126 SELF-OWNED CO-OPERATIVE BUILDING LEASE 1974 FOR 998 YEARS'},
+      {t:'卖方披露', kv:[['房况声明(PDS)','无 · 遗产出售(No : Estate Sale)'],['租赁固定装置','无'],['移除固定装置','无']],
+        note:'PDS 为两段式字段(有无 + 原因),遗产出售通常无卖方房况申报,验房需加强;居住状态与挂牌到期日不对 C 端展示。'},
     ]
   }
 };
