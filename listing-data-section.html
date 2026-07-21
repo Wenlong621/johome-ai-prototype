@@ -119,7 +119,7 @@ body.anno .kv .row.ghost{display:flex}
 const META = {
   duplex:{seg:'双拼 · R3146640', title:'R3146640 · 房源资料', price:'$999,900', addr:'Edmonds BE · Burnaby East', sample:false},
   house:{seg:'独立屋/移动屋 · R3143859', title:'R3143859 · 房源资料', price:'$340,000', addr:'Maillardville · Coquitlam', sample:false},
-  town:{seg:'联排 · 示意', title:'联排示意 · 房源资料', price:'$868,000', addr:'Willoughby Heights · Langley', sample:true},
+  town:{seg:'联排 · R3130583', title:'R3130583 · 房源资料', price:'$144,900', addr:'VLA · Prince George', sample:false},
   apt:{seg:'公寓 · 示意', title:'公寓示意 · 房源资料', price:'$668,000', addr:'Metrotown · Burnaby South', sample:true},
 };
 const DETAILS = {
@@ -157,16 +157,19 @@ const DETAILS = {
     ]
   },
   town: {
-    src: '联排示意样例(Langley · Willoughby)',
+    src: '样例 R3130583(Prince George · VLA · BC Northern)',
     tabs: [
-      {t:'关键信息', kv:[['@','挂牌信息'],['MLS® / DOM','示意 · 第 5 天'],['区域 / 社区','Fraser Valley(FVREB)· Langley · Willoughby Heights'],['挂牌日期','07/12/2026',{b:'fix'}],['累计在市(Property DOM)','5 天'],['到期日','10/12/2026',{ghost:'board 会员字段 · 公开端不展示(合规)'}],['@','物业概况'],['房屋类型','联排(Townhouse · 共管)'],['产权','永久产权 · 共管(Freehold Strata)'],['室内面积','1,420 ft²(单元内 3 层)'],['卧室','3(均在上层)'],['卫生间','2 全 + 1 半'],['停车','2 位(带盖 1)'],['@','持有费用'],['物业月费','$385 / 月'],['地税','$3,420(2026 · 不含市政公用费)']],
+      {t:'关键信息', kv:[['@','挂牌信息'],['MLS® 编号','R3130583'],['区域 / 社区','BC 北部(BCNREB)· PG City Central · VLA'],['地址','E29-1900 Strathcona Avenue'],['邮编','V2L 2V9'],['挂牌日期 · DOM','05/31/2026 · 已挂 51 天',{b:'fix'}],['到期日','12/31/2026',{ghost:'board 会员字段 · 公开端不展示(合规)'}],['累计在市(Property DOM)','51 天'],['@','物业概况'],['房屋类型','联排(Townhouse)'],['产权','永久产权 · 共管(Freehold Strata)'],['室内面积','896 ft²(完成)· 另 448 ft² 未完成地下室'],['卧室','2(均在上层)'],['卫生间','1(1 全)'],['厨房','1'],['停车','1 位(无带盖)'],['@','持有费用'],['物业月费','$349.09 / 月'],['地税','$1,222.81(2026 · 不含市政公用费)']],
         note:'合规:挂牌到期日(Expiry Date)为 board 会员字段,公开端不展示。'},
-      {t:'房屋·空间', kv:[['@','建筑'],['建造年份','2016(楼龄 10 年)'],['建筑样式(Style of Home)','三层联排(3 Storey · 示意)'],['层数','3'],['翻新','无记录'],['结构','木框架(Frame-Wood)'],['外墙','纤维水泥板 · 砖(Fibre Cement · Brick)'],['防雨幕','全(Full Rain Screen)'],['屋顶','沥青瓦'],['壁炉','1(电)'],['供水 / 排水','市政 · 公共下水道'],['@','内部'],['供暖','强制风暖(天然气)'],['地下室','无(None)'],['厨房','1'],['房间总数','8'],['@','外部'],['户外空间','围栏庭院 · 阳台'],['车位形式','车库 · 单位 + 车道位(示意)'],['景观(View)','无']],
-        areas:[['下层 · 入户 (Below)','240 sqft'],['主层 (Main)','560 sqft'],['上层 (Above)','620 sqft'],['合计 (Grand Total)','1,420 sqft']],
-        rooms:[['客厅','主层','12′×11′'],['厨房','主层','11′×10′'],['餐厅','主层','10′×9′'],['主卧室','上层','12′×11′6″'],['卧室 ×2','上层','10′×9′ / 9′6″×9′'],['入户 / 车库','下层','—']],
-        baths:[['主层','2 件套(半卫)'],['上层','4 件套 · 主卧套内'],['上层','4 件套']]},
-      {t:'物业', chips:[['green','✓ 允许出租(短租除外)· 宠物 2 只 · 无年龄限制 · 禁烟',{b:'new'}]],
-        kv:[['短租(<1 年)','不允许(No)'],['月费包含','物业管理 · 园艺 · 垃圾 · 除雪'],['小区单元数','78(Units in Development)'],['管理公司','示意物业管理公司'],['车位归属','车库私有 · 车道位 LCP(以 Form B 为准)'],['维修基金 / 折旧报告','见 Form B']]},
+      {t:'房屋·空间', kv:[['@','建筑'],['建造年份','1965(楼龄 61 年)'],['建筑样式(Style of Home)','两层带地下室(2 Storey w/Bsmt.)'],['层数','2'],['结构','木框架(Frame – Wood)'],['外墙','其他 · 灰泥(Other · Stucco)'],['地基','混凝土围护(Concrete Perimeter)'],['屋顶','沥青瓦'],['供水','市政(City/Municipal)'],['排水','市政(City/Municipal)'],['@','内部'],['供暖','其他(Other)'],['地下室','全地下 · 未完成(Full · Unfinished)'],['房间总数','4'],['@','外部'],['户外空间','无(None)'],['车位形式','其他(Other) · 前侧进出'],['景观(View)','无']],
+        areas:[['主层 (Main)','448 sqft'],['楼上 (Above)','448 sqft'],['完成面积 (Total)','896 sqft'],['未完成 · 地下 (Unfinished)','448 sqft'],['总面积 (Grand Total)','1,344 sqft']],
+        rooms:[['客厅','主层','15′×12′'],['厨房','主层','12′×10′'],['主卧室','上层','12′×11′'],['卧室','上层','13′×10′']],
+        baths:[['上层','4 件套']]},
+      {t:'物业', chips:[['green','✓ 宠物允许 · 限 2 只(猫狗均可)· 出租允许(有限制)· 吸烟限制 · 短租不可']],
+        kv:[['章程限制(Bylaws)','宠物 / 出租 / 吸烟均有限制'],['短租(<1 年)','不允许(No)'],['月费包含','垃圾清运 · 物业管理 · 除雪'],['Strata 总户数','239(Tot Units in Strata)'],['管理公司','Elevate Property Management · 250-564-0022']],
+        legal:'STRATA LOT 142 DISTRICT LOT 777 CARIBOO DISTRICT PLAN PGS173, TOGETHER WITH AN INTEREST IN THE COMMON PROPERTY IN PROPORTION TO THE UNIT ENTITLEMENT OF THE STRATA LOT AS SHOWN ON FORM 1'},
+      {t:'卖方披露', kv:[['房况声明(PDS)','有'],['租赁固定装置','无'],['移除固定装置','无']],
+        note:'居住状态(Occupancy: Vacant)不对 C 端展示;挂牌到期日为 board 会员字段,公开端不展示。'},
     ]
   },
   apt: {
