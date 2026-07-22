@@ -329,7 +329,7 @@ body.annotate .mod-tag{display:inline-block}
     <button class="stage-btn" data-ft="house" onclick="setFacts('house',this)">独立屋/移动屋</button>
     <button class="stage-btn on" data-ft="duplex" onclick="setFacts('duplex',this)">双拼</button>
     <button class="stage-btn" data-ft="town" onclick="setFacts('town',this)">联排</button>
-    <button class="stage-btn" data-ft="apt" onclick="setFacts('apt',this)">公寓</button>
+    <button class="stage-btn" data-ft="apt" onclick="setFacts('apt',this)">公寓</button><button class="stage-btn" data-ft="multi" onclick="setFacts('multi',this)">整栋双拼</button>
     <button class="stage-btn on" id="btnAnno" onclick="toggleAnno()">显示 PRD 模块标注</button>
   </div>
 </div>
@@ -827,6 +827,19 @@ const FACTS = {
       ['🚭','30+','年龄限制 · 无宠物'],
       ['🏗','1968','建造年份'],
     ]
+  },
+  multi: {
+    note: '整栋双拼(Multifamily · Duplex):一个产权持有两个单元;突出单元构成与收益口径,无 strata',
+    items: [
+      ['🛏','5','卧室(两单元)'],
+      ['🛁','2<small>全</small>','卫生间'],
+      ['📐','1,804<small> ft²</small>','室内面积(另 956 未完成)'],
+      ['🚗','6<small>(露天)</small>','车位'],
+      ['🏘','2+3<small> 房</small>','单元构成(2 户)'],
+      ['🌳','99′×120′','土地(11,880 ft²)'],
+      ['🧯','无','喷淋 · 烟感'],
+      ['🏗','1993','建造年份'],
+    ]
   }
 };
 /* ===== 房源资料 Tab:第一 tab 为关键信息(整合全部关键字段),细节下沉后续 tab、不重复 =====
@@ -895,6 +908,21 @@ const DETAILS = {
         legal:'LOT 117, PLAN NWP32362, DISTRICT LOT 32, GROUP 1, NEW WESTMINSTER LAND DISTRICT, 2910-5126 SELF-OWNED CO-OPERATIVE BUILDING LEASE 1974 FOR 998 YEARS'},
       {t:'卖方披露', kv:[['房况声明(PDS)','无 · 遗产出售(No : Estate Sale)'],['租赁固定装置','无'],['移除固定装置','无']],
         note:'PDS 为两段式字段(有无 + 原因),遗产出售通常无卖方房况申报,验房需加强;居住状态与挂牌到期日不对 C 端展示。'},
+    ]
+  },
+  multi: {
+    src: '样例 R3136156(Hazelton · BC Northern · Multifamily)',
+    tabs: [
+      {t:'关键信息', kv:[['@','挂牌信息'],['MLS® 编号','R3136156'],['区域 / 社区','BC 北部(BCNREB)· Hazelton & Hwy 37 · Hazelton'],['地址','4879 9th Avenue'],['邮编','V0J 2J0'],['挂牌日期 · DOM','06/15/2026 · 已挂 36 天'],['累计在市(Property DOM)','36 天'],['@','物业概况'],['房屋类型','整栋双拼(Multifamily · Duplex)'],['产权','永久产权 · 独立(Freehold NonStrata)'],['单元构成(Unit Mix)','2 房单元 ×1 + 3 房单元 ×1'],['室内面积','1,804 ft²(完成)· 另 956 ft² 未完成'],['卧室','5(地上 5 · 地下 0)'],['卫生间','2(2 全)'],['厨房','2(每单元 1)'],['停车','6 位(露天)'],['@','持有费用'],['地税','$3,328.50(2025 · 不含市政公用费)']],
+        note:'Multifamily 专属收益字段(年收入 / 运营支出 / NOI)本套为空值不展示,有值时列于持有费用小节;挂牌到期日为 board 会员字段,公开端不展示。'},
+      {t:'房屋·空间', kv:[['@','建筑'],['建造年份','1993(楼龄 33 年)'],['建筑样式(Style of Home)','两层(2 Storey)'],['层数','2'],['结构','木框架(Frame – Wood)'],['外墙','乙烯(Vinyl)'],['地基','防腐木(Preserved Wood)'],['屋顶','沥青瓦'],['供水','市政(City/Municipal)'],['排水','市政(City/Municipal)'],['@','内部'],['供暖','强制风暖 · 丙烷(Forced Air · Propane Gas)'],['地面','强化地板(Laminate)'],['地下室','未完成(Unfinished)'],['喷淋 / 烟感','无 · 无(Sprinklers · Smoke Detectors: No)'],['房间总数','12(两单元)'],['@','外部'],['户外空间','无(None)'],['车位形式','露天(Open)'],['景观(View)','无']],
+        areas:[['主层 (Main)','970 sqft'],['下层 (Below)','834 sqft'],['完成面积 (Total)','1,804 sqft'],['未完成 (Unfinished)','956 sqft'],['总面积 (Grand Total)','2,760 sqft']],
+        rooms:[['厨房','主层','10′7″×9′11″'],['客厅','主层','12′10″×15′9″'],['餐厅','主层','8′10″×9′11″'],['主卧室','主层','12′4″×12′'],['卧室','主层','9′7″×10′2″'],['卧室','主层','11′7″×13′3″'],['娱乐室','地下','14′9″×23′'],['厨房','下层','10′4″×7′2″'],['餐厅','下层','9′11″×6′6″'],['客厅','下层','12′8″×11′6″'],['卧室','下层','12′×11′11″'],['卧室','下层','10′3″×9′2″']],
+        baths:[['主层','4 件套'],['下层','4 件套']]},
+      {t:'土地', kv:[['占地面积(Lot Area)','<span class="uv" data-a="11,880 sqft" data-b="0.27 acres">11,880 sqft</span><button class="ubtn" data-u1="sqft" data-u2="acres" onclick="uSwap(this)">⇄ acres</button>'],['面宽(Frontage)','<span class="uv" data-a="99.00 ft" data-b="30.18 m">99.00 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'],['进深(Depth/Size)','<span class="uv" data-a="120 ft" data-b="36.58 m">120 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button> <span style="font-size:10px;color:#8C99AF;font-weight:400">单位按 Meas. Type: Feet 推定</span>'],['洪泛区(Flood Plain)','否'],['土地性质','R1'],['PID','014-006-952(另 014-006-961 / 014-006-979)']],
+        legal:'LOTS 13-15 BLOCK 90 DISTRICT LOT 882 SECTION 2 CASSIAR DISTRICT PLAN 968'},
+      {t:'卖方披露', kv:[['房况声明(PDS)','有'],['租赁固定装置','无'],['市政违规记录(Bylaw Infractions)','无(N)']],
+        note:'居住状态(Occupancy: Tenant, Vacant)不对 C 端展示;挂牌到期日为 board 会员字段,公开端不展示。'},
     ]
   }
 };
