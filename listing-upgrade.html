@@ -432,24 +432,23 @@ body.annotate .mod-tag{display:inline-block}
           <div class="v">1 天 <span style="color:var(--muted);font-weight:500">/ 21 天</span></div>
         </div>
       </div>
-      <div class="pc-note">该房源曾于 02/2026 以 $2,700,000 挂牌后终止,本次挂牌下调 $12,000。数据基于近 6 个月 MLS® 成交聚合。</div>
-    </div>
-
-    <!-- ⑨ 归属上下文 chips -->
-    <div class="mod" style="margin-top:16px">
-      <span class="mod-tag">新⑨ 归属上下文</span>
-      <div class="chips-row" style="margin-top:0">
-        <a class="geo-chip" href="#"><small>社区</small> Cambie ›</a>
-        <a class="geo-chip" href="#"><small>片区</small> Cambie · Mount Pleasant ›</a>
-        <a class="geo-chip" href="#"><small>商圈</small> Oakridge(就近)›</a>
-      </div>
+      <div class="pc-note">数据基于近 6 个月 MLS® 成交聚合。</div>
     </div>
 
     <!-- 图标行(O2 口径修正 · 按 MLS 房源类型自适应) -->
     <div class="mod" style="margin-top:14px">
       <span class="mod-tag opt" style="top:-6px">O2+ 图标行按 MLS 类型自适应</span>
       <div class="facts" id="factsGrid" style="margin-top:0"></div>
-      <div class="footnote" id="factsNote" style="padding:0 14px 12px;text-align:center"></div>
+    </div>
+
+    <!-- ⑨ 归属上下文 chips -->
+    <div class="mod" style="margin-top:14px">
+      <span class="mod-tag">新⑨ 归属上下文</span>
+      <div class="chips-row" style="margin-top:0">
+        <a class="geo-chip" href="#"><small>社区</small> Cambie ›</a>
+        <a class="geo-chip" href="#"><small>片区</small> Cambie · Mount Pleasant ›</a>
+        <a class="geo-chip" href="#"><small>商圈</small> Oakridge(就近)›</a>
+      </div>
     </div>
   </div>
 
@@ -991,7 +990,6 @@ function setFacts(type, btn){
   const grid=document.getElementById('factsGrid');
   grid.innerHTML=FACTS[type].items.map(([ic,v,k])=>
     `<div class="fact"><div class="ic">${ic}</div><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
-  document.getElementById('factsNote').textContent=FACTS[type].note;
   if(btn){document.querySelectorAll('[data-ft]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
 }
 setFacts('duplex');
