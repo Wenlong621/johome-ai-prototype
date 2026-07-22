@@ -199,6 +199,9 @@ body.annotate .mod-tag{display:inline-block}
 .fold-blk .rooms{padding:4px 11px 10px;margin:0}
 .ubtn{border:1px solid var(--brand);color:var(--brand);background:transparent;border-radius:999px;font-size:9.5px;padding:1px 7px;margin-left:6px;cursor:pointer;font-family:inherit;vertical-align:1px}
 .ubtn:hover{background:var(--brand-soft)}
+.ibtn{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;border:1px solid var(--brand);color:var(--brand);background:transparent;font-size:9px;font-style:italic;font-family:Georgia,serif;cursor:pointer;margin-left:5px;vertical-align:1px;padding:0}
+.ibtn:hover{background:var(--brand-soft)}
+.ipop{display:none;margin:5px 0 3px;padding:6px 9px;background:#F2F5F9;border-left:2px solid var(--brand);border-radius:6px;color:var(--ink-2);font-size:10.5px;line-height:1.7;font-family:var(--cjk)}
 .rooms{padding:0 14px 14px}
 .rooms table{width:100%;border-collapse:collapse;font-size:11.5px}
 .rooms th{text-align:left;color:var(--muted);font-weight:500;padding:6px 0;border-bottom:1px solid var(--line);font-size:10.5px}
@@ -566,14 +569,17 @@ body.annotate .mod-tag{display:inline-block}
       </div>
       <details style="margin-top:9px;border:1px solid var(--line);border-radius:10px;overflow:hidden">
         <summary style="list-style:none;cursor:pointer;padding:8px 11px;font-size:11.5px;font-weight:700;color:var(--brand);background:#F7F9FC">Cap Rate 计算明细(白盒) ▾</summary>
-        <div style="padding:8px 11px 10px;font-size:11px;line-height:1.95;color:var(--ink-2);font-family:var(--num)">
-          <b>NOI ≈ $33,600 ÷ 挂牌价 $999,900 = 3.4%</b><br>
-          年租金(挂牌中位) $44,400 <span style="color:var(--muted)">MLS 租赁挂牌 · 社区×房型 近一年中位</span><br>
-          − 地税 $3,984 <span style="color:var(--ok);font-weight:600">feed 实值</span><br>
-          − 保险 ≈$2,180 <span style="color:var(--warn)">重建成本法</span> <span style="color:var(--muted)">面积×重建单价×费率×出租加成 · 参数 2026Q3</span><br>
-          − 维护拨备 ≈$3,300 <span style="color:var(--warn)">构件摊销法</span> <span style="color:var(--muted)">屋顶/供暖/热水罐/外墙÷寿命 + 日常$1.2/ft² × 楼龄系数</span><br>
-          − 空置准备 ≈$1,330 <span style="color:var(--warn)">CMHC 口径</span> <span style="color:var(--muted)">max(分区空置率, 换手摩擦) = 3%</span><br>
-          <span style="color:var(--muted)">未计入:代管费(本房自管 $0)· 贷款成本(Cap Rate 口径不含融资);资本性支出已含于构件摊销</span>
+        <div style="padding:8px 11px 10px;font-size:11px;line-height:1.9;color:var(--ink-2);font-family:var(--num)">
+          <div><b>NOI ≈ $33,600 ÷ 挂牌价 $999,900 = 3.4%</b></div>
+          <div>年租金(挂牌中位) $44,400 <span style="color:var(--muted)">MLS 租赁挂牌 · 社区×房型 近一年中位</span></div>
+          <div>− 地税 $3,984 <span style="color:var(--ok);font-weight:600">feed 实值</span></div>
+          <div>− 保险 ≈$2,180 <span style="color:var(--warn)">估算</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">重建成本法:室内面积 × 重建单价($200–300/ft²) × 保险费率(0.5–0.7%) × 出租加成(+15–25%);Flood Plain = Y 时上浮。Strata 类只计 condo 保单固定带。参数 2026Q3,季度校准。</div></div>
+          <div>− 维护拨备 ≈$3,300 <span style="color:var(--warn)">估算</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">构件摊销法:Σ(构件更换成本 ÷ 设计寿命)——屋顶/供暖/热水罐/外墙(取 feed 的 Roof/Heat/Exterior 字段)+ 日常维护 $1.2/ft²/年,整体乘楼龄系数(10–30 年 = 1.0)。Strata 类仅计套内构件,避免与月费重复。</div></div>
+          <div>− 空置准备 ≈$1,330 <span style="color:var(--warn)">估算</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">CMHC 口径:max(CMHC 分区空置率(每年 10 月更新), 换手摩擦率 = 空窗月数 ÷ 平均租期)。本例 Burnaby 双拼 = 3%。</div></div>
+          <div style="color:var(--muted)">未计入:代管费(本房自管 $0)· 贷款成本(Cap Rate 口径不含融资);资本性支出已含于构件摊销</div>
         </div>
       </details>
     </div>
@@ -947,6 +953,7 @@ const DETAILS = {
   }
 };
 function uSwap(b){var v=b.previousElementSibling;var isA=v.textContent===v.dataset.a;v.textContent=isA?v.dataset.b:v.dataset.a;b.textContent='\u21c4 '+(isA?b.dataset.u1:b.dataset.u2);}
+function iTip(b){var p=b.parentElement.querySelector('.ipop');p.style.display=(p.style.display==='none'||!p.style.display)?'block':'none';}
 let dtType='duplex', dtIdx=0;
 function renderDetails(){
   const d=DETAILS[dtType];
