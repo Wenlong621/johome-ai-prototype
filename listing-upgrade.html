@@ -329,7 +329,7 @@ body.annotate .mod-tag{display:inline-block}
     <button class="stage-btn" data-ft="house" onclick="setFacts('house',this)">独立屋/移动屋</button>
     <button class="stage-btn on" data-ft="duplex" onclick="setFacts('duplex',this)">双拼</button>
     <button class="stage-btn" data-ft="town" onclick="setFacts('town',this)">联排</button>
-    <button class="stage-btn" data-ft="apt" onclick="setFacts('apt',this)">公寓</button><button class="stage-btn" data-ft="multi" onclick="setFacts('multi',this)">整栋双拼</button>
+    <button class="stage-btn" data-ft="apt" onclick="setFacts('apt',this)">公寓</button><button class="stage-btn" data-ft="multi" onclick="setFacts('multi',this)">整栋双拼</button><button class="stage-btn" data-ft="land" onclick="setFacts('land',this)">土地</button>
     <button class="stage-btn on" id="btnAnno" onclick="toggleAnno()">显示 PRD 模块标注</button>
   </div>
 </div>
@@ -840,6 +840,19 @@ const FACTS = {
       ['🧯','无','喷淋 · 烟感'],
       ['🏗','1993','建造年份'],
     ]
+  },
+  land: {
+    note: '土地(Land Only):无建筑,突出接入状态(水/电/气)与开发许可;不设「房屋·空间」tab',
+    items: [
+      ['📐','3,000<small> ft²</small>','占地(0.07 英亩)'],
+      ['🧭','东南','朝向'],
+      ['🛣','道路可达','通达(Access)'],
+      ['⚡','至地块线','电力'],
+      ['🚰','无','供水 · 下水'],
+      ['🔥','不可用','天然气'],
+      ['🏛','RR1','土地性质'],
+      ['💰','$84<small>/年</small>','地税'],
+    ]
   }
 };
 /* ===== 房源资料 Tab:第一 tab 为关键信息(整合全部关键字段),细节下沉后续 tab、不重复 =====
@@ -923,6 +936,18 @@ const DETAILS = {
         legal:'LOTS 13-15 BLOCK 90 DISTRICT LOT 882 SECTION 2 CASSIAR DISTRICT PLAN 968(014-006-961, 014-006-979)'},
       {t:'卖方披露', kv:[['房况声明(PDS)','有'],['租赁固定装置','无'],['市政违规记录(Bylaw Infractions)','无(N)']],
         note:'居住状态(Occupancy: Tenant, Vacant)不对 C 端展示;挂牌到期日为 board 会员字段,公开端不展示。'},
+    ]
+  },
+  land: {
+    src: '样例 R2986522(Willow River · PG Rural East · Land Only)',
+    tabs: [
+      {t:'关键信息', kv:[['@','挂牌信息'],['MLS® 编号','R2986522'],['区域 / 社区','BC 北部(BCNREB)· PG Rural East · Willow River'],['地址','LOT 37 Gwen Avenue'],['邮编','V0J 3C0'],['挂牌日期 · DOM','04/04/2025 · 已挂 474 天'],['累计在市(Property DOM)','474 天'],['@','物业概况'],['房屋类型','土地(Land Only)'],['产权','永久产权 · 独立(Freehold NonStrata)'],['小区(Subdiv)','Willow River'],['@','持有费用'],['地税','$83.93(2024)']],
+        note:'土地类无建筑,不设「房屋·空间」tab;挂牌到期日为 board 会员字段,公开端不展示。'},
+      {t:'土地', kv:[['土地性质','RR1'],['PID','013-981-692'],['地块与周边(Site Influences)','无'],['占地面积(Lot Area)','<span class="uv" data-a="3,000 sqft" data-b="0.07 acres">3,000 sqft</span><button class="ubtn" data-u1="sqft" data-u2="acres" onclick="uSwap(this)">⇄ acres</button>'],['朝向(Exposure)','东南(Southeast)'],['通达(Property Access)','道路可达(Road Access)'],['近两年有无伐木(Trees Logged)','否(No)'],['限制(Restrictions)','无(None)']],
+        legal:'LOT 37 BLOCK 27 DISTRICT LOT 785 CARIBOO DISTRICT PLAN 1235'},
+      {t:'接入与许可', kv:[['@','市政接入'],['供水','无(None)'],['卫生下水','无(None)'],['雨水下水','无(None)'],['电力','至地块线(At Lot Line)'],['天然气','不可用(Not Available)'],['电话','附近可接(Available Nearby)'],['有线电视','附近可接(Available Nearby)'],['@','开发与许可'],['开发许可(Develop Permit)','无(No)'],['建筑许可批准(Bldg Permit)','无(No)'],['建筑图纸(Building Plans)','无(Not Available)'],['招股书(Prospectus)','不需要(Not Required)']]},
+      {t:'卖方披露', kv:[['房况声明(PDS)','有'],['资料包(Information Pkg)','有'],['地块草图(Sketch Attached)','有']],
+        note:'挂牌到期日为 board 会员字段,公开端不展示。'},
     ]
   }
 };
