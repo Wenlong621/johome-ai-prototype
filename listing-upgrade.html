@@ -563,29 +563,38 @@ body.annotate .mod-tag{display:inline-block}
     <div id="dtBody"></div>
   </div>
 
-  <!-- ⑧ 投资视角(条件展开) -->
+  <!-- ⑧ 投资视角(条件展开 · 6护栏:绑定当前房源/样本量/白盒明细/未计项/挂牌口径/客观热度) -->
   <div class="card mod">
     <span class="mod-tag">新⑧ 投资视角</span>
     <div class="sec-head">
-      <span class="sec-title">投资视角</span>
+      <span class="sec-title">投资视角 <span style="font-size:10px;color:var(--muted);font-weight:400">你的档案:自住兼顾投资 · 已默认展开 · 绑定本房 R3146640</span></span>
       <a class="sec-link" href="#">收起 ▴</a>
     </div>
     <div class="card-pad" style="padding-top:10px">
       <div class="inv-grid">
-        <div class="inv-tile"><div class="k">预估月租</div><div class="v">$6,900</div><div class="s">Cambie 3房双拼租赁挂牌中位</div></div>
-        <div class="inv-tile"><div class="k">毛租售比(年)</div><div class="v">3.1%</div><div class="s">年租金 ÷ 挂牌价</div></div>
-        <div class="inv-tile"><div class="k">Cap Rate(估)</div><div class="v">2.3%</div><div class="s">已扣地税/保险/维护估算</div></div>
-        <div class="inv-tile"><div class="k">市场热度</div><div class="v" style="font-size:13.5px;font-family:var(--cjk)">卖方市场</div><div class="s">SALR 24% · 社区 DOM 21 天</div></div>
+        <div class="inv-tile"><div class="k">预估月租(挂牌口径)</div><div class="v">$3,700</div><div class="s">Edmonds 3房双拼/联排租赁挂牌中位 · 样本 8 条/近90天(示意) · 非成交租金</div></div>
+        <div class="inv-tile"><div class="k">毛租售比(年)</div><div class="v">4.4%</div><div class="s">$3,700 × 12 ÷ 挂牌价 $999,900</div></div>
+        <div class="inv-tile"><div class="k">Cap Rate(估)</div><div class="v">3.1%</div><div class="s">NOI ÷ 挂牌价 · 计算明细见下方白盒</div></div>
+        <div class="inv-tile"><div class="k">市场节奏(客观)</div><div class="v">SALR 21%</div><div class="s">社区 DOM 18 天(示意) · 阈值见注,不作定性</div></div>
       </div>
+      <details style="margin-top:9px;border:1px solid var(--line);border-radius:10px;overflow:hidden">
+        <summary style="list-style:none;cursor:pointer;padding:8px 11px;font-size:11.5px;font-weight:700;color:var(--brand);background:#F7F9FC">Cap Rate 计算明细(白盒) ▾</summary>
+        <div style="padding:8px 11px 10px;font-size:11px;line-height:1.95;color:var(--ink-2);font-family:var(--num)">
+          年租金(挂牌中位) $44,400<br>
+          − 地税 $3,984 <span style="color:var(--ok);font-weight:600">feed 实值</span><br>
+          − 保险 ≈$2,400 <span style="color:var(--warn)">估算</span> &nbsp;− 维护拨备 ≈$5,000 <span style="color:var(--warn)">估算·房价0.5%</span> &nbsp;− 空置准备 ≈$1,776 <span style="color:var(--warn)">估算·4%</span><br>
+          = NOI ≈ $31,240 ÷ $999,900 = <b>3.1%</b><br>
+          <span style="color:var(--muted)">未计入:代管费(本房自管 $0)· 贷款成本 · 资本性支出(屋顶/设备更换)</span>
+        </div>
+      </details>
       <div class="tagline">
-        <span class="fact-tag">物业月费 $0(自维护)</span>
-        <span class="fact-tag">2026 新建 · 新房保险(2-5-10)</span>
-        <span class="fact-tag">近一年社区 +2.1%</span>
+        <span class="fact-tag">物业月费 $0(自管 · feed 字段)</span>
+        <span class="fact-tag">2012 年建 · 楼龄 14 年</span>
+        <span class="fact-tag">近一年社区 +2.1%(示意)</span>
       </div>
-      <div class="footnote" style="margin-top:10px">以上为估算口径:租金取社区×房型租赁挂牌中位,非本房实际报价;历史数据不代表未来表现,不构成投资建议。</div>
+      <div class="footnote" style="margin-top:10px">护栏口径:租金取 社区×房型 租赁挂牌中位(asking·非成交价);样本不足 5 条时本模块整体隐藏或退化为入场门槛口径(O5);SALR 阈值为 REBGV 惯例(>20% 供不应求 · 12–20% 平衡 · 12% 以下供过于求),仅作节奏参考、不作市场定性;历史数据不代表未来表现,不构成投资建议。</div>
     </div>
   </div>
-
   <!-- ② 社区行情入口 + ⑤ 社区画像速览 -->
   <div class="card mod">
     <span class="mod-tag">新② 社区行情入口</span>
