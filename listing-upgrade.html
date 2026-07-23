@@ -1117,7 +1117,7 @@ var RISKS={
     {s:'tradeoff',t:'报建从零开始',x:'无既有开发许可与图纸,自建周期含完整规划审批;时间成本计入决策。',e:'Develop Permit=No · Building Plans=Not Available',a:'咨询市府报建'}
   ]};
 var riskDone={};
-var RISK_GATE='<div style="font-size:11.5px;color:var(--ink-2);margin-bottom:10px">按需生成:结合本房字段与规则库,由 AI 归纳风险与权衡</div><button onclick="riskGen()" style="border:none;cursor:pointer;font-family:var(--cjk);font-size:12.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--ai1),var(--ai2));border-radius:99px;padding:9px 20px">✦ 生成分析</button>';
+var RISK_GATE='<button onclick="riskGen()" style="border:none;cursor:pointer;font-family:var(--cjk);font-size:12.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--ai1),var(--ai2));border-radius:99px;padding:9px 20px">✦ 生成分析</button>';
 function riskGen(){var t=dtType,g=document.getElementById('riskGate');g.innerHTML='<div style="font-size:12px;color:var(--ink-2);padding:8px 0">✦ AI 正在结合字段生成…</div>';setTimeout(function(){riskDone[t]=1;riskState(t);},900);}
 function riskState(t){var g=document.getElementById('riskGate'),l=document.getElementById('riskList'),d=document.getElementById('riskDisc');if(!g)return;if(riskDone[t]){g.style.display='none';riskRender(t);d.style.display='block';}else{g.style.display='block';g.innerHTML=RISK_GATE;l.innerHTML='';d.style.display='none';}}
 function riskRender(type){
