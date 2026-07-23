@@ -779,8 +779,9 @@ body.annotate .mod-tag{display:inline-block}
     <span class="mod-tag">New ⑪ Risks & Trade-offs</span>
     <div class="sec-head"><span class="sec-title">Risks & Trade-offs <span style="font-size:10px;font-weight:600;color:var(--brand-ink);background:var(--brand-soft);border:1px solid #DCE8FC;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:2px">AI-generated</span></span><span style="font-size:10px;color:var(--muted)">Rule-triggered · evidence attached</span></div>
     <div class="card-pad" style="padding-top:8px;padding-bottom:10px">
+      <div id="riskGate" style="text-align:center;padding:14px 0 10px"></div>
       <div id="riskList"></div>
-      <div class="footnote" style="padding:9px 0 0">Rule-based flags from listing and public data — not professional inspection or legal advice; rely on your inspection report and title documents.</div>
+      <div class="footnote" id="riskDisc" style="padding:9px 0 0;display:none">Rule-based flags from listing and public data — not professional inspection or legal advice; rely on your inspection report and title documents.</div>
     </div>
   </div>
 
@@ -1111,6 +1112,10 @@ var RISKS={
     {s:'tradeoff',t:'474 days on market — thin liquidity',x:'Rural lots turn over in years — strong negotiating room, but resale is just as slow; plan a long hold.',e:'DOM=474',a:'Pricing leverage'},
     {s:'tradeoff',t:'Permitting starts from zero',x:'No permits or plans in place; the build timeline includes full approvals — count the time cost.',e:'Develop Permit=No · Building Plans=Not Available',a:'Ask the municipality'}
   ]};
+var riskDone={};
+var RISK_GATE='<div style="font-size:11.5px;color:var(--ink-2);margin-bottom:10px">Generated on demand: AI summarizes risks and trade-offs from listing fields and the rule library</div><button onclick="riskGen()" style="border:none;cursor:pointer;font-family:var(--cjk);font-size:12.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--ai1),var(--ai2));border-radius:99px;padding:9px 20px">✦ Generate analysis</button>';
+function riskGen(){var t=dtType,g=document.getElementById('riskGate');g.innerHTML='<div style="font-size:12px;color:var(--ink-2);padding:8px 0">✦ Generating from listing fields…</div>';setTimeout(function(){riskDone[t]=1;riskState(t);},900);}
+function riskState(t){var g=document.getElementById('riskGate'),l=document.getElementById('riskList'),d=document.getElementById('riskDisc');if(!g)return;if(riskDone[t]){g.style.display='none';riskRender(t);d.style.display='block';}else{g.style.display='block';g.innerHTML=RISK_GATE;l.innerHTML='';d.style.display='none';}}
 function riskRender(type){
   var el=document.getElementById('riskList');if(!el)return;
   var rows=RISKS[type]||[];
@@ -1175,7 +1180,7 @@ function renderDetails(){
   document.getElementById('dtBody').innerHTML=h;
 }
 function setFacts(type, btn){
-  dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails(); riskRender(type);
+  dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails(); riskState(type);
   const grid=document.getElementById('factsGrid');
   grid.innerHTML=FACTS[type].items.map(([ic,v,k])=>
     `<div class="fact"><div class="ic">${ic}</div><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
