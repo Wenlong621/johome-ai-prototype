@@ -229,6 +229,15 @@ body.annotate .mod-tag{display:inline-block}
 .sch-score .r{font-size:10px;color:var(--muted);margin-top:1px;font-family:var(--num)}
 .sch-chev{color:#C4CBD8;font-size:15px;flex:none}
 .sch-empty{font-size:11.5px;color:var(--muted);text-align:center;padding:18px 0 10px}
+.rk-item{border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-top:8px}
+.rk-head{display:flex;align-items:center;gap:7px}
+.rk-sev{font-size:9px;font-weight:700;border-radius:99px;padding:2px 8px;flex:none}
+.rk-sev.risk{color:#B4382A;background:var(--up-soft)}
+.rk-sev.tradeoff{color:#8A5A18;background:var(--warn-soft)}
+.rk-title{font-size:12.5px;font-weight:700;color:var(--ink)}
+.rk-act{margin-left:auto;font-size:9.5px;color:var(--brand-ink);background:var(--brand-soft);border-radius:99px;padding:2px 8px;flex:none;white-space:nowrap}
+.rk-text{font-size:11.5px;color:var(--ink-2);line-height:1.65;margin-top:5px}
+.rk-ev{font-size:9.5px;color:var(--muted);font-family:var(--num);margin-top:4px;line-height:1.6}
 .rooms{padding:0 14px 14px}
 .rooms table{width:100%;border-collapse:collapse;font-size:11.5px}
 .rooms th{text-align:left;color:var(--muted);font-weight:500;padding:6px 0;border-bottom:1px solid var(--line);font-size:10.5px}
@@ -773,10 +782,10 @@ body.annotate .mod-tag{display:inline-block}
   <!-- ⑪ 风险与权衡 -->
   <div class="card mod">
     <span class="mod-tag">新⑪ 风险与权衡</span>
-    <div class="sec-head"><span class="sec-title">风险与权衡</span><span style="font-size:10px;color:var(--muted)">客观提示 · 建立全面判断</span></div>
-    <div class="card-pad" style="padding-top:8px">
-      <div class="risk-item"><span class="ic">⚠</span><span><b>片区:</b>Cambie 走廊沿线开发活跃,未来数年周边或有施工与街景变化;临近 Cambie 主干道,部分时段有交通噪音。</span><span class="lv">片区级</span></div>
-      <div class="risk-item"><span class="ic">⚠</span><span><b>本房:</b>共有产权(与另一户共用 Strata),月费 $0 意味着外部维护需两户自行协调;2026 年新建,无历史成交与维护记录可参考。</span><span class="lv">房源级</span></div>
+    <div class="sec-head"><span class="sec-title">风险与权衡</span><span style="font-size:10px;color:var(--muted)">规则触发 · 每条附字段依据</span></div>
+    <div class="card-pad" style="padding-top:8px;padding-bottom:10px">
+      <div id="riskList"></div>
+      <div class="footnote" style="padding:9px 0 0">以上基于挂牌与公开数据的规则化提示,非专业验房/法律意见;请以验房报告与产权文件为准。</div>
     </div>
   </div>
 
@@ -1074,6 +1083,46 @@ function mktDraw(){
   /* 周期 pills 视觉切换 */
   document.querySelectorAll('.mkt-period span').forEach(function(sp){sp.onclick=function(){sp.parentElement.querySelectorAll('span').forEach(function(x){x.classList.remove('on')});sp.classList.add('on');};});
 }
+var RISKS={
+  duplex:[
+    {s:'tradeoff',t:'两户自管 Strata:无月费,责任自担',x:'月费 $0 且无管理公司,楼体保险与屋顶外墙维护需与邻户协商分摊;下 offer 前确认共同保险安排。',e:'Maint Fee=$0.00 · Mgmt Co=空 · Title to Land=Freehold Strata',a:'确认共同保险'},
+    {s:'tradeoff',t:'短租不可',x:'章程无其他限制但禁止 1 年内短租;民宿型投资不适用,自住与长租不受影响。',e:'Short Term(<1yr) Rnt/Lse Alwd=No',a:'核对章程'}
+  ],
+  house:[
+    {s:'risk',t:'园区场地租赁,非土地产权',x:'房屋为 MHR 登记动产、土地按月租用;贷款渠道少、pad 租金存在调涨可能,增值逻辑与常规独立屋不同。',e:'Title to Land=Other(MHP) · PAD Rental=$1,400/月 · MHR#=62817',a:'咨询贷款经纪'},
+    {s:'risk',t:'CSA/BCE 认证未见登记',x:'表上认证栏为空;保险与放贷机构通常要求移动屋结构电气认证,交易前补核。',e:'CSA/BCE=空',a:'向园区/卖方索证'}
+  ],
+  town:[
+    {s:'risk',t:'楼龄 61 年,维护周期到站',x:'1965 年建,机电与围护结构多进入更换周期;保险与维护预算上调,验房从严。',e:'Year Built=1965 · Age=61',a:'验房加项'},
+    {s:'risk',t:'供暖方式未明示',x:'供暖字段为 Other,系统类型与能耗不明;现场确认设备类型、年限与运行状况。',e:'Fuel/Heating=Other',a:'现场确认'},
+    {s:'tradeoff',t:'448 ft² 未完成地下室',x:'改造空间换当前可用面积——完成面积仅 896 ft²,与同价房源对比时注意口径。',e:'Basement=Full, Unfinished · Unfinished Floor=448 ft²',a:'评估改造成本'},
+    {s:'tradeoff',t:'出租有限制 · 短租不可',x:'章程允许出租但带限制,短租禁止;投资用途先取章程原文核实条件。',e:'Rentals Allwd w/Restrctns · Short Term=No',a:'索要章程'}
+  ],
+  apt:[
+    {s:'risk',t:'合作社股份产权,融资受限',x:'购买的是公司股份而非独立产权,多数银行不放贷,常需大比例首付或指定信用社。',e:'Title to Land=Shares in Co-operative',a:'先谈贷款方案'},
+    {s:'risk',t:'遗产出售,无房况声明',x:'执行人卖房、不提供 PDS,房况信息有限;全面验房并保留验房条件。',e:'Property Disc.=No : Estate Sale',a:'验房加项'},
+    {s:'risk',t:'楼龄 58 年老楼',x:'1968 年建,管线与火炬熔铺屋顶等大项进入更换期;重点查维修基金与折旧报告。',e:'Year Built=1968 · Roof=Torch-On',a:'查折旧报告'},
+    {s:'tradeoff',t:'30+ 年龄限制 · 不允许宠物',x:'入住门槛换安静环境——受众与转售流动性收窄;自住先确认全员符合年龄要求。',e:'Restricted Age=30+ · Pets=Not Allowed',a:'核对章程'}
+  ],
+  multi:[
+    {s:'risk',t:'防腐木地基(PWF)',x:'木质地基对贷款与保险有额外要求,寿命与维护路径不同于混凝土;结构检测必做。',e:'Foundation=Preserved Wood',a:'结构检测'},
+    {s:'risk',t:'烟感/喷淋未安装',x:'出租物业的消防合规底线;接手即需安装,交易前确认有无市政整改要求。',e:'Smoke Detectors=No · Sprinklers=No',a:'合规整改预算'},
+    {s:'tradeoff',t:'一户带租约交接',x:'半租半空——即时现金流换交接复杂度;租约随房转移,按 RTA 流程处理。',e:'Occupancy=Tenant, Vacant',a:'审租约条款'},
+    {s:'tradeoff',t:'丙烷供暖',x:'无天然气管道,罐装丙烷成本高于城燃;持有成本按此口径估算。',e:'Fuel/Heating=Forced Air, Propane Gas',a:'估算能耗'}
+  ],
+  land:[
+    {s:'risk',t:'无市政水与下水',x:'建房需自建井水与化粪池;购买条件中安排渗滤测试与打井评估,费用计入总预算。',e:'Water Supply=None · Sanitary Sewer=None · Perc Test=未提供',a:'条件期做 perc test'},
+    {s:'tradeoff',t:'电至地块线 · 燃气不可用',x:'通电成本低是亮点,供暖只能电或丙烷——建后运营成本按此口径估。',e:'Electricity=At Lot Line · Natural Gas=Not Available',a:'估接入成本'},
+    {s:'tradeoff',t:'挂牌 474 天,流动性弱',x:'乡村地块周转以年计——议价空间大,转售同样慢,按长持有期规划。',e:'DOM=474',a:'出价参考'},
+    {s:'tradeoff',t:'报建从零开始',x:'无既有开发许可与图纸,自建周期含完整规划审批;时间成本计入决策。',e:'Develop Permit=No · Building Plans=Not Available',a:'咨询市府报建'}
+  ]};
+function riskRender(type){
+  var el=document.getElementById('riskList');if(!el)return;
+  var rows=RISKS[type]||[];
+  el.innerHTML=rows.map(function(r){
+    return '<div class="rk-item"><div class="rk-head"><span class="rk-sev '+r.s+'">'+(r.s==='risk'?'风险':'权衡')+'</span><span class="rk-title">'+r.t+'</span><span class="rk-act">'+r.a+'</span></div><div class="rk-text">'+r.x+'</div><div class="rk-ev">依据: '+r.e+'</div></div>';
+  }).join('');
+}
 var SCHOOLS={
   pub:{k:[['Douglas Park StrongStart(公立学前)','4550 Douglas Park Lane · 步行 9 分钟',null,null,false]],
        e:[['Edith Cavell Elementary','500 20th Ave W · 步行 4 分钟 · Fraser Institute 2025',7.6,'253 / 931',true],
@@ -1131,7 +1180,7 @@ function renderDetails(){
   document.getElementById('dtBody').innerHTML=h;
 }
 function setFacts(type, btn){
-  dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails();
+  dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails(); riskRender(type);
   const grid=document.getElementById('factsGrid');
   grid.innerHTML=FACTS[type].items.map(([ic,v,k])=>
     `<div class="fact"><div class="ic">${ic}</div><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
