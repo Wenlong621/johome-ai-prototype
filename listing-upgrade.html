@@ -202,6 +202,23 @@ body.annotate .mod-tag{display:inline-block}
 .ibtn{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;border:1px solid var(--brand);color:var(--brand);background:transparent;font-size:9px;font-style:italic;font-family:Georgia,serif;cursor:pointer;margin-left:5px;vertical-align:1px;padding:0}
 .ibtn:hover{background:var(--brand-soft)}
 .ipop{display:none;margin:5px 0 3px;padding:6px 9px;background:#F2F5F9;border-left:2px solid var(--brand);border-radius:6px;color:var(--ink-2);font-size:10.5px;line-height:1.7;font-family:var(--cjk)}
+.mkt-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:13px}
+.mkt-pill{border:1px solid var(--line);border-radius:9px;padding:6px 10px;font-size:11.5px;background:#fff;cursor:pointer;font-family:var(--cjk);color:var(--ink-2)}
+.mkt-pill.on{background:var(--brand);color:#fff;border-color:var(--brand);font-weight:600}
+.mkt-period{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:2px;margin-top:11px;background:#fff}
+.mkt-period span{font-size:11px;padding:4px 12px;border-radius:99px;cursor:pointer;color:var(--ink-2)}
+.mkt-period span.on{background:var(--brand);color:#fff;font-weight:600}
+.mkt-title{font-size:12px;color:var(--ink-2);margin-top:11px}
+.stat4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+.stat4 .st{background:#F7F9FC;border-radius:9px;padding:7px 4px;text-align:center}
+.stat4 .st .v{font-weight:800;font-family:var(--num);font-size:12.5px;color:var(--ink)}
+.stat4 .st .k{font-size:10px;color:var(--muted);margin-top:1px}
+.mkt-sel{margin-top:9px;font-family:var(--cjk);font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink-2)}
+.mkt-chart{margin-top:8px}
+.mkt-legend{display:flex;gap:12px;justify-content:center;font-size:10.5px;color:var(--ink-2);margin-top:5px}
+.mkt-legend i{font-style:normal;display:inline-flex;align-items:center;gap:4px}
+.mkt-legend .dotc{width:8px;height:8px;border-radius:50%;display:inline-block}
+.mkt-foot{font-size:10px;color:var(--muted);text-align:center;margin-top:5px;line-height:1.6}
 .rooms{padding:0 14px 14px}
 .rooms table{width:100%;border-collapse:collapse;font-size:11.5px}
 .rooms th{text-align:left;color:var(--muted);font-weight:500;padding:6px 0;border-bottom:1px solid var(--line);font-size:10.5px}
@@ -586,7 +603,7 @@ body.annotate .mod-tag{display:inline-block}
   <!-- ② 社区行情入口 + ⑤ 社区画像速览 -->
   <div class="card mod">
     <span class="mod-tag">新② 社区行情入口</span>
-    <div class="sec-head"><span class="sec-title">Cambie 社区行情</span><a class="sec-link" href="#">查看完整行情 ›</a></div>
+    <div class="sec-head"><span class="sec-title">Cambie 社区行情</span><a class="sec-link" href="#" id="mktToggleLink" onclick="mktToggle(event)">查看完整行情 ›</a></div>
     <div class="card-pad" style="padding-top:10px">
       <div class="trend-row">
         <div class="trend-meta">
@@ -600,6 +617,57 @@ body.annotate .mod-tag{display:inline-block}
           <path d="M4,34 L17,36 L30,31 L43,33 L56,28 L69,30 L82,25 L95,27 L108,22 L121,24 L134,19 L146,16" fill="none" stroke="#2E6BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="146" cy="16" r="3" fill="#2E6BE6" stroke="#fff" stroke-width="1.5"/>
         </svg>
+      </div>
+      <div id="mktFull" style="display:none">
+        <div class="mkt-pills" id="mktPills">
+          <span class="mkt-pill on" onclick="mktTab(0,this)">售出中位价</span>
+          <span class="mkt-pill" onclick="mktTab(1,this)">价格涨跌幅</span>
+          <span class="mkt-pill" onclick="mktTab(2,this)">在售套数</span>
+          <span class="mkt-pill" onclick="mktTab(3,this)">平均售出天数</span>
+          <span class="mkt-pill" onclick="mktTab(4,this)">成交占比</span>
+        </div>
+        <div class="mkt-pane" id="mp0">
+          <div class="mkt-title">该社区已售房源的中位成交价格</div>
+          <div class="stat4"><div class="st"><div class="v">$155万</div><div class="k">全部中位价</div></div><div class="st"><div class="v">$79万</div><div class="k">公寓</div></div><div class="st"><div class="v">$135万</div><div class="k">联排</div></div><div class="st"><div class="v">$265万</div><div class="k">独立屋</div></div></div>
+          <div class="mkt-chart" id="mc0"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>公寓</i><i><span class="dotc" style="background:#2E6BE6"></span>联排</i><i><span class="dotc" style="background:#F29900"></span>独立屋</i></div>
+          <div class="mkt-foot">横轴 = 价格区段(万) · 纵轴 = 套数(active)</div>
+        </div>
+        <div class="mkt-pane" id="mp1" style="display:none">
+          <div class="mkt-period"><span class="on">1年</span><span>3年</span><span>5年</span></div>
+          <div class="mkt-title">近1年中位价涨跌幅</div>
+          <div class="stat4"><div class="st"><div class="v">+2.1%</div><div class="k">全部</div></div><div class="st"><div class="v">+3.6%</div><div class="k">公寓</div></div><div class="st"><div class="v">+4.2%</div><div class="k">联排</div></div><div class="st"><div class="v">+4.7%</div><div class="k">独立屋</div></div></div>
+          <div class="mkt-chart" id="mc1"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>公寓</i><i><span class="dotc" style="background:#2E6BE6"></span>联排</i><i><span class="dotc" style="background:#F29900"></span>独立屋</i></div>
+          <div class="mkt-foot">纵轴 = 售出中位价($M) · 横轴 = 月份</div>
+        </div>
+        <div class="mkt-pane" id="mp2" style="display:none">
+          <div class="mkt-period"><span class="on">1年</span><span>3年</span><span>5年</span></div>
+          <div class="mkt-title">近1年各房型在售套数</div>
+          <div class="stat4"><div class="st"><div class="v">132 套</div><div class="k">全部</div></div><div class="st"><div class="v">48 套</div><div class="k">公寓</div></div><div class="st"><div class="v">39 套</div><div class="k">联排</div></div><div class="st"><div class="v">45 套</div><div class="k">独立屋</div></div></div>
+          <select class="mkt-sel"><option>全部</option><option>公寓</option><option>联排</option><option>独立屋</option></select>
+          <div class="mkt-chart" id="mc2"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>Active</i><i><span class="dotc" style="background:#2E6BE6"></span>New</i><i><span class="dotc" style="background:#F29900"></span>Sold</i></div>
+          <div class="mkt-foot">纵轴 = 套数 · 柱 = Active,线 = New / Sold</div>
+        </div>
+        <div class="mkt-pane" id="mp3" style="display:none">
+          <div class="mkt-period"><span class="on">1年</span><span>3年</span><span>5年</span></div>
+          <div class="mkt-title">近1年各房型平均售出天数</div>
+          <div class="stat4"><div class="st"><div class="v">24 天</div><div class="k">全部</div></div><div class="st"><div class="v">21 天</div><div class="k">公寓</div></div><div class="st"><div class="v">24 天</div><div class="k">联排</div></div><div class="st"><div class="v">32 天</div><div class="k">独立屋</div></div></div>
+          <select class="mkt-sel"><option>全部</option><option>公寓</option><option>联排</option><option>独立屋</option></select>
+          <div class="mkt-chart" id="mc3"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#2E6BE6"></span>DOM</i><i><span class="dotc" style="background:#0E9F6E"></span>PDOM</i></div>
+          <div class="mkt-foot">纵轴 = 天数 · DOM = 售出天数,PDOM = 累计售出天数</div>
+        </div>
+        <div class="mkt-pane" id="mp4" style="display:none">
+          <div class="mkt-period"><span class="on">1年</span><span>3年</span><span>5年</span></div>
+          <div class="mkt-title">近1年各房型平均成交占比</div>
+          <div class="stat4"><div class="st"><div class="v">18%</div><div class="k">全部</div></div><div class="st"><div class="v">21%</div><div class="k">公寓</div></div><div class="st"><div class="v">18%</div><div class="k">联排</div></div><div class="st"><div class="v">14%</div><div class="k">独立屋</div></div></div>
+          <select class="mkt-sel"><option>全部</option><option>公寓</option><option>联排</option><option>独立屋</option></select>
+          <div class="mkt-chart" id="mc4"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>成交占比</i></div>
+          <div class="mkt-foot">纵轴 = 成交占比:>20% 偏卖方 · 12–20% 均衡 · <12% 偏买方</div>
+        </div>
       </div>
     </div>
   </div>
@@ -951,6 +1019,45 @@ const DETAILS = {
   }
 };
 function uSwap(b){var v=b.previousElementSibling;var isA=v.textContent===v.dataset.a;v.textContent=isA?v.dataset.b:v.dataset.a;b.textContent='\u21c4 '+(isA?b.dataset.u1:b.dataset.u2);}
+function mktToggle(e){e.preventDefault();var p=document.getElementById('mktFull');var l=document.getElementById('mktToggleLink');var open=p.style.display==='none';p.style.display=open?'block':'none';l.textContent=open?'收起行情 ▴':'查看完整行情 ›';if(open&&!p.dataset.drawn){mktDraw();p.dataset.drawn=1;}}
+function mktTab(i,el){document.querySelectorAll('#mktPills .mkt-pill').forEach(function(b){b.classList.remove('on')});el.classList.add('on');for(var k=0;k<5;k++)document.getElementById('mp'+k).style.display=k===i?'block':'none';}
+function mktDraw(){
+  var W=320,H=150,L=30,B=20,T=8;
+  function lineTo(pts,max,min){var w=(W-L-8)/(pts.length-1);return pts.map(function(v,i){return (L+i*w).toFixed(1)+','+(H-B-((v-min)/(max-min))*(H-B-T)).toFixed(1)}).join(' ');}
+  function axis(yl,xl){var t='';yl.forEach(function(o){t+='<text x="2" y="'+o[1]+'" font-size="8" fill="#8C99AF">'+o[0]+'</text><line x1="'+L+'" y1="'+o[1]+'" x2="'+(W-4)+'" y2="'+o[1]+'" stroke="#EEF1F6"/>';});xl.forEach(function(o){t+='<text x="'+o[1]+'" y="'+(H-6)+'" font-size="8" fill="#8C99AF">'+o[0]+'</text>';});return t;}
+  /* T0 分组柱 */
+  var g={lab:['<100','100-150','150-200','200-250','250-300','>300'],apt:[26,27,10,6,3,2],twn:[10,19,22,17,8,4],det:[1,4,12,18,22,16]},max0=30;
+  var svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['30',T+4],['15',(H-B+T)/2],['0',H-B]],g.lab.map(function(l,i){return [l,L+4+i*((W-L-8)/6)]}));
+  ['apt','twn','det'].forEach(function(k,si){var c=['#34A853','#2E6BE6','#F29900'][si];g[k].forEach(function(v,i){var gw=(W-L-8)/6,x=L+i*gw+5+si*8,h=(v/max0)*(H-B-T);svg+='<rect x="'+x+'" y="'+(H-B-h)+'" width="6.5" height="'+h+'" rx="1.5" fill="'+c+'"/>';});});
+  document.getElementById('mc0').innerHTML=svg+'</svg>';
+  /* T1 三线 */
+  var apt=[0.77,0.76,0.78,0.77,0.78,0.79,0.78,0.79,0.80,0.79,0.80,0.80],twn=[1.30,1.31,1.30,1.32,1.33,1.32,1.34,1.33,1.35,1.34,1.35,1.36],det=[2.55,2.53,2.56,2.58,2.57,2.60,2.59,2.62,2.61,2.63,2.62,2.66];
+  var mons=[['1月',L],['3',L+2*(W-L-8)/11],['5',L+4*(W-L-8)/11],['7',L+6*(W-L-8)/11],['9',L+8*(W-L-8)/11],['11',L+10*(W-L-8)/11]];
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['3.0M',T+4],['1.5M',(H-B+T)/2],['0',H-B]],mons);
+  [[apt,'#34A853'],[twn,'#2E6BE6'],[det,'#F29900']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0],3,0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>';});
+  document.getElementById('mc1').innerHTML=svg+'</svg>';
+  /* T2 柱+双线 */
+  var act=[118,112,120,131,126,129,135,128,122,117,124,132],nw=[42,38,45,50,44,47,52,46,40,38,43,48],sd=[35,33,38,41,39,42,45,40,36,34,39,44];
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['140',T+4],['70',(H-B+T)/2],['0',H-B]],mons);
+  act.forEach(function(v,i){var w=(W-L-8)/12,x=L+i*w+3,h=(v/140)*(H-B-T);svg+='<rect x="'+x+'" y="'+(H-B-h)+'" width="'+(w-6)+'" height="'+h+'" rx="2" fill="#34A853" opacity="0.85"/>';});
+  [[nw,'#2E6BE6'],[sd,'#F29900']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0],140,0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>';});
+  document.getElementById('mc2').innerHTML=svg+'</svg>';
+  /* T3 DOM/PDOM */
+  var dom=[24,30,26,19,32,27,22,18,25,28,30,33],pd=[38,45,40,31,48,42,35,30,39,44,46,50];
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['50',T+4],['25',(H-B+T)/2],['0天',H-B]],mons);
+  [[dom,'#2E6BE6'],[pd,'#0E9F6E']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0],50,0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>';});
+  document.getElementById('mc3').innerHTML=svg+'</svg>';
+  /* T4 SALR+阈值线 */
+  var sa=[18,29,20,27,16,19,19,18,15,13,19,19];
+  var y20=H-B-(20/30)*(H-B-T),y12=H-B-(12/30)*(H-B-T);
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['30',T+4],['15',(H-B+T)/2],['0%',H-B]],mons);
+  svg+='<line x1="'+L+'" y1="'+y20+'" x2="'+(W-4)+'" y2="'+y20+'" stroke="#E8604C" stroke-dasharray="4 3"/><text x="'+(W-52)+'" y="'+(y20-3)+'" font-size="8" fill="#E8604C">卖方 20%</text>';
+  svg+='<line x1="'+L+'" y1="'+y12+'" x2="'+(W-4)+'" y2="'+y12+'" stroke="#5B8DEF" stroke-dasharray="4 3"/><text x="'+(W-52)+'" y="'+(y12+9)+'" font-size="8" fill="#5B8DEF">买方 12%</text>';
+  svg+='<polyline points="'+lineTo(sa,30,0)+'" fill="none" stroke="#34A853" stroke-width="1.8"/>';
+  document.getElementById('mc4').innerHTML=svg+'</svg>';
+  /* 周期 pills 视觉切换 */
+  document.querySelectorAll('.mkt-period span').forEach(function(sp){sp.onclick=function(){sp.parentElement.querySelectorAll('span').forEach(function(x){x.classList.remove('on')});sp.classList.add('on');};});
+}
 function iTip(b){var p=b.parentElement.querySelector('.ipop');p.style.display=(p.style.display==='none'||!p.style.display)?'block':'none';}
 let dtType='duplex', dtIdx=0;
 function renderDetails(){
