@@ -1197,10 +1197,6 @@ document.querySelectorAll('.poi-pill').forEach(p=>{
   p.addEventListener('click',()=>{
     document.querySelectorAll('.poi-pill').forEach(x=>x.classList.remove('on'));
     p.classList.add('on');
-    const map=document.querySelector('.map-count');
-    const n=p.querySelector('b').textContent;
-    const t=p.textContent.trim().split(' ')[0];
-    map.innerHTML=`${t} · 步行 10 分钟内共 <b class="num">${n}</b> 家`;
   });
 });
 </script>

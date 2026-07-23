@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,  initial-scale=1.0">
+<title>Johome · Listing Detail Upgrade · EN</title>
+<link rel="preconnect" href="https: //fonts.googleapis.com">
+<link rel="preconnect" href="https: //fonts.gstatic.com" crossorigin>
+<link href="https: //fonts.googleapis.com/css2?family=Schibsted+Grotesk: ital, wght@0, 400..900; 1, 400..900&display=swap" rel="stylesheet">
+<style>
+: root{
+  --brand: #2E6BE6; 
+  --brand-ink: #1E4FB8; 
+  --brand-soft: #EDF3FE; 
+  --brand-deep: #12244D; 
+  --ink: #182338; 
+  --ink-2: #54627C; 
+  --muted: #8C99AF; 
+  --line: #E7ECF3; 
+  --page: #F3F5F9; 
+  --card: #FFFFFF; 
+  --up: #D8402F;         /* 涨/高于(中文习惯 红=涨) */
+  --up-soft: #FDEEEC; 
+  --down: #0E9F6E;       /* 跌/低于 */
+  --down-soft: #E7F6F0; 
+  --ok: #0E9F6E; 
+  --ok-soft: #E7F6F0; 
+  --warn: #C97A06; 
+  --warn-soft: #FCF3E4; 
+  --live: #19B36B; 
+  --ai1: #3D5CF5; 
+  --ai2: #8A3DF5; 
+  --canada-line: #0098C9; 
+  --num: 'Schibsted Grotesk', -apple-system, sans-serif; 
+  --cjk: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Microsoft YaHei', sans-serif; 
+  --r: 14px; 
+  --shadow: 0 1px 2px rgba(24, 35, 56, .04), 0 6px 20px -8px rgba(24, 35, 56, .08); 
+}
+*{margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent}
+html{scroll-behavior: smooth}
+body{
+  font-family: var(--cjk); color: var(--ink); background: #E4E8EF; 
+  min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; 
+}
+/* ===== 设计演示工具条(非产品 UI, 交付时可整条移除) ===== */
+.stage-head{
+  width: 100%; max-width: 430px; background: #EDF0F5; border-bottom: 1px solid #DDE3EC; 
+  padding: 10px 14px 11px; display: flex; flex-direction: column; gap: 8px; 
+}
+.stage-title{color: #3A465C; font-size: 12.5px; font-weight: 700}
+.stage-title small{display: block; color: #8C99AF; font-weight: 400; font-size: 10.5px; margin-top: 2px}
+.stage-actions{display: flex; gap: 6px; flex-wrap: wrap; align-items: center}
+.stage-btn{
+  font-family: var(--cjk); font-size: 11.5px; color: #54627C; background: #fff; 
+  border: 1px solid #D8DFE9; border-radius: 99px; padding: 5px 11px; cursor: pointer; transition: .18s; 
+}
+.stage-btn: hover{border-color: var(--brand)}
+.stage-btn.on{background: var(--brand); border-color: var(--brand); color: #fff}
+/* ===== 页面容器(iPhone 逻辑宽度, 自然滚动) ===== */
+.phone{
+  width: 100%; max-width: 430px; background: var(--page); position: relative; flex: 1; 
+  box-shadow: 0 0 50px -10px rgba(24, 35, 56, .18); 
+}
+.screen{position: relative}
+/* 状态栏 + 导航 */
+.statusbar{
+  position: sticky; top: 0; z-index: 60; background: rgba(255, 255, 255, .92); backdrop-filter: blur(14px); 
+  border-bottom: 1px solid var(--line); 
+}
+.statusbar .sim{display: flex; justify-content: space-between; align-items: center; padding: 10px 22px 2px; font-family: var(--num); font-size: 12.5px; font-weight: 600; color: var(--ink)}
+.navrow{display: flex; align-items: center; gap: 10px; padding: 8px 14px 10px}
+.navrow .back{width: 30px; height: 30px; border-radius: 99px; display: grid; place-items: center; color: var(--ink); font-size: 17px}
+.navrow .nav-title{font-size: 14.5px; font-weight: 600; flex: 1; text-align: center}
+.navrow .nav-ic{width: 30px; height: 30px; border-radius: 99px; display: grid; place-items: center; color: var(--ink-2); font-size: 15px}
+/* ===== 模块标注(设计评审用) ===== */
+.mod{position: relative}
+.mod-tag{
+  display: none; position: absolute; top: -9px; right: 10px; z-index: 5; 
+  font-size: 10.5px; font-weight: 700; letter-spacing: .02em; color: #fff; 
+  background: linear-gradient(135deg, #FF7A45, #F53D6B); border-radius: 99px; padding: 3px 9px; 
+  box-shadow: 0 3px 10px -2px rgba(245, 61, 107, .5); 
+}
+.mod-tag.opt{background: linear-gradient(135deg, #7A8CA8, #54627C); box-shadow: 0 3px 10px -2px rgba(84, 98, 124, .4)}
+body.annotate .mod-tag{display: inline-block}
+/* ===== 通用卡片 ===== */
+.wrap{padding: 0 12px}
+.card{background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); margin-top: 10px}
+.card-pad{padding: 14px}
+.sec-head{display: flex; align-items: baseline; justify-content: space-between; padding: 14px 14px 0}
+.sec-title{font-size: 15px; font-weight: 700; letter-spacing: .01em}
+.sec-link{font-size: 12px; color: var(--brand); font-weight: 500; text-decoration: none}
+.footnote{font-size: 10.5px; color: var(--muted); line-height: 1.6}
+.num{font-family: var(--num); font-variant-numeric: tabular-nums}
+.chev{color: #B9C3D6}
+/* ===== 头图 ===== */
+.hero{position: relative; height: 250px; overflow: hidden; background: #0E1B2E}
+.hero-img{position: absolute; inset: 0}
+.hero-badges{position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; z-index: 3}
+.badge-live{background: var(--live); color: #fff; font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 99px; box-shadow: 0 3px 10px -2px rgba(25, 179, 107, .55)}
+.badge-count{background: rgba(10, 16, 28, .55); backdrop-filter: blur(6px); color: #fff; font-size: 11px; padding: 4px 10px; border-radius: 99px}
+.hero-tabs{position: absolute; left: 50%; transform: translateX(-50%); bottom: 12px; display: flex; gap: 4px; background: rgba(10, 16, 28, .5); backdrop-filter: blur(8px); padding: 3px; border-radius: 99px; z-index: 3}
+.hero-tabs span{font-size: 11px; color: rgba(255, 255, 255, .75); padding: 4px 12px; border-radius: 99px; white-space: nowrap}
+.hero-tabs span.on{background: #fff; color: var(--ink); font-weight: 600}
+.hero-dots{position: absolute; right: 14px; bottom: 16px; display: flex; gap: 4px; z-index: 3}
+.hero-dots i{width: 5px; height: 5px; border-radius: 99px; background: rgba(255, 255, 255, .45)}
+.hero-dots i.on{background: #fff; width: 14px}
+/* ===== 标题价格 ===== */
+.head-card{border-radius: 0 0 var(--r) var(--r); margin-top: 0}
+.price-row{display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap}
+.price{font-family: var(--num); font-size: 29px; font-weight: 800; letter-spacing: -.01em}
+.price-label{font-size: 11px; color: var(--muted)}
+.price-label b{color: var(--ink-2); font-weight: 500}
+.addr{font-size: 16.5px; font-weight: 700; margin-top: 8px; line-height: 1.35}
+.addr-sub{font-size: 12px; color: var(--ink-2); margin-top: 4px}
+.mls{font-family: var(--num); color: var(--muted)}
+/* ①价格体检 */
+.pcheck{margin-top: 12px; border: 1px solid #F0E3D8; background: linear-gradient(180deg, #FFFDF9, #FFF9F0); border-radius: 12px; padding: 11px 12px}
+.pcheck-top{display: flex; align-items: center; gap: 7px; margin-bottom: 9px}
+.pcheck-top .t{font-size: 12.5px; font-weight: 700; color: #8A5A18}
+.pcheck-top .pill{margin-left: auto; font-size: 10.5px; color: #A07B3F; background: #F6ECDC; border-radius: 99px; padding: 2px 8px}
+.pcheck-grid{display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px}
+.pc-item .k{font-size: 10.5px; color: var(--muted); margin-bottom: 2px}
+.pc-item .v{font-size: 13px; font-weight: 700; font-family: var(--num)}
+.delta-up{color: var(--up)}
+.delta-down{color: var(--down)}
+.delta-flat{color: var(--ink-2)}
+.pc-note{margin-top: 9px; padding-top: 8px; border-top: 1px dashed #EBDCC4; font-size: 11px; color: #8A6A38; line-height: 1.55}
+/* ⑨归属chips */
+.chips-row{display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; margin-top: 12px}
+.chips-row: : -webkit-scrollbar{display: none}
+.geo-chip{flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--brand-ink); background: var(--brand-soft); border: 1px solid #DCE8FC; border-radius: 99px; padding: 5px 11px; font-weight: 500; text-decoration: none}
+.geo-chip small{color: #8FA6D4; font-weight: 400}
+/* 图标行 */
+.facts{display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 4px; padding: 14px 10px; border-top: 1px solid var(--line); margin-top: 14px}
+.fact{text-align: center}
+.fact .ic{font-size: 17px; margin-bottom: 3px}
+.fact .v{font-size: 13px; font-weight: 700; font-family: var(--num)}
+.fact .v small{font-size: 10px; font-weight: 500; color: var(--ink-2)}
+.fact .k{font-size: 10px; color: var(--muted); margin-top: 1px}
+/* ===== 地图区 ===== */
+.mapbox{position: relative; height: 190px; border-radius: 12px; overflow: hidden; margin-top: 12px}
+.map-count{position: absolute; left: 10px; bottom: 10px; z-index: 4; background: rgba(255, 255, 255, .94); backdrop-filter: blur(4px); font-size: 10.5px; color: var(--ink-2); border-radius: 99px; padding: 4px 10px; box-shadow: var(--shadow)}
+.poi-pills{display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-top: 10px; padding-bottom: 2px}
+.poi-pills: : -webkit-scrollbar{display: none}
+.poi-pill{flex-shrink: 0; font-size: 11.5px; color: var(--ink-2); background: #F2F5F9; border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; cursor: pointer; display: inline-flex; gap: 5px; align-items: center}
+.poi-pill b{font-family: var(--num); font-weight: 600; color: var(--muted)}
+.poi-pill.on{background: var(--brand); border-color: var(--brand); color: #fff}
+.poi-pill.on b{color: rgba(255, 255, 255, .8)}
+/* ③交通通勤 */
+.transit{margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px}
+.transit-row{display: flex; gap: 7px; flex-wrap: wrap}
+.stn-chip{display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; background: #F2FAFD; border: 1px solid #D5EEF7; border-radius: 99px; padding: 5px 11px; color: #0A6E92; font-weight: 500}
+.stn-chip .dot{width: 8px; height: 8px; border-radius: 99px; background: var(--canada-line)}
+.score-chip{display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; background: #F2F5F9; border: 1px solid var(--line); border-radius: 99px; padding: 5px 11px; color: var(--ink-2)}
+.score-chip b{font-family: var(--num); color: var(--ink)}
+.commute{margin-top: 10px; display: grid; gap: 6px}
+.cmt{display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2)}
+.cmt .ic{width: 22px; height: 22px; border-radius: 7px; background: #F2F5F9; display: grid; place-items: center; font-size: 11px}
+.cmt b{font-family: var(--num); color: var(--ink); font-weight: 600; margin-left: auto}
+.cmt.me{background: var(--ok-soft); border: 1px solid #CBEBDD; border-radius: 10px; padding: 8px 10px; color: #0B7A54}
+.cmt.me .ic{background: #fff}
+.cmt.me b{color: #0B7A54}
+.cmt.me .ok{font-size: 11px; color: #0B7A54; font-weight: 600}
+/* ===== 描述 ===== */
+.desc{font-size: 13.5px; line-height: 1.85; color: #2A374E}
+.desc-en{margin-top: 10px}
+.desc-en summary{list-style: none; cursor: pointer; font-size: 12px; color: var(--brand); font-weight: 500; display: inline-flex; gap: 4px; align-items: center}
+.desc-en summary: : -webkit-details-marker{display: none}
+.desc-en p{margin-top: 8px; font-size: 12.5px; line-height: 1.7; color: var(--ink-2)}
+/* ⑦Picked for You */
+.fit-card{background: linear-gradient(160deg, #F4F1FF 0%, #FFFFFF 45%); border: 1px solid #E6E0FA}
+.fit-head{display: flex; align-items: center; gap: 8px}
+.fit-head .ai-ic{width: 26px; height: 26px; border-radius: 9px; background: linear-gradient(135deg, var(--ai1), var(--ai2)); display: grid; place-items: center; color: #fff; font-size: 13px}
+.fit-head .t{font-size: 15px; font-weight: 700}
+.fit-head .sub{font-size: 10.5px; color: var(--muted)}
+.fit-score{margin-left: auto; text-align: right}
+.fit-score .n{font-family: var(--num); font-size: 21px; font-weight: 800; background: linear-gradient(135deg, var(--ai1), var(--ai2)); -webkit-background-clip: text; background-clip: text; color: transparent}
+.fit-score .k{font-size: 9.5px; color: var(--muted)}
+.fit-list{margin-top: 12px; display: grid; gap: 8px}
+.fit-item{display: flex; gap: 9px; font-size: 12.5px; line-height: 1.55; color: #2A374E}
+.fit-item .mark{flex-shrink: 0; width: 17px; height: 17px; border-radius: 99px; display: grid; place-items: center; font-size: 10px; font-weight: 800; margin-top: 1px}
+.fit-item.yes .mark{background: var(--ok-soft); color: var(--ok)}
+.fit-item.no .mark{background: var(--up-soft); color: var(--up)}
+.fit-item.mid .mark{background: var(--warn-soft); color: var(--warn)}
+.fit-item b{font-weight: 600}
+/* ===== 表格 ===== */
+.kv{display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; padding: 4px 14px 14px}
+.kv .row{display: flex; justify-content: space-between; padding: 7.5px 0; border-bottom: 1px solid #F1F4F8; font-size: 12px}
+.kv .row .k{color: var(--muted)}
+.kv .row .v{font-weight: 600; color: var(--ink); font-family: var(--num); text-align: right}
+.kv .subh{grid-column: 1/-1; font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--brand); padding: 13px 0 4px}
+.kv .subh: first-child{padding-top: 2px}
+.fold-blk{margin: 6px 14px 10px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff}
+.fold-blk summary{list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 9px 11px; font-size: 11px; font-weight: 700; letter-spacing: .05em; color: var(--brand); background: #F7F9FC}
+.fold-blk summary: : -webkit-details-marker{display: none}
+.fold-blk summary em{font-style: normal; font-weight: 400; color: var(--muted); font-size: 10px; margin-left: auto}
+.fold-blk summary: : after{content: '▾'; color: var(--brand); font-size: 10px; transition: transform .15s}
+.fold-blk[open] summary: : after{transform: rotate(180deg)}
+.fold-blk .rooms{padding: 4px 11px 10px; margin: 0}
+.ubtn{border: 1px solid var(--brand); color: var(--brand); background: transparent; border-radius: 999px; font-size: 9.5px; padding: 1px 7px; margin-left: 6px; cursor: pointer; font-family: inherit; vertical-align: 1px}
+.ubtn: hover{background: var(--brand-soft)}
+.ibtn{display: inline-grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--brand); color: var(--brand); background: transparent; font-size: 9px; font-style: italic; font-family: Georgia, serif; cursor: pointer; margin-left: 5px; vertical-align: 1px; padding: 0}
+.ibtn: hover{background: var(--brand-soft)}
+.ipop{display: none; margin: 5px 0 3px; padding: 6px 9px; background: #F2F5F9; border-left: 2px solid var(--brand); border-radius: 6px; color: var(--ink-2); font-size: 10.5px; line-height: 1.7; font-family: var(--cjk)}
+.mkt-pills{display: flex; gap: 6px; flex-wrap: wrap; margin-top: 13px}
+.mkt-pill{border: 1px solid var(--line); border-radius: 9px; padding: 6px 10px; font-size: 11.5px; background: #fff; cursor: pointer; font-family: var(--cjk); color: var(--ink-2)}
+.mkt-pill.on{background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 600}
+.mkt-period{display: inline-flex; border: 1px solid var(--line); border-radius: 99px; padding: 2px; margin-top: 11px; background: #fff}
+.mkt-period span{font-size: 11px; padding: 4px 12px; border-radius: 99px; cursor: pointer; color: var(--ink-2)}
+.mkt-period span.on{background: var(--brand); color: #fff; font-weight: 600}
+.mkt-title{font-size: 12px; color: var(--ink-2); margin-top: 11px}
+.stat4{display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 9px}
+.stat4 .st{background: #F7F9FC; border-radius: 9px; padding: 7px 4px; text-align: center}
+.stat4 .st .v{font-weight: 800; font-family: var(--num); font-size: 12.5px; color: var(--ink)}
+.stat4 .st .k{font-size: 10px; color: var(--muted); margin-top: 1px}
+.mkt-sel{margin-top: 9px; font-family: var(--cjk); font-size: 11px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink-2)}
+.mkt-chart{margin-top: 8px}
+.mkt-legend{display: flex; gap: 12px; justify-content: center; font-size: 10.5px; color: var(--ink-2); margin-top: 5px}
+.mkt-legend i{font-style: normal; display: inline-flex; align-items: center; gap: 4px}
+.mkt-legend .dotc{width: 8px; height: 8px; border-radius: 50%; display: inline-block}
+.mkt-foot{font-size: 10px; color: var(--muted); text-align: center; margin-top: 5px; line-height: 1.6}
+.sch-row{display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-top: 8px; background: #fff}
+.sch-ic{width: 34px; height: 34px; border-radius: 10px; background: #F2F5F9; display: grid; place-items: center; font-size: 16px; flex: none}
+.sch-nm{font-size: 13px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px; flex-wrap: wrap}
+.sch-tag{font-size: 9px; color: #0B7A54; background: var(--ok-soft); border: 1px solid #CBEBDD; border-radius: 99px; padding: 1px 7px; font-weight: 600}
+.sch-ad{font-size: 10.5px; color: var(--muted); margin-top: 2px; line-height: 1.5}
+.sch-score{margin-left: auto; text-align: right; flex: none}
+.sch-score .v{font-family: var(--num); font-size: 15px; font-weight: 800; color: var(--brand)}
+.sch-score .r{font-size: 10px; color: var(--muted); margin-top: 1px; font-family: var(--num)}
+.sch-chev{color: #C4CBD8; font-size: 15px; flex: none}
+.sch-empty{font-size: 11.5px; color: var(--muted); text-align: center; padding: 18px 0 10px}
+.rk-item{border: 1px solid var(--line); border-radius: 12px; padding: 9px 11px; margin-top: 8px}
+.rk-head{display: flex; align-items: center; gap: 7px}
+.rk-sev{font-size: 9px; font-weight: 700; border-radius: 99px; padding: 2px 8px; flex: none}
+.rk-sev.risk{color: #B4382A; background: var(--up-soft)}
+.rk-sev.tradeoff{color: #8A5A18; background: var(--warn-soft)}
+.rk-title{font-size: 12.5px; font-weight: 700; color: var(--ink)}
+.rk-act{margin-left: auto; font-size: 9.5px; color: var(--brand-ink); background: var(--brand-soft); border-radius: 99px; padding: 2px 8px; flex: none; white-space: nowrap}
+.rk-text{font-size: 11.5px; color: var(--ink-2); line-height: 1.65; margin-top: 5px}
+.rk-ev{font-size: 9.5px; color: var(--muted); font-family: var(--num); margin-top: 4px; line-height: 1.6}
+.rooms{padding: 0 14px 14px}
+.rooms table{width: 100%; border-collapse: collapse; font-size: 11.5px}
+.rooms th{text-align: left; color: var(--muted); font-weight: 500; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 10.5px}
+.rooms td{padding: 6.5px 0; border-bottom: 1px solid #F1F4F8; color: var(--ink-2)}
+.rooms td: first-child{color: var(--ink); font-weight: 500}
+.rooms td: last-child, .rooms th: last-child{text-align: right; font-family: var(--num)}
+.more-collapse summary{list-style: none; cursor: pointer; text-align: center; font-size: 12px; color: var(--brand); font-weight: 500; padding: 11px; border-top: 1px solid var(--line)}
+.more-collapse summary: : -webkit-details-marker{display: none}
+/* Listing Facts Tab 化 */
+.dtabs{display: flex; gap: 4px; margin: 10px 14px 0; background: #F2F5F9; border-radius: 11px; padding: 3px}
+.dtab{flex: 1; text-align: center; font-size: 12.5px; color: var(--ink-2); padding: 8px 0; border-radius: 9px; cursor: pointer; font-weight: 500; transition: .15s}
+.dtab.on{background: #fff; color: var(--ink); font-weight: 700; box-shadow: 0 1px 4px rgba(24, 35, 56, .1)}
+.ins-chip{display: flex; gap: 7px; align-items: flex-start; margin: 10px 14px 0; background: var(--brand-soft); border: 1px solid #DCE8FC; border-radius: 10px; padding: 8px 11px; font-size: 11.5px; color: var(--brand-ink); line-height: 1.55}
+.ins-chip.gold{background: #FCF6E8; border-color: #F0E2C0; color: #8A5A18}
+.ins-chip.green{background: var(--ok-soft); border-color: #CBEBDD; color: #0B7A54}
+.legal-fold{margin: 6px 14px 12px}
+.legal-fold summary{list-style: none; cursor: pointer; font-size: 11.5px; color: var(--brand); font-weight: 500}
+.legal-fold summary: : -webkit-details-marker{display: none}
+.legal-fold p{margin-top: 6px; font-size: 10.5px; color: var(--muted); line-height: 1.6; font-family: var(--num)}
+/* ⑧Investor View */
+.inv-grid{display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px}
+.inv-tile{background: #F7F9FC; border: 1px solid var(--line); border-radius: 11px; padding: 10px 11px}
+.inv-tile .k{font-size: 10.5px; color: var(--muted)}
+.inv-tile .v{font-family: var(--num); font-size: 16.5px; font-weight: 800; margin-top: 2px}
+.inv-tile .s{font-size: 10px; color: var(--muted); margin-top: 2px}
+.tagline{display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap}
+.fact-tag{font-size: 10.5px; color: var(--ink-2); background: #F2F5F9; border-radius: 99px; padding: 3.5px 9px}
+/* ②Community行情 */
+.trend-row{display: flex; align-items: center; gap: 12px}
+.trend-meta .v{font-family: var(--num); font-size: 17px; font-weight: 800}
+.trend-meta .k{font-size: 10.5px; color: var(--muted)}
+.trend-meta .d{font-size: 11.5px; font-weight: 700; font-family: var(--num)}
+.spark{margin-left: auto}
+/* ⑤画像 */
+.demo-grid{display: grid; grid-template-columns: 1fr 1fr; gap: 8px}
+.demo-tile{background: #F7F9FC; border: 1px solid var(--line); border-radius: 11px; padding: 10px 11px}
+.demo-tile .v{font-family: var(--num); font-size: 15.5px; font-weight: 800}
+.demo-tile .v.txt{font-family: var(--cjk); font-size: 12.5px; font-weight: 700; line-height: 1.4}
+.demo-tile .k{font-size: 10.5px; color: var(--muted); margin-top: 2px}
+/* ⑥学校 */
+.sch-group{padding: 0 14px}
+.sch-group-tag{display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; border-radius: 8px; padding: 4px 9px; margin-top: 12px}
+.sch-group-tag.catch{background: var(--ok-soft); color: #0B7A54}
+.sch-group-tag.near{background: #F2F5F9; color: var(--ink-2)}
+.school{display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid #F1F4F8}
+.school: last-child{border-bottom: none}
+.school .badge{flex-shrink: 0; width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; font-size: 10px; font-weight: 700; line-height: 1.1; text-align: center}
+.school .badge.pub{background: var(--brand-soft); color: var(--brand-ink)}
+.school .badge.pri{background: #F6EFFA; color: #8A44B8}
+.school .info{flex: 1; min-width: 0}
+.school .nm{font-size: 13px; font-weight: 600}
+.school .meta{font-size: 10.5px; color: var(--muted); margin-top: 2px}
+.school .rk{text-align: right; flex-shrink: 0}
+.school .rk .n{font-family: var(--num); font-size: 14px; font-weight: 800; color: var(--brand-ink)}
+.school .rk .s{font-size: 9.5px; color: var(--muted)}
+/* ⑪Risk */
+.risk-item{display: flex; gap: 9px; padding: 9px 0; font-size: 12.5px; line-height: 1.6; color: #2A374E; border-bottom: 1px solid #F1F4F8}
+.risk-item: last-child{border-bottom: none}
+.risk-item .ic{flex-shrink: 0; width: 18px; height: 18px; border-radius: 6px; background: var(--warn-soft); color: var(--warn); display: grid; place-items: center; font-size: 10.5px; margin-top: 2px}
+.risk-item .lv{flex-shrink: 0; font-size: 10px; color: var(--muted); background: #F2F5F9; border-radius: 99px; padding: 2px 7px; height: fit-content; margin-top: 2px}
+/* ⑩Similar Listings */
+.sim-scroll{display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding: 12px 14px 4px}
+.sim-scroll: : -webkit-scrollbar{display: none}
+.sim-card{flex-shrink: 0; width: 150px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff}
+.sim-card .ph{height: 88px; position: relative}
+.sim-card .ph .tag{position: absolute; top: 7px; left: 7px; font-size: 9px; color: #fff; background: rgba(10, 16, 28, .55); border-radius: 99px; padding: 2px 7px}
+.sim-card .bd{padding: 8px 9px 10px}
+.sim-card .p{font-family: var(--num); font-size: 13.5px; font-weight: 800}
+.sim-card .p small{font-size: 9.5px; font-weight: 600; margin-left: 3px}
+.sim-card .a{font-size: 10.5px; color: var(--ink-2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis}
+.sim-card .m{font-size: 9.5px; color: var(--muted); margin-top: 3px; font-family: var(--num)}
+.alt-line{margin: 10px 14px 14px; background: #F7F9FC; border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; font-size: 11.5px; color: var(--ink-2); line-height: 1.6}
+.alt-line a{color: var(--brand); font-weight: 600; text-decoration: none}
+/* 经纪人 */
+.agent{display: flex; align-items: center; gap: 11px; padding: 11px 14px; border-bottom: 1px solid #F1F4F8}
+.agent: last-child{border-bottom: none}
+.agent .av{width: 42px; height: 42px; border-radius: 99px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 15px; font-family: var(--num)}
+.agent .nm{font-size: 13.5px; font-weight: 700}
+.agent .co{font-size: 11px; color: var(--muted); margin-top: 1px}
+.agent .tel{margin-left: auto; font-size: 10.5px; color: var(--brand); font-family: var(--num); font-weight: 600; white-space: nowrap}
+.agent-tag{font-size: 9.5px; color: #B8860B; background: #FCF3E4; border-radius: 99px; padding: 2px 7px; margin-left: 6px; font-weight: 600}
+/* 免责+推广 */
+.legal{padding: 16px 14px 8px}
+.promo{margin: 10px 12px 0}
+.promo summary{list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; background: #EEF1F6; border-radius: 12px; padding: 11px 14px; font-size: 12px; color: var(--ink-2)}
+.promo summary: : -webkit-details-marker{display: none}
+.promo .ad-mark{font-size: 9.5px; color: var(--muted); border: 1px solid #CBD4E2; border-radius: 4px; padding: 1px 5px}
+.promo .ads{display: grid; gap: 8px; padding: 10px 2px 0}
+.ad-card{border-radius: 11px; padding: 12px 14px; font-size: 12px; color: #fff; position: relative; overflow: hidden}
+.ad-card .am{position: absolute; top: 8px; right: 10px; font-size: 9px; border: 1px solid rgba(255, 255, 255, .5); border-radius: 4px; padding: 1px 5px; color: rgba(255, 255, 255, .8)}
+.ad-card b{font-size: 13px}
+.ad-card p{font-size: 10.5px; opacity: .85; margin-top: 3px}
+/* 底部操作条 ⑫ */
+.actionbar{
+  position: sticky; bottom: 0; z-index: 70; background: rgba(255, 255, 255, .95); backdrop-filter: blur(16px); 
+  border-top: 1px solid var(--line); padding: 10px 14px calc(10px + 14px); display: flex; gap: 9px; align-items: center; 
+}
+.ab-ic{flex-shrink: 0; width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; font-size: 18px; border: 1px solid var(--line); background: #fff}
+.ab-ic .lbl{display: none}
+.ab-ask{
+  flex: 1; height: 44px; border: none; border-radius: 13px; cursor: pointer; 
+  background: linear-gradient(135deg, var(--ai1), var(--ai2)); color: #fff; font-family: var(--cjk); 
+  font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 7px; 
+  box-shadow: 0 8px 20px -6px rgba(93, 61, 245, .5); position: relative; overflow: hidden; 
+}
+.ab-ask: : after{content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, .25) 50%, transparent 60%); transform: translateX(-100%); animation: shine 3.2s ease-in-out infinite}
+@keyframes shine{0%, 60%{transform: translateX(-100%)}100%{transform: translateX(100%)}}
+.ab-call{flex-shrink: 0; height: 44px; padding: 0 18px; border-radius: 13px; background: var(--ink); color: #fff; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 6px}
+/* 载入动画 */
+.wrap>.card, .head-card{animation: rise .5s cubic-bezier(.2, .7, .3, 1) both}
+@keyframes rise{from{opacity: 0; transform: translateY(10px)}to{opacity: 1; transform: none}}
+@media (max-width: 430px){
+  .phone{box-shadow: none}
+}
+/* iOS 安全区 */
+.actionbar{padding-bottom: calc(10px + env(safe-area-inset-bottom, 14px))}
+.statusbar .sim{padding-top: calc(10px + env(safe-area-inset-top, 0px))}
+</style>
+</head>
+<body>
+
+<div class="stage-head">
+  <div class="stage-title">Johome · Listing Detail Upgrade Prototype (demo toolbar,  not product UI)
+    <small>Sample R3146279 · Final state · PRD ①–⑫ new modules + O1–O5 fixes</small>
+  </div>
+  <div class="stage-actions">
+    <span style="color: #8C99AF; font-size: 10.5px">MLS class demo: </span>
+    <button class="stage-btn" data-ft="house" onclick="setFacts('house', this)">House/Manufactured</button>
+    <button class="stage-btn on" data-ft="duplex" onclick="setFacts('duplex', this)">1/2 Duplex</button>
+    <button class="stage-btn" data-ft="town" onclick="setFacts('town', this)">Townhouse</button>
+    <button class="stage-btn" data-ft="apt" onclick="setFacts('apt', this)">Apartment</button><button class="stage-btn" data-ft="multi" onclick="setFacts('multi', this)">Full Duplex</button><button class="stage-btn" data-ft="land" onclick="setFacts('land', this)">Land</button>
+    <button class="stage-btn on" id="btnAnno" onclick="toggleAnno()">Show PRD annotations</button>
+  </div>
+</div>
+
+<div class="phone">
+<div class="screen" id="screen">
+
+  <!-- 状态栏 + 导航 -->
+  <div class="statusbar">
+    <div class="sim"><span>3: 24</span><span style="display: inline-flex; align-items: center; gap: 5px">5G
+      <svg width="16" height="10" viewBox="0 0 16 10"><g fill="#182338"><rect x="0" y="6" width="2.6" height="4" rx="1"/><rect x="4.2" y="4" width="2.6" height="6" rx="1"/><rect x="8.4" y="2" width="2.6" height="8" rx="1"/><rect x="12.6" y="0" width="2.6" height="10" rx="1"/></g></svg>
+      <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0" y="0" width="19" height="11" rx="3" fill="none" stroke="#182338" stroke-width="1.2"/><rect x="2" y="2" width="13" height="7" rx="1.5" fill="#182338"/><rect x="20" y="3.5" width="2" height="4" rx="1" fill="#182338"/></svg>
+    </span></div>
+    <div class="navrow">
+      <div class="back">‹</div>
+      <div class="nav-title num">R3146279 - Detail</div>
+      <div class="nav-ic">♡</div>
+      <div class="nav-ic">⧉</div>
+    </div>
+  </div>
+
+  <!-- 头图轮播 -->
+  <div class="hero">
+    <div class="hero-img">
+      <svg width="100%" height="100%" viewBox="0 0 390 250" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#B8D4E8"/><stop offset="1" stop-color="#E8EFF4"/>
+          </linearGradient>
+          <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#4A5A6B"/><stop offset="1" stop-color="#37465A"/>
+          </linearGradient>
+          <linearGradient id="wall2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#5B6C7E"/><stop offset="1" stop-color="#46586C"/>
+          </linearGradient>
+        </defs>
+        <rect width="390" height="250" fill="url(#sky)"/>
+        <ellipse cx="60" cy="245" rx="180" ry="40" fill="#C5D6C0"/>
+        <ellipse cx="340" cy="250" rx="200" ry="42" fill="#B7CBB2"/>
+        <rect x="70" y="70" width="180" height="150" fill="url(#wall)"/>
+        <rect x="250" y="95" width="90" height="125" fill="url(#wall2)"/>
+        <polygon points="70, 70 160, 38 250, 70" fill="#2C3947"/>
+        <polygon points="250, 95 295, 72 340, 95" fill="#3A4A5C"/>
+        <g fill="#DCE8F2">
+          <rect x="88" y="88" width="34" height="44" rx="2"/><rect x="132" y="88" width="34" height="44" rx="2"/>
+          <rect x="182" y="88" width="50" height="44" rx="2"/>
+          <rect x="88" y="150" width="34" height="52" rx="2"/><rect x="182" y="150" width="50" height="30" rx="2"/>
+          <rect x="264" y="110" width="26" height="30" rx="2"/><rect x="298" y="110" width="26" height="30" rx="2"/>
+          <rect x="264" y="155" width="60" height="26" rx="2"/>
+        </g>
+        <rect x="134" y="158" width="30" height="62" rx="2" fill="#C89A5B"/>
+        <rect x="60" y="205" width="290" height="8" fill="#8FA893"/>
+        <g fill="#5F7D63"><ellipse cx="38" cy="185" rx="26" ry="42"/><ellipse cx="368" cy="178" rx="24" ry="48"/><ellipse cx="345" cy="200" rx="16" ry="26"/></g>
+        <rect width="390" height="250" fill="url(#grain)" opacity=".5"/>
+      </svg>
+    </div>
+    <span style="position: absolute; top: 12px; right: 12px; z-index: 3; background: #1FA75A; color: #fff; font-size: 11px; font-weight: 600; padding: 5px 13px; border-radius: 99px">Active</span>
+    <div class="hero-tabs"><span>VR</span><span class="on">Photos</span></div>
+    <div class="num" style="position: absolute; right: 14px; bottom: 14px; z-index: 3; background: rgba(10, 16, 28, .55); color: #fff; font-size: 10.5px; padding: 3px 10px; border-radius: 99px">3 / 32</div>
+  </div>
+
+  <!-- 标题 / 价格 / ①价格体检 / ⑨归属chips / 图标行 -->
+  <div class="card head-card card-pad mod">
+    <span class="mod-tag opt">O2 terminology fix</span>
+    <div class="price-row">
+      <span class="price">$2, 688, 000</span>
+      <span class="price-label"><b>List Date</b> 07/14/2026 · <span class="num">Day 1 on market</span></span>
+    </div>
+    <div class="addr">396 W 21ST AVENUE,  Vancouver BC</div>
+    <div style="font-size: 12.5px; color: var(--ink-2); margin-top: 3px">Cambie,  Vancouver West,  V5Y 2E5</div>
+    <div class="addr-sub">1/2 Duplex · Residential Attached · Freehold Strata &nbsp; |&nbsp;  <span class="mls num">MLS® R3146279</span></div>
+
+    <!-- ① 价格体检 -->
+    <div class="pcheck mod">
+      <span class="mod-tag">New ① Price Check</span>
+      <div class="pcheck-top">
+        <span style="font-size: 14px">🩺</span><span class="t">Price Check · This home vs Cambie</span>
+        <span class="pill">Same community · same type</span>
+      </div>
+      <div class="pcheck-grid">
+        <div class="pc-item">
+          <div class="k">vs community 1/2-duplex sold median $2.49M</div>
+          <div class="v delta-up">▲ 8% above median</div>
+        </div>
+        <div class="pc-item">
+          <div class="k">Cambie 1/2 duplex · 1 yr</div>
+          <div class="v delta-up">▲ +2.1%</div>
+        </div>
+        <div class="pc-item">
+          <div class="k">Active same-type listings</div>
+          <div class="v">11</div>
+        </div>
+        <div class="pc-item">
+          <div class="k">DOM vs community average</div>
+          <div class="v">1 d <span style="color: var(--muted); font-weight: 500">/ 21 d</span></div>
+        </div>
+        <div class="pc-item" style="grid-column: 1/-1">
+          <div class="k" style="font-size: 12.5px; font-weight: 700; color: #8A5A18; margin-bottom: 3px">vs BC Assessment (2025) $2.41M</div>
+          <div class="v delta-up">▲ 12% above assessed</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图标行(O2 terminology fix · 按 MLS 房源类型自适应) -->
+    <div class="mod" style="margin-top: 14px">
+      <span class="mod-tag opt" style="top: -6px">O2+ icon row adapts by class</span>
+      <div class="facts" id="factsGrid" style="margin-top: 0"></div>
+    </div>
+
+    <!-- ⑨ 归属上下文 chips -->
+    <div class="mod" style="margin-top: 14px">
+      <span class="mod-tag">New ⑨ Context chips</span>
+      <div class="chips-row" style="margin-top: 0">
+        <a class="geo-chip" href="#"><small>Community</small> Cambie ›</a>
+        <a class="geo-chip" href="#"><small>Zone</small> Cambie · Mount Pleasant ›</a>
+        <a class="geo-chip" href="#"><small>District</small> Oakridge(nearest)›</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+  <!-- 平台经纪速联卡 -->
+  <div class="card card-pad" style="display: flex; align-items: center; gap: 12px">
+    <div style="position: relative; flex: none">
+      <div style="width: 52px; height: 52px; border-radius: 50%; background: #EEF1F6; display: grid; place-items: center; font-size: 24px">👤</div>
+      <span style="position: absolute; left: 50%; transform: translateX(-50%); bottom: -6px; background: #F29900; color: #fff; font-size: 8.5px; font-weight: 700; border-radius: 99px; padding: 2px 7px; white-space: nowrap">☘ Realtor</span>
+    </div>
+    <div style="flex: 1; min-width: 0">
+      <div style="font-size: 14.5px; font-weight: 800">Mike Zhang</div>
+      <div style="font-size: 11.5px; color: var(--ink-2); margin-top: 2px">Nu Stream Realty Inc</div>
+      <div class="num" style="font-size: 11.5px; color: var(--ink-2); margin-top: 1px">+1 (778) 926-9213</div>
+      <div style="font-size: 11.5px; color: var(--ink-2)">mike.zhang@Johome.com</div>
+    </div>
+  </div>
+
+  <!-- Open House -->
+  <div class="sec-head" style="padding: 2px 4px 9px"><span class="sec-title">Open House</span></div>
+  <div class="card">
+    <div class="card-pad" style="display: flex; align-items: center; gap: 10px">
+      <span style="font-size: 20px">🗓</span>
+      <div style="flex: 1">
+        <div style="font-size: 13.5px; font-weight: 700">Sat,  Jul 18</div>
+        <div style="font-size: 11.5px; color: var(--ink-2); margin-top: 2px" class="num">13: 30 – 15: 00</div>
+      </div>
+      <button style="border: none; background: var(--brand); color: #fff; font-family: var(--cjk); font-size: 12.5px; font-weight: 600; border-radius: 10px; padding: 9px 16px">Register</button>
+    </div>
+  </div>
+
+  <!-- Listing History(同一Strata历次挂牌) -->
+  <div class="sec-head" style="padding: 8px 4px 9px"><span class="sec-title">Listing History</span></div>
+  <div class="card">
+    <div class="card-pad" style="padding-top: 12px; padding-bottom: 4px">
+      <div style="display: flex; align-items: center"><div class="num" style="font-size: 15px; font-weight: 800">$ 2, 688, 000</div><span style="margin-left: auto; font-size: 10px; font-weight: 700; color: #0B7A54; background: var(--ok-soft); border-radius: 99px; padding: 3px 10px">Active</span></div>
+      <div style="font-size: 11px; color: var(--muted); margin-top: 3px" class="num">Listed:  07/14/2026 · MLS:  R3146279</div>
+      <div style="border-top: 1px solid var(--line); margin: 11px 0"></div>
+      <div style="display: flex; align-items: center"><div class="num" style="font-size: 15px; font-weight: 800">$ 2, 700, 000</div><span style="margin-left: auto; font-size: 10px; font-weight: 700; color: var(--ink-2); background: #EEF1F6; border-radius: 99px; padding: 3px 10px">Terminated</span></div>
+      <div style="font-size: 11px; color: var(--muted); margin-top: 3px" class="num">Listed:  02/20/2026 · Ended:  07/14/2026 · MLS:  R3092014</div>
+      <div class="footnote" style="padding: 10px 0 8px">MLS® listing history for this property;  expiry date of the active listing is not displayed (board member-only field).</div>
+    </div>
+  </div>
+
+  <!-- 地图 + ④POI + ③交通通勤 -->
+  <div class="card card-pad mod">
+    <span class="mod-tag">New ③④ Transit + POI</span>
+    <div class="sec-title" style="padding: 0">Location & Nearby</div>
+
+    <div class="mapbox">
+      <svg width="100%" height="100%" viewBox="0 0 366 190" preserveAspectRatio="xMidYMid slice">
+        <rect width="366" height="190" fill="#EEF3EE"/>
+        <g stroke="#FFFFFF" stroke-width="7">
+          <line x1="0" y1="48" x2="366" y2="44"/><line x1="0" y1="106" x2="366" y2="102"/><line x1="0" y1="160" x2="366" y2="158"/>
+          <line x1="62" y1="0" x2="66" y2="190"/><line x1="188" y1="0" x2="184" y2="190"/><line x1="300" y1="0" x2="304" y2="190"/>
+        </g>
+        <g stroke="#FFD966" stroke-width="9"><line x1="188" y1="0" x2="184" y2="190"/></g>
+        <g stroke="#FFFFFF" stroke-width="3" opacity=".9">
+          <line x1="0" y1="76" x2="366" y2="73"/><line x1="0" y1="132" x2="366" y2="130"/>
+          <line x1="124" y1="0" x2="126" y2="190"/><line x1="244" y1="0" x2="246" y2="190"/>
+        </g>
+        <rect x="18" y="116" width="38" height="36" rx="4" fill="#BFDCB4"/>
+        <rect x="310" y="54" width="44" height="42" rx="4" fill="#BFDCB4"/>
+        <text x="326" y="79" font-size="8" fill="#5E7D57" font-family="sans-serif">Parks</text>
+        <!-- Canada Line -->
+        <line x1="186" y1="0" x2="183" y2="190" stroke="#0098C9" stroke-width="3" stroke-dasharray="8 5" opacity=".85"/>
+        <circle cx="184.5" cy="96" r="6.5" fill="#0098C9" stroke="#fff" stroke-width="2.5"/>
+        <!-- POI 点位 -->
+        <g>
+          <circle cx="96" cy="60" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="150" cy="140" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="262" cy="66" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="216" cy="150" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="322" cy="132" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="42" cy="82" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+        </g>
+        <!-- 本房 pin -->
+        <g transform="translate(120, 88)">
+          <path d="M0, -26 C-11, -26 -17, -18 -17, -10 C-17, 0 0, 14 0, 14 C0, 14 17, 0 17, -10 C17, -18 11, -26 0, -26Z" fill="#2E6BE6" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="0" cy="-11" r="5" fill="#fff"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- ④ POI 类型 pills -->
+    <div class="poi-pills">
+      <span class="poi-pill on">🍜 Dining <b>46</b></span>
+      <span class="poi-pill">🛒 Grocery <b>8</b></span>
+      <span class="poi-pill">☕ Coffee <b>21</b></span>
+      <span class="poi-pill">🌳 Parks <b>12</b></span>
+      <span class="poi-pill">💪 Fitness <b>9</b></span>
+      <span class="poi-pill">🏥 Medical <b>15</b></span>
+    </div>
+
+    <!-- ③ 交通与通勤 -->
+    <div class="transit">
+      <div class="transit-row">
+        <span class="stn-chip"><span class="dot"></span>Canada Line · King Edward <b class="num">6 min walk</b></span>
+        <span class="stn-chip"><span class="dot"></span>Canada Line · Oakridge–41st <b class="num">18 min walk</b></span>
+      </div>
+      </div>
+  </div>
+
+  <!-- Description(O3 中文优先) -->
+  <div class="card mod">
+    <span class="mod-tag opt">O3 description (EN original)</span>
+    <div class="sec-head"><span class="sec-title">Description</span></div>
+    <div class="card-pad" style="padding-top: 10px">
+      <p class="desc">Architecturally striking 3Bed/3.5Bath contemporary duplex built by Rdon Construction,  designed by Architrix on a prime 36′×122′ Cambie corner lot. Metal roof,  aluminum detailing,  triple-glazed Cortizo sliding doors,  Hardie siding,  radiant in-floor heating and A/C. Private landscaped yard and beautiful mountain views enhance the detached-home feel. Interiors showcase white oak floors,  marble fireplace,  skylights and a fully integrated kitchen. OPEN HOUSE:  SAT July 18th 1: 30–3 PM.</p>
+    </div>
+  </div>
+
+  <!-- ⑦ Picked for You -->
+  <div class="card fit-card card-pad mod">
+    <span class="mod-tag">New ⑦ Picked for You</span>
+    <div class="fit-head">
+      <div class="ai-ic">✦</div>
+      <div><div class="t">Picked for You</div><div class="sub">Compared line-by-line with your buyer profile · visible only to you</div></div>
+      <div class="fit-score"><div class="n">82</div><div class="k">Match</div></div>
+    </div>
+    <div class="fit-list">
+      <div class="fit-item no"><span class="mark">✕</span><span><b>Budget:  </b>about <b class="num">$188, 000</b> over your $2.5M band;  negotiable if you can stretch ≤8%</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>Type:  </b>3 beds + a real office — matches your 3+ bed duplex/townhouse intent</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>Commute:  </b>18 min to Broadway Tech Centre — inside your 30-min isochrone</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>Schools:  </b>catchment Eric Hamber Secondary (Fraser Institute 2025 · <span class="num">8.6</span>)</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>View:  </b>listing notes mountain views — matches your preference</span></div>
+      <div class="fit-item mid"><span class="mark">!</span><span><b>Parking:  </b>1 stall vs your 2-preferred;  street parking available</span></div>
+    </div>
+    <div class="footnote" style="margin-top: 11px">Based on your Buying AI profile;  mismatches shown honestly. Update in Profile → Preferences.</div>
+  </div>
+
+  <!-- Listing Facts(Tab 化重组: 去重 + 信号提炼, 内容随 MLS 类型切换) -->
+  <div class="card mod">
+    <span class="mod-tag opt">O2+ Tabbed facts · dedup + signals</span>
+    <div class="sec-head"><span class="sec-title">Listing Facts</span><span style="font-size: 10px; color: var(--muted)" id="dtSrc"></span></div>
+    <div class="dtabs" id="dtabs"></div>
+    <div id="dtBody"></div>
+  </div>
+
+  <!-- BC Assessment(BC Assessment) -->
+  <div class="sec-head" style="padding: 8px 4px 9px"><span class="sec-title">BC Assessment</span></div>
+  <div class="card">
+    <div class="card-pad" style="padding-top: 12px; padding-bottom: 4px">
+      <div style="display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px"><div class="num" style="font-size: 18px; font-weight: 800; letter-spacing: .5px">$2, 405, 000</div><span style="font-size: 10.5px; color: var(--muted)">2025 Roll</span><span style="margin-left: auto; font-size: 11px; font-weight: 700" class="delta-up">Listed 12% above assessed</span></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px">
+        <div style="background: #F7F9FC; border-radius: 9px; padding: 8px 10px"><div style="font-size: 10px; color: var(--muted)">Land Value</div><div class="num" style="font-size: 13.5px; font-weight: 800; margin-top: 2px">$1, 850, 000 <span style="font-size: 9.5px; color: var(--muted); font-weight: 500">77%</span></div></div>
+        <div style="background: #F7F9FC; border-radius: 9px; padding: 8px 10px"><div style="font-size: 10px; color: var(--muted)">Building Value</div><div class="num" style="font-size: 13.5px; font-weight: 800; margin-top: 2px">$555, 000 <span style="font-size: 9.5px; color: var(--muted); font-weight: 500">23%</span></div></div>
+      </div>
+      <div class="footnote" style="padding: 10px 0 8px">Source:  BC Assessment public data.</div>
+    </div>
+  </div>
+
+  <!-- ⑧ Investor View(条件展开 · 6护栏: 绑定当前房源/样本量/白盒明细/未计项/挂牌口径/客观热度) -->
+  <div class="card mod">
+    <span class="mod-tag">New ⑧ Investor View</span>
+    <div class="sec-head">
+      <span class="sec-title">Investor View</span>
+    </div>
+    <div class="card-pad" style="padding-top: 10px">
+      <div class="inv-grid">
+        <div class="inv-tile"><div class="k">Est. Monthly Rent (asking)</div><div class="v">$3, 700</div><div class="s">Edmonds duplex/town rentals · 1-yr asking median</div></div>
+        <div class="inv-tile"><div class="k">Gross Yield (annual)</div><div class="v">4.4%</div><div class="s">Annual rent ÷ list price</div></div>
+        <div class="inv-tile"><div class="k">Cap Rate (est.)</div><div class="v">3.4%</div><div class="s">(Annual rent − carrying costs) ÷ list price · see breakdown</div></div>
+        <div class="inv-tile"><div class="k">Market Pace (objective)</div><div class="v">SALR 21%</div><div class="s">Monthly sold ÷ active · community DOM 18 d</div></div>
+      </div>
+      <details style="margin-top: 9px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden">
+        <summary style="list-style: none; cursor: pointer; padding: 8px 11px; font-size: 11.5px; font-weight: 700; color: var(--brand); background: #F7F9FC">Cap Rate Breakdown (white-box) ▾</summary>
+        <div style="padding: 8px 11px 10px; font-size: 11px; line-height: 1.9; color: var(--ink-2); font-family: var(--num)">
+          <div><b>NOI ≈ $33, 600 ÷ list price $999, 900 = 3.4%</b></div>
+          <div>Annual rent (asking median) $44, 400 <span style="color: var(--muted)">MLS rental listings · community × type · 1-yr median</span></div>
+          <div>− Property tax $3, 984 <span style="color: var(--ok); font-weight: 600">feed actual</span></div>
+          <div>− Insurance ≈$2, 180 <span style="color: var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">Replacement-cost method:  floor area × rebuild rate ($200–300/ft²) × premium rate (0.5–0.7%) × rental uplift (+15–25%);  loaded when Flood Plain = Y. Strata types use a flat condo-policy band. Params 2026Q3,  calibrated quarterly.</div></div>
+          <div>− Maintenance reserve ≈$3, 300 <span style="color: var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">Component amortization:  Σ(replacement cost ÷ design life) — roof/heat/HW tank/exterior (from feed Roof/Heat/Exterior fields) + routine $1.2/ft²/yr,  × age factor (10–30 yrs = 1.0). Strata types count in-suite components only to avoid double-counting the fee.</div></div>
+          <div>− Vacancy allowance ≈$1, 330 <span style="color: var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">CMHC basis:  max(CMHC zone vacancy rate (updated each Oct),  turnover friction = vacant months ÷ avg tenancy). Burnaby duplex here = 3%.</div></div>
+          <div style="color: var(--muted)">Excluded:  management fee (self-managed,  $0) · financing (cap rate excludes debt);  capex covered by amortization</div>
+        </div>
+      </details>
+    </div>
+  </div>
+  <!-- ② Community行情入口 + ⑤ Demographics -->
+  <div class="card mod">
+    <span class="mod-tag">New ② Market entry</span>
+    <div class="sec-head"><span class="sec-title">Cambie Market</span><a class="sec-link" href="#" id="mktToggleLink" onclick="mktToggle(event)">View full market data ›</a></div>
+    <div class="card-pad" style="padding-top: 10px">
+      <div class="trend-row">
+        <div class="trend-meta">
+          <div class="v">$2.49M</div>
+          <div class="k">1/2-duplex sold median · past month</div>
+          <div class="d delta-up" style="margin-top: 3px">▲ 1 yr +2.1%</div>
+        </div>
+        <svg class="spark" width="150" height="54" viewBox="0 0 150 54" role="img" aria-label="Cambie 1/2 Duplex中位价近12月走势">
+          <defs><linearGradient id="sp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E6BE6" stop-opacity=".18"/><stop offset="1" stop-color="#2E6BE6" stop-opacity="0"/></linearGradient></defs>
+          <path d="M4, 34 L17, 36 L30, 31 L43, 33 L56, 28 L69, 30 L82, 25 L95, 27 L108, 22 L121, 24 L134, 19 L146, 16 L146, 52 L4, 52 Z" fill="url(#sp)"/>
+          <path d="M4, 34 L17, 36 L30, 31 L43, 33 L56, 28 L69, 30 L82, 25 L95, 27 L108, 22 L121, 24 L134, 19 L146, 16" fill="none" stroke="#2E6BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="146" cy="16" r="3" fill="#2E6BE6" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div id="mktFull" style="display: none">
+        <div class="mkt-pills" id="mktPills">
+          <span class="mkt-pill on" onclick="mktTab(0, this)">Sold Median</span>
+          <span class="mkt-pill" onclick="mktTab(1, this)">Price Change</span>
+          <span class="mkt-pill" onclick="mktTab(2, this)">Active Listings</span>
+          <span class="mkt-pill" onclick="mktTab(3, this)">Avg DOM</span>
+          <span class="mkt-pill" onclick="mktTab(4, this)">SALR</span>
+        </div>
+        <div class="mkt-pane" id="mp0">
+          <div class="mkt-title">Median sold price in this community</div>
+          <div class="stat4"><div class="st"><div class="v">$1.55M</div><div class="k">All · median</div></div><div class="st"><div class="v">$0.79M</div><div class="k">Apartment</div></div><div class="st"><div class="v">$1.35M</div><div class="k">Townhouse</div></div><div class="st"><div class="v">$2.65M</div><div class="k">House</div></div></div>
+          <div class="mkt-chart" id="mc0"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background: #34A853"></span>Apartment</i><i><span class="dotc" style="background: #2E6BE6"></span>Townhouse</i><i><span class="dotc" style="background: #F29900"></span>House</i></div>
+          <div class="mkt-foot">X = price bucket ($10k) · Y = active count</div>
+        </div>
+        <div class="mkt-pane" id="mp1" style="display: none">
+          <div class="mkt-period"><span class="on">1Y</span><span>3Y</span><span>5Y</span></div>
+          <div class="mkt-title">1-yr median price change</div>
+          <div class="stat4"><div class="st"><div class="v">+2.1%</div><div class="k">All</div></div><div class="st"><div class="v">+3.6%</div><div class="k">Apartment</div></div><div class="st"><div class="v">+4.2%</div><div class="k">Townhouse</div></div><div class="st"><div class="v">+4.7%</div><div class="k">House</div></div></div>
+          <div class="mkt-chart" id="mc1"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background: #34A853"></span>Apartment</i><i><span class="dotc" style="background: #2E6BE6"></span>Townhouse</i><i><span class="dotc" style="background: #F29900"></span>House</i></div>
+          <div class="mkt-foot">Y = sold median ($M) · X = month</div>
+        </div>
+        <div class="mkt-pane" id="mp2" style="display: none">
+          <div class="mkt-period"><span class="on">1Y</span><span>3Y</span><span>5Y</span></div>
+          <div class="mkt-title">1-yr active listings by type</div>
+          <div class="stat4"><div class="st"><div class="v">132</div><div class="k">All</div></div><div class="st"><div class="v">48</div><div class="k">Apartment</div></div><div class="st"><div class="v">39</div><div class="k">Townhouse</div></div><div class="st"><div class="v">45</div><div class="k">House</div></div></div>
+          <select class="mkt-sel"><option>All</option><option>Apartment</option><option>Townhouse</option><option>House</option></select>
+          <div class="mkt-chart" id="mc2"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background: #34A853"></span>Active</i><i><span class="dotc" style="background: #2E6BE6"></span>New</i><i><span class="dotc" style="background: #F29900"></span>Sold</i></div>
+          <div class="mkt-foot">Y = units · bars = Active,  lines = New / Sold</div>
+        </div>
+        <div class="mkt-pane" id="mp3" style="display: none">
+          <div class="mkt-period"><span class="on">1Y</span><span>3Y</span><span>5Y</span></div>
+          <div class="mkt-title">1-yr average DOM by type</div>
+          <div class="stat4"><div class="st"><div class="v">24 d</div><div class="k">All</div></div><div class="st"><div class="v">21 d</div><div class="k">Apartment</div></div><div class="st"><div class="v">24 d</div><div class="k">Townhouse</div></div><div class="st"><div class="v">32 d</div><div class="k">House</div></div></div>
+          <select class="mkt-sel"><option>All</option><option>Apartment</option><option>Townhouse</option><option>House</option></select>
+          <div class="mkt-chart" id="mc3"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background: #2E6BE6"></span>DOM</i><i><span class="dotc" style="background: #0E9F6E"></span>PDOM</i></div>
+          <div class="mkt-foot">Y = days · DOM = days on market,  PDOM = property DOM</div>
+        </div>
+        <div class="mkt-pane" id="mp4" style="display: none">
+          <div class="mkt-period"><span class="on">1Y</span><span>3Y</span><span>5Y</span></div>
+          <div class="mkt-title">1-yr average SALR by type</div>
+          <div class="stat4"><div class="st"><div class="v">18%</div><div class="k">All</div></div><div class="st"><div class="v">21%</div><div class="k">Apartment</div></div><div class="st"><div class="v">18%</div><div class="k">Townhouse</div></div><div class="st"><div class="v">14%</div><div class="k">House</div></div></div>
+          <select class="mkt-sel"><option>All</option><option>Apartment</option><option>Townhouse</option><option>House</option></select>
+          <div class="mkt-chart" id="mc4"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background: #34A853"></span>SALR</i></div>
+          <div class="mkt-foot">Y = SALR:  >20% sellers' · 12–20% balanced · <12% buyers'</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mod">
+    <span class="mod-tag">新⑤ Demographics</span>
+    <div class="sec-head"><span class="sec-title">Demographics</span><a class="sec-link" href="#">Full demographics ›</a></div>
+    <div class="card-pad" style="padding-top: 10px">
+      <div class="demo-grid">
+        <div class="demo-tile"><div class="v">$98, 400</div><div class="k">Median Household Income</div></div>
+        <div class="demo-tile"><div class="v">78%</div><div class="k">Post-secondary Educated</div></div>
+        <div class="demo-tile"><div class="v">61%</div><div class="k">Owner-occupied</div></div>
+        <div class="demo-tile"><div class="v txt">English · Cantonese · Mandarin</div><div class="k">Top Languages</div></div>
+      </div>
+      <div class="footnote" style="margin-top: 9px">Source:  Statistics Canada Census 2021 (aggregated to Cambie census tracts).</div>
+    </div>
+  </div>
+
+  <!-- ⑥ 学校区块改造 -->
+  <div class="card mod">
+    <span class="mod-tag">New ⑥ Schools</span>
+    <div class="sec-head"><span class="sec-title">Schools & Catchment</span></div>
+    <div class="card-pad" style="padding-top: 6px; padding-bottom: 4px">
+      <div class="mkt-pills" style="margin-top: 0" id="schTabs">
+        <span class="mkt-pill on" onclick="schTab('pub', this)">Public 4</span>
+        <span class="mkt-pill" onclick="schTab('cat', this)">Catholic 2</span>
+        <span class="mkt-pill" onclick="schTab('pri', this)">Private 3</span>
+      </div>
+      <div class="mkt-period" id="schLvls" style="margin-top: 10px">
+        <span onclick="schLvl('k', this)">Kindergarten</span><span class="on" onclick="schLvl('e', this)">Elementary</span><span onclick="schLvl('s', this)">Secondary</span>
+      </div>
+      <div id="schList"></div>
+    </div>
+    <div class="legal" style="padding-top: 4px">
+      <div class="footnote">Rankings:  Fraser Institute School Rankings 2025,  for reference only.</div>
+    </div>
+  </div>
+
+  <!-- ⑪ Risks & Trade-offs -->
+  <div class="card mod">
+    <span class="mod-tag">New ⑪ Risks & Trade-offs</span>
+    <div class="sec-head"><span class="sec-title">Risks & Trade-offs</span><span style="font-size: 10px; color: var(--muted)">Rule-triggered · evidence attached</span></div>
+    <div class="card-pad" style="padding-top: 8px; padding-bottom: 10px">
+      <div id="riskList"></div>
+      <div class="footnote" style="padding: 9px 0 0">Rule-based flags from listing and public data — not professional inspection or legal advice;  rely on your inspection report and title documents.</div>
+    </div>
+  </div>
+
+  <!-- ⑩ Similar Listings与替代建议 -->
+  <div class="card mod">
+    <span class="mod-tag">New ⑩ Similar</span>
+    <div class="sec-head"><span class="sec-title">Similar Listings</span><span style="font-size: 10px; color: var(--muted)">Same community · same type · ±15% band</span></div>
+    <div class="sim-scroll">
+      <div class="sim-card">
+        <div class="ph" style="background: linear-gradient(135deg, #8FA5B8, #5E7488)"><span class="tag">Active</span></div>
+        <div class="bd"><div class="p">$2.59M <small class="delta-down">3.6% below</small></div><div class="a">128 W 23rd Ave</div><div class="m">3 bd · 1, 688 ft² · DOM 9</div></div>
+      </div>
+      <div class="sim-card">
+        <div class="ph" style="background: linear-gradient(135deg, #A89A8C, #7A6C5E)"><span class="tag">Active</span></div>
+        <div class="bd"><div class="p">$2.75M <small class="delta-up">2.3% above</small></div><div class="a">4576 Ash St</div><div class="m">4 bd · 1, 860 ft² · DOM 15</div></div>
+      </div>
+      <div class="sim-card">
+        <div class="ph" style="background: linear-gradient(135deg, #96A88F, #69805F)"><span class="tag">Sold</span></div>
+        <div class="bd"><div class="p">$2.46M <small class="delta-down">8.5% below</small></div><div class="a">357 W 19th Ave</div><div class="m">3 bd · 1, 705 ft² · 06/2026 Sold</div></div>
+      </div>
+      <div class="sim-card">
+        <div class="ph" style="background: linear-gradient(135deg, #9BA8B8, #66788C)"><span class="tag">Active</span></div>
+        <div class="bd"><div class="p">$2.88M <small class="delta-up">7.1% above</small></div><div class="a">669 W 28th Ave</div><div class="m">3 bd · 1, 790 ft² · DOM 32</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Listing Agents -->
+  <div class="card">
+    <div class="sec-head"><span class="sec-title">Listing Agents</span></div>
+    <div style="padding-top: 4px">
+      <div class="agent">
+        <span class="av" style="background: linear-gradient(135deg, #5E7488, #38495C)">ST</span>
+        <div><div class="nm">Sarah Thompson PREC*</div><div class="co">RE/MAX Select Properties</div></div>
+        <span class="tel">604-785-8000</span>
+      </div>
+      <div class="agent">
+        <span class="av" style="background: linear-gradient(135deg, #8C7A5E, #5E5138)">DT</span>
+        <div><div class="nm">David Thompson</div><div class="co">RE/MAX Select Properties</div></div>
+        <span class="tel">604-346-1862</span>
+      </div>
+      <div class="agent" style="background: #F7F9FC; border-radius: 0 0 var(--r) var(--r)">
+        <span class="av" style="background: linear-gradient(135deg, #2E6BE6, #1E4FB8)">MZ</span>
+        <div><div class="nm">Mike Zhang<span class="agent-tag">Licensed Agent</span></div><div class="co">Nu Stream Realty Inc. · mike.zhang@johome.com</div></div>
+        <span class="tel">(778) 926-9213</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 免责 + O1 推广位治理 -->
+  <div class="legal">
+    <p class="footnote">© 2026 Greater Vancouver REALTORS® (GVR),  Fraser Valley Real Estate Board (FVREB) & Chilliwack &amp;  District Real Estate Board (CADREB). All rights reserved. Portions of this page are generated from GVR/FVREB/CADREB data;  the boards assume no responsibility for its accuracy. For consumers personal,  non-commercial use only.</p>
+  </div>
+  <details class="promo mod">
+    <span class="mod-tag opt" style="top: -8px">O1 ads out of flow</span>
+    <summary><span class="ad-mark">Ad</span>Sponsored (2) · tap to expand<span style="margin-left: auto" class="chev">▾</span></summary>
+    <div class="ads">
+      <div class="ad-card" style="background: linear-gradient(135deg, #1F3C88, #12244D)">
+        <span class="am">Ad</span><b>Cross-border funds — compliant transfer channel</b><p>Large purchase amounts · same-day arrival · great FX</p>
+      </div>
+      <div class="ad-card" style="background: linear-gradient(135deg, #8A2E2E, #4D1212)">
+        <span class="am">Ad</span><b>Private lending,  no income check · up to 75% LTV</b><p>Residential | Commercial | Farm | Development | Construction</p>
+      </div>
+    </div>
+  </details>
+
+  <div style="height: 16px"></div>
+  </div><!-- /wrap -->
+
+  <!-- 底部操作条 + ⑫问AI -->
+  <div class="actionbar">
+    <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #D7DDE7; background: #F4F6F9; display: grid; place-items: center; font-size: 20px; color: #B9C2D0; flex: none">👤</div>
+    <div style="font-size: 15.5px; font-weight: 800; color: var(--ink); flex: 1">Mike Zhang</div>
+    <button style="border: none; width: 58px; height: 38px; border-radius: 12px; background: #3B82F6; color: #fff; font-size: 17px; cursor: pointer">💬</button>
+    <button style="border: none; width: 58px; height: 38px; border-radius: 12px; background: #2BB24C; color: #fff; font-size: 16px; cursor: pointer">📞</button>
+  </div>
+
+</div><!-- /screen -->
+</div><!-- /phone -->
+
+<script>
+/* ===== 图标行: 按 GVR MLS 房源类型自适应 =====
+   共享核心 4 格(卧/卫/Area/车位)+ 类型专属 4 格; 
+   Kitchens、Fireplaces等低决策权重字段下沉到「Key Facts」表 */
+const FACTS = {
+  duplex:  {
+    note:  '1/2 Duplex(1/2 Duplex): 核心摘要七项(年份/Area/卧/卫/厨/停车/Fireplaces)', 
+    items:  [
+      ['🏗', '2012', 'Year Built'], 
+      ['📐', '1, 213<small> ft²</small>', 'Floor Area'], 
+      ['🛏', '3', 'Bedrooms'], 
+      ['🛁', '2<small>F</small>+1<small>H</small>', 'Bathrooms'], 
+      ['🍳', '1', 'Kitchens'], 
+      ['🅿', '2', 'Parking'], 
+      ['🔥', '1', 'Fireplaces'], 
+    ]
+  }, 
+  house:  {
+    note:  'House/Manufactured: 核心摘要七项口径(Fireplaces 0 不出格)', 
+    items:  [
+      ['🏗', '1989', 'Year Built'], 
+      ['📐', '1, 180<small> ft²</small>', 'Floor Area'], 
+      ['🛏', '3', 'Bedrooms'], 
+      ['🛁', '2<small>F</small>', 'Bathrooms'], 
+      ['🍳', '1', 'Kitchens'], 
+      ['🅿', '4', 'Parking'], 
+    ]
+  }, 
+  town:  {
+    note:  'Townhouse(Townhouse · Strata): 突出# of Levels、Maint. Fee与宠物/出租; Land共Yes, 不显示独享地块', 
+    items:  [
+      ['🛏', '2', 'Bedrooms'], 
+      ['🛁', '1<small>F</small>', 'Bathrooms'], 
+      ['📐', '896<small> ft²</small>', 'Floor Area (+448 unfin.)'], 
+      ['🚗', '1', '车位'], 
+      ['🪜', '2<small> lvls</small>', 'Levels · w/Bsmt'], 
+      ['🏛', '$349', 'Maint. Fee'], 
+      ['🐾', 'Yes<small>*</small>', 'Pets · Rentals (bylaws)'], 
+      ['🏗', '1965', 'Year Built'], 
+    ]
+  }, 
+  apt:  {
+    note:  'Apartment(Apartment / Condo): 突出Maint. Fee、储物间与章程限制; 本例为合作社股份(Co-op)Title to Land', 
+    items:  [
+      ['🛏', '2', 'Bedrooms'], 
+      ['🛁', '1<small>F</small>', 'Bathrooms'], 
+      ['📐', '855<small> ft²</small>', 'Floor Area'], 
+      ['🚗', '1<small>+Lkr</small>', 'Parking · Locker'], 
+      ['🏢', '1<small> / 3 层</small>', 'Floor / Storeys'], 
+      ['🏛', '$304', 'Maint. Fee'], 
+      ['🚭', '30+', 'Age Restricted · No Pets'], 
+      ['🏗', '1968', 'Year Built'], 
+    ]
+  }, 
+  multi:  {
+    note:  'Duplex (Multifamily): 一Title to Land持Yes两单元; 突出单元构成与收益口径, None strata', 
+    items:  [
+      ['🛏', '5', 'Bedrooms (2 units)'], 
+      ['🛁', '2<small>F</small>', 'Bathrooms'], 
+      ['📐', '1, 804<small> ft²</small>', 'Floor Area (+956 unfin.)'], 
+      ['🚗', '6<small>(open)</small>', '车位'], 
+      ['🏘', '2+3<small>BR</small>', 'Unit Mix (2 units)'], 
+      ['🌳', '99′×120′', 'Lot (11, 880 ft²)'], 
+      ['🧯', 'None', 'Sprinklers · Smoke Det.'], 
+      ['🏗', '1993', 'Year Built'], 
+    ]
+  }, 
+  land:  {
+    note:  'Land Only: NoneBuilding, 突出接入状态(水/电/气)与开发许可; 不设「Home & Interior」tab', 
+    items:  [
+      ['📐', '3, 000<small> ft²</small>', 'Lot (0.07 ac)'], 
+      ['🧭', 'SE', 'Exposure'], 
+      ['🛣', 'Road Access', 'Access'], 
+      ['⚡', 'At Lot Line', 'Electricity'], 
+      ['🚰', 'None', 'Water · Sewer'], 
+      ['🔥', 'Not Available', 'Natural Gas'], 
+      ['🏛', 'RR1', 'Zoning'], 
+      ['💰', '$84<small>/yr</small>', 'Gross Taxes'], 
+    ]
+  }
+}; 
+/* ===== Listing Facts Tab: 第一 tab 为Key Facts(整合All关键字段), 细节下沉后续 tab、不重复 =====
+   Key Facts=身份+价格+核心数字 · Home & Interior=Building本体与室内布局 · Land/Strata=Title to Land地块或 strata · Seller Disclosure=披露与固定装置(PDS/Fixtures; Seller Interest 接口None · 不展示)
+   chips = 从字段组合提炼的决策信号 */
+const DETAILS = {
+  duplex:  {
+    src:  'Sample R3146640(Burnaby East · Edmonds)', 
+    tabs:  [
+      {t: 'Key Facts',  kv: [['@', 'Listing'], ['MLS® #', 'R3146640'], ['Region / Community', 'Greater Vancouver (GVR) · Burnaby East · Edmonds BE'], ['Address', '7240 Stride Avenue'], ['Postal Code', 'V3N 1T9'], ['List Date · DOM', '07/15/2026 · 6 DOM'], ['Property DOM', '6 days'], ['@', 'Property'], ['Type of Dwelling', '1/2 Duplex'], ['Title to Land', 'Freehold Strata'], ['Floor Area', '1, 213 ft² (2 levels)'], ['Bedrooms', '3 (all above)'], ['Bathrooms', '3 (2F + 1H)'], ['Kitchens', '1'], ['停车', '2 (1 covered)'], ['@', 'Ownership Costs'], ['Maint. Fee', '$0 (self-managed)'], ['Gross Taxes', '$3, 984.18 (2025 · utilities not incl.)']], 
+        note: 'Compliance:  Expiry Date is a board member-only field and is not shown publicly.'}, 
+      {t: 'Home & Interior',  kv: [['@', 'Building'], ['Year Built', '2012 (Age 14)'], ['Construction', 'Frame – Wood'], ['Style of Home', '2 Storey'], ['# of Levels', '2'], ['Foundation', 'Concrete Perimeter'], ['Exterior Finish', 'Mixed,  Vinyl'], ['Roof', 'Asphalt'], ['Fireplaces', '1 (Natural Gas)'], ['Water Supply', 'City/Municipal'], ['Sewer Type', 'City/Municipal'], ['@', 'Interior'], ['Heat/Fuel', 'Hot Water,  Natural Gas'], ['Floor Finish', 'Laminate'], ['Basement', 'None'], ['Features', 'ClthWsh/Dryr/Frdg/Stve/DW'], ['# of Rooms', '8'], ['@', 'Exterior'], ['Outdoor Area', 'Fenced Yard,  Patio(s)'], ['Parking Type/Access', 'Garage;  Single · Rear access'], ['View', 'None']], 
+        areas: [['Main', '608 sqft'], ['Above', '605 sqft'], ['Grand Total', '1, 213 sqft']], 
+        rooms: [['Living Room', 'Main', '16′×14′'], ['Dining Room', 'Main', '10′×8′'], ['Kitchens', 'Main', '10′×9′'], ['Laundry', 'Main', '4′×3′'], ['Utility', 'Main', '5′×3′'], ['Primary Bedroom', 'Above', '11′×10′'], ['Bedrooms', 'Above', '10′×10′'], ['Bedrooms', 'Above', '10′×10′']], 
+        baths: [['Main', '2 pc (half)'], ['Above', '4 pc'], ['Above', '4 pc · Ensuite']]}, 
+      {t: 'Land · Strata',  kv: [['Bylaw Restrictions', 'No Restrictions'], ['Short Term (<1yr)', 'No'], ['Zoning', 'R1'], ['PID', '028-632-711'], ['Site Influences', 'Central Location,  Private Yard'], ['Lot Area', '<span class="uv" data-a="4, 039 sqft" data-b="0.09 acres">4, 039 sqft</span><button class="ubtn" data-u1="sqft" data-u2="acres" onclick="uSwap(this)">⇄ acres</button> · shared lot'], ['Frontage', '<span class="uv" data-a="30.60 ft" data-b="9.33 m">30.60 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'], ['Depth/Size', '<span class="uv" data-a="132 ft" data-b="40.23 m">132 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button> <span style="font-size: 10px; color: #8C99AF; font-weight: 400">unit inferred from Meas. Type:  Feet</span>']], 
+        legal: 'STRATA LOT 1,  PLAN BCS4161,  DISTRICT LOT 53,  GROUP 1,  NEW WESTMINSTER LAND DISTRICT'}, 
+      {t: 'Seller Disclosure',  kv: [['Property Disclosure', 'Yes']], 
+        note: 'Occupancy (Vacant) is not shown to consumers for safety;  Expiry Date is member-only and not shown.'}, 
+    ]
+  }, 
+  house:  {
+    src:  'Sample R3143859(Coquitlam · Maillardville)', 
+    tabs:  [
+      {t: 'Key Facts',  kv: [['@', 'Listing'], ['MLS® #', 'R3143859'], ['Region / Community', 'Greater Vancouver (GVR) · Coquitlam · Maillardville'], ['Address', '162-145 King Edward Street'], ['Postal Code', 'V3K 6M5'], ['List Date · DOM', '07/07/2026 · 13 DOM'], ['Property DOM', '13 days'], ['@', 'Property'], ['Type of Dwelling', 'Manufactured · Double Wide'], ['Title to Land', 'Other (MHP pad lease)'], ['Floor Area', '1, 180 ft² (1 level)'], ['Bedrooms', '3'], ['Bathrooms', '2F'], ['Kitchens', '1'], ['停车', '4 (1 covered)'], ['Complex/Subdiv', 'Mill Creek Park'], ['@', 'Ownership Costs'], ['Gross Taxes', '$1, 293.44(2025 · utilities not incl.)'], ['PAD Rental', '$1, 400 / mo']], 
+        note: 'Compliance:  Expiry Date is a board member-only field and is not shown publicly.'}, 
+      {t: 'Home & Interior',  chips: [['gold', '⌂ Double-wide manufactured home (MHR #62817):  tenure is a park pad lease — financing and resale differ from a regular house;  park rules & MHR govern']], 
+        kv: [['@', 'Building'], ['Year Built', '1989 (Age 37)'], ['Style of Home', 'Manufactured/Mobile'], ['Construction', 'Manufactured/Mobile'], ['# of Levels', '1'], ['Foundation', 'None'], ['Exterior Finish', 'Vinyl'], ['Roof', 'Asphalt'], ['Water Supply', 'City/Municipal'], ['@', 'Interior'], ['A/C', 'Yes (Air Conditioning)'], ['Heat/Fuel', 'Forced Air'], ['Floor Finish', 'Laminate'], ['Basement', 'None'], ['Features', 'Air Conditioning,  ClthWsh/Dryr/Frdg/Stve/DW,  Drapes/Window Coverings,  Storage Shed,  Vaulted Ceiling,  Windows - Thermo'], ['@', 'Exterior'], ['Outdoor Area', 'Balcny(s),  Patio(s),  Dck(s)'], ['Parking Type/Access', 'Carport;  Multiple · Front access'], ['Amenities', 'Club House'], ['View', 'None']], 
+        areas: [['Main', '1, 180 sqft'], ['Grand Total', '1, 180 sqft']], 
+        rooms: [['Living Room', 'Main', '19′0″×12′9″'], ['Dining Room', 'Main', '10′2″×10′5″'], ['Kitchens', 'Main', '8′10″×10′0″'], ['Primary Bedroom', 'Main', '13′7″×11′6″'], ['Bedrooms', 'Main', '12′1″×11′3″'], ['Bedrooms', 'Main', '11′0″×11′7″'], ['Laundry', 'Main', '7′2″×6′3″']], 
+        baths: [['Main', '4 pc'], ['Main', '4 pc']]}, 
+      {t: 'Land',  chips: [['gold', '⚑ Land is a pad lease (Title to Land:  Other) · PAD rent $1, 400/mo']], 
+        kv: [['Zoning', 'MANUF'], ['PID', '800-187-580'], ['Site Influences', 'Central Location,  Shopping Nearby']], 
+        note: 'A regular detached home would show Lot Area (sqft ⇄ acres),  Frontage/Depth (ft ⇄ m) and Flood Plain here — all blank for this MHP pad listing,  hidden per display rules.', 
+        legal: 'NEW WESTMINSTER LAND DISTRICT,  MANUFACTURED HOME REG.# 62817,  BAY # 162,  10305 MILL CREEK VILLAGE MANUFACTURED HOME PARK,  MHP ROLL # 10-305-40007-019'}, 
+      {t: 'Seller Disclosure',  kv: [['Property Disclosure', 'Yes'], ['Fixtures Leased', 'None'], ['Fixtures Removed', 'None']], 
+        note: 'Occupancy is not shown to consumers (vacancy = safety,  tenancy = privacy);  a notice chip appears only when Tenant. Expiry Date is member-only and not shown.'}, 
+    ]
+  }, 
+  town:  {
+    src:  'Sample R3130583(Prince George · VLA · BC Northern)', 
+    tabs:  [
+      {t: 'Key Facts',  kv: [['@', 'Listing'], ['MLS® #', 'R3130583'], ['Region / Community', 'BC Northern (BCNREB) · PG City Central · VLA'], ['Address', 'E29-1900 Strathcona Avenue'], ['Postal Code', 'V2L 2V9'], ['List Date · DOM', '05/31/2026 · 51 DOM'], ['Property DOM', '51 days'], ['@', 'Property'], ['Type of Dwelling', 'Townhouse'], ['Title to Land', 'Freehold Strata'], ['Floor Area', '896 ft² finished · +448 ft² unfinished bsmt'], ['Bedrooms', '2(均在Above)'], ['Bathrooms', '1 (1F)'], ['Kitchens', '1'], ['停车', '1 (0 covered)'], ['@', 'Ownership Costs'], ['Maint. Fee', '$349.09 / mo'], ['Gross Taxes', '$1, 222.81 (2026 · utilities not incl.)']], 
+        note: 'Compliance:  Expiry Date is a board member-only field and is not shown publicly.'}, 
+      {t: 'Home & Interior',  kv: [['@', 'Building'], ['Year Built', '1965 (Age 61)'], ['Style of Home', '2 Storey w/Bsmt.'], ['# of Levels', '2'], ['Construction', 'Frame – Wood'], ['Exterior Finish', 'Other,  Stucco'], ['Foundation', 'Concrete Perimeter'], ['Roof', 'Asphalt'], ['Water Supply', 'City/Municipal'], ['Sewer Type', 'City/Municipal'], ['@', 'Interior'], ['Heat/Fuel', 'Other'], ['Basement', 'Full,  Unfinished'], ['# of Rooms', '4'], ['@', 'Exterior'], ['Outdoor Area', 'None'], ['Parking Type/Access', 'Other · Front access'], ['View', 'None']], 
+        areas: [['Main', '448 sqft'], ['Above', '448 sqft'], ['Finished (Total)', '896 sqft'], ['Unfinished (Bsmt)', '448 sqft'], ['总Area (Grand Total)', '1, 344 sqft']], 
+        rooms: [['Living Room', 'Main', '15′×12′'], ['Kitchens', 'Main', '12′×10′'], ['Primary Bedroom', 'Above', '12′×11′'], ['Bedrooms', 'Above', '13′×10′']], 
+        baths: [['Above', '4 pc']]}, 
+      {t: 'Strata',  kv: [['Bylaw Restrictions', 'Pets Allowed w/Rest. (max 2,  cats & dogs) · Rentals Allwd w/Restrctns · Smoking Restrictions'], ['Short Term (<1yr)', 'No'], ['Maint Fee Includes', 'Garbage Pickup,  Management,  Snow removal'], ['Tot Units in Strata', '239'], ['Mgmt. Co Name', 'Elevate Property Management · 250-564-0022'], ['Site Influences', 'None']], 
+        legal: 'STRATA LOT 142 DISTRICT LOT 777 CARIBOO DISTRICT PLAN PGS173,  TOGETHER WITH AN INTEREST IN THE COMMON PROPERTY IN PROPORTION TO THE UNIT ENTITLEMENT OF THE STRATA LOT AS SHOWN ON FORM 1'}, 
+      {t: 'Seller Disclosure',  kv: [['Property Disclosure', 'Yes'], ['Fixtures Leased', 'None'], ['Fixtures Removed', 'None']], 
+        note: 'Occupancy (Vacant) is not shown to consumers;  Expiry Date is member-only and not shown.'}, 
+    ]
+  }, 
+  apt:  {
+    src:  'Sample R3046098(Burnaby South · Forest Glen)', 
+    tabs:  [
+      {t: 'Key Facts',  chips: [['gold', '⚑ Co-operative title (Shares in Co-operative):  you buy company shares,  not fee-simple — financing limited;  building lease 998 yrs from 1974,  per documents']], 
+        kv: [['@', 'Listing'], ['MLS® #', 'R3046098'], ['Region / Community', 'Greater Vancouver (GVR) · Burnaby South · Forest Glen BS'], ['Address', '106-5127 Irving Street'], ['Complex/Subdiv', 'Irving Appartments Ltd.'], ['Postal Code', 'V5H 1T6'], ['List Date · DOM', '09/08/2025 · 316 DOM'], ['Property DOM', '316 days'], ['Price History', '$399, 000 → $368, 800 → now $359, 000'], ['@', 'Property'], ['Type of Dwelling', 'Apartment/Condo'], ['Title to Land', 'Shares in Co-operative'], ['Floor Area', '855 ft² (1 level)'], ['Bedrooms', '2'], ['Bathrooms', '1 (1F)'], ['Kitchens', '1'], ['停车', '1 (1 covered)'], ['@', 'Ownership Costs'], ['Maint. Fee', '$304.10 / mo'], ['Gross Taxes', '$1, 857.49 (2026 · utilities incl.)']], 
+        note: 'Compliance:  Expiry Date is a board member-only field and is not shown publicly.'}, 
+      {t: 'Home & Interior',  kv: [['@', 'Building'], ['Year Built', '1968 (Age 58)'], ['Style of Home', 'Corner Unit · Ground Level'], ['Construction', 'Frame – Wood'], ['Exterior Finish', 'Stucco'], ['Foundation', 'Concrete Perimeter'], ['Roof', 'Torch-On'], ['Storeys in Building', '3'], ['Elevator', 'Yes'], ['Water Supply', 'City/Municipal'], ['Sewer Type', 'City/Municipal'], ['@', 'Interior'], ['Heat/Fuel', 'Baseboard,  Hot Water'], ['Floor Finish', 'Vinyl/Linoleum,  Wall/Wall/Mixed'], ['Features', 'Drapes/Window Coverings,  Refrigerator,  Stove'], ['# of Rooms', '6'], ['@', 'Exterior'], ['Exposure(Exposure)', 'Southwest'], ['Parking Type/Access', 'Garage Underbuilding · Rear access'], ['Locker', 'Yes'], ['Outdoor Area', 'Balcony(s)'], ['View', 'Yes :  Street View']], 
+        areas: [['Main', '855 sqft'], ['Grand Total', '855 sqft']], 
+        rooms: [['Kitchens', 'Main', '7′×7′'], ['Dining Room', 'Main', '9′×7′'], ['Living Room', 'Main', '18′×12′'], ['Primary Bedroom', 'Main', '13′×10′'], ['Bedrooms', 'Main', '11′×9′'], ['Foyer', 'Main', '9′×3′4″']], 
+        baths: [['Main', '4 pc · Ensuite']]}, 
+      {t: 'Strata',  kv: [['Bylaw Restrictions', 'Age Restrictions (30+) · Pets Not Allowed · Rentals Allowed (10% cap) · Smoking Restrictions'], ['Short Term (<1yr)', 'No'], ['Maint Fee Includes', 'Gardening,  Gas,  Heat,  Hot Water,  Management,  Snow removal'], ['Tot Units in Strata', '29'], ['Amenities', 'Elevator,  Shared Laundry,  Storage'], ['Mgmt. Co Name', 'Self Managed'], ['Site Influences', 'Adult Oriented,  Central Location,  Recreation Nearby,  Shopping Nearby']], 
+        legal: 'LOT 117,  PLAN NWP32362,  DISTRICT LOT 32,  GROUP 1,  NEW WESTMINSTER LAND DISTRICT,  2910-5126 SELF-OWNED CO-OPERATIVE BUILDING LEASE 1974 FOR 998 YEARS'}, 
+      {t: 'Seller Disclosure',  kv: [['Property Disclosure', 'No :  Estate Sale'], ['Fixtures Leased', 'None'], ['Fixtures Removed', 'None']], 
+        note: 'PDS is a two-part field (Y/N + reason). Estate sales typically have no seller disclosure — strengthen inspection. Occupancy and Expiry Date are not shown.'}, 
+    ]
+  }, 
+  multi:  {
+    src:  'Sample R3136156(Hazelton · BC Northern · Multifamily)', 
+    tabs:  [
+      {t: 'Key Facts',  kv: [['@', 'Listing'], ['MLS® #', 'R3136156'], ['Region / Community', 'BC Northern (BCNREB) · Hazelton & Hwy 37 · Hazelton'], ['Address', '4879 9th Avenue'], ['Postal Code', 'V0J 2J0'], ['List Date · DOM', '06/15/2026 · 36 DOM'], ['Property DOM', '36 days'], ['@', 'Property'], ['Type of Dwelling', 'Duplex (Multifamily)'], ['Title to Land', 'Freehold NonStrata'], ['Unit Mix', '2-Bed ×1 + 3-Bed ×1'], ['Floor Area', '1, 804 ft² finished · +956 ft² unfinished'], ['Bedrooms', '5 (5 above · 0 bsmt)'], ['Bathrooms', '2 (2F)'], ['Kitchens', '2 (1 per unit)'], ['停车', '6 (open)'], ['@', 'Ownership Costs'], ['Gross Taxes', '$3, 328.50 (2025 · utilities not incl.)']], 
+        note: 'Multifamily income fields (Income/annum,  Op. Exp.,  NOI) are blank on this listing and hidden;  when present they appear under Ownership Costs. Expiry Date is member-only.'}, 
+      {t: 'Home & Interior',  kv: [['@', 'Building'], ['Year Built', '1993 (Age 33)'], ['Style of Home', '2 Storey'], ['# of Levels', '2'], ['Construction', 'Frame – Wood'], ['Exterior Finish', 'Vinyl'], ['Foundation', 'Preserved Wood'], ['Roof', 'Asphalt'], ['Water Supply', 'City/Municipal'], ['Sewer Type', 'City/Municipal'], ['@', 'Interior'], ['Heat/Fuel', 'Forced Air,  Propane Gas'], ['Floor Finish', 'Laminate'], ['Basement', 'Unfinished'], ['Sprinklers', 'No'], ['Smoke Detectors', 'No'], ['# of Rooms', '12 (both units)'], ['@', 'Exterior'], ['Outdoor Area', 'None'], ['Parking Type/Access', 'Open'], ['View', 'None']], 
+        areas: [['Main', '970 sqft'], ['Below', '834 sqft'], ['Finished (Total)', '1, 804 sqft'], ['Unfinished', '956 sqft'], ['总Area (Grand Total)', '2, 760 sqft']], 
+        rooms: [['Kitchens', 'Main', '10′7″×9′11″'], ['Living Room', 'Main', '12′10″×15′9″'], ['Dining Room', 'Main', '8′10″×9′11″'], ['Primary Bedroom', 'Main', '12′4″×12′'], ['Bedrooms', 'Main', '9′7″×10′2″'], ['Bedrooms', 'Main', '11′7″×13′3″'], ['Recreation Room', 'Bsmt', '14′9″×23′'], ['Kitchens', 'Below', '10′4″×7′2″'], ['Dining Room', 'Below', '9′11″×6′6″'], ['Living Room', 'Below', '12′8″×11′6″'], ['Bedrooms', 'Below', '12′×11′11″'], ['Bedrooms', 'Below', '10′3″×9′2″']], 
+        baths: [['Main', '4 pc'], ['Below', '4 pc']]}, 
+      {t: 'Land',  kv: [['Zoning', 'R1'], ['PID', '014-006-952'], ['Site Influences', 'None'], ['Lot Area', '<span class="uv" data-a="11, 880 sqft" data-b="0.27 acres">11, 880 sqft</span><button class="ubtn" data-u1="sqft" data-u2="acres" onclick="uSwap(this)">⇄ acres</button>'], ['Frontage', '<span class="uv" data-a="99.00 ft" data-b="30.18 m">99.00 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'], ['Depth/Size', '<span class="uv" data-a="120 ft" data-b="36.58 m">120 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button> <span style="font-size: 10px; color: #8C99AF; font-weight: 400">unit inferred from Meas. Type:  Feet</span>'], ['Flood Plain', 'No']], 
+        legal: 'LOTS 13-15 BLOCK 90 DISTRICT LOT 882 SECTION 2 CASSIAR DISTRICT PLAN 968(014-006-961,  014-006-979)'}, 
+      {t: 'Seller Disclosure',  kv: [['Property Disclosure', 'Yes'], ['Fixtures Leased', 'None'], ['Bylaw Infractions', 'N']], 
+        note: 'Occupancy (Tenant,  Vacant) is not shown to consumers;  Expiry Date is member-only and not shown.'}, 
+    ]
+  }, 
+  land:  {
+    src:  'Sample R2986522(Willow River · PG Rural East · Land Only)', 
+    tabs:  [
+      {t: 'Key Facts',  kv: [['@', 'Listing'], ['MLS® #', 'R2986522'], ['Region / Community', 'BC Northern (BCNREB) · PG Rural East · Willow River'], ['Address', 'LOT 37 Gwen Avenue'], ['Postal Code', 'V0J 3C0'], ['List Date · DOM', '04/04/2025 · 474 DOM'], ['Property DOM', '474 days'], ['@', 'Property'], ['Type of Dwelling', 'Land Only'], ['Title to Land', 'Freehold NonStrata'], ['Complex/Subdiv', 'Willow River'], ['@', 'Ownership Costs'], ['Gross Taxes', '$83.93 (2024)']], 
+        note: 'Land Only has no building — the Home & Interior tab is omitted. Expiry Date is member-only and not shown.'}, 
+      {t: 'Land',  kv: [['Zoning', 'RR1'], ['PID', '013-981-692'], ['Site Influences', 'None'], ['Lot Area', '<span class="uv" data-a="3, 000 sqft" data-b="0.07 acres">3, 000 sqft</span><button class="ubtn" data-u1="sqft" data-u2="acres" onclick="uSwap(this)">⇄ acres</button>'], ['Exposure(Exposure)', 'Southeast'], ['Property Access', 'Road Access'], ['Trees Logged (2 yrs)', 'No'], ['Restrictions', 'None']], 
+        legal: 'LOT 37 BLOCK 27 DISTRICT LOT 785 CARIBOO DISTRICT PLAN 1235'}, 
+      {t: 'Utilities & Permits',  kv: [['@', 'Utilities'], ['Water Supply', 'None'], ['Sanitary Sewer', 'None'], ['Storm Sewer', 'None'], ['Electricity', 'At Lot Line'], ['Natural Gas', 'Not Available(Not Available)'], ['Telephone', 'Available Nearby'], ['Cable', 'Available Nearby'], ['@', 'Development & Permits'], ['Develop Permit', 'No'], ['Bldg Permit Apprv', 'No'], ['Building Plans', 'Not Available'], ['Prospectus', 'Not Required']]}, 
+      {t: 'Seller Disclosure',  kv: [['Property Disclosure', 'Yes'], ['Information Package', 'Yes'], ['Sketch Attached', 'Yes']], 
+        note: 'Expiry Date is a board member-only field, not shown publicly. '}, 
+    ]
+  }
+}; 
+function uSwap(b){var v=b.previousElementSibling; var isA=v.textContent===v.dataset.a; v.textContent=isA?v.dataset.b: v.dataset.a; b.textContent='\u21c4 '+(isA?b.dataset.u1: b.dataset.u2); }
+function mktToggle(e){e.preventDefault(); var p=document.getElementById('mktFull'); var l=document.getElementById('mktToggleLink'); var open=p.style.display==='none'; p.style.display=open?'block': 'none'; l.textContent=open?'Collapse ▴': 'View full market data ›'; if(open&&!p.dataset.drawn){mktDraw(); p.dataset.drawn=1; }}
+function mktTab(i, el){document.querySelectorAll('#mktPills .mkt-pill').forEach(function(b){b.classList.remove('on')}); el.classList.add('on'); for(var k=0; k<5; k++)document.getElementById('mp'+k).style.display=k===i?'block': 'none'; }
+function mktDraw(){
+  var W=320, H=150, L=30, B=20, T=8; 
+  function lineTo(pts, max, min){var w=(W-L-8)/(pts.length-1); return pts.map(function(v, i){return (L+i*w).toFixed(1)+', '+(H-B-((v-min)/(max-min))*(H-B-T)).toFixed(1)}).join(' '); }
+  function axis(yl, xl){var t=''; yl.forEach(function(o){t+='<text x="2" y="'+o[1]+'" font-size="8" fill="#8C99AF">'+o[0]+'</text><line x1="'+L+'" y1="'+o[1]+'" x2="'+(W-4)+'" y2="'+o[1]+'" stroke="#EEF1F6"/>'; }); xl.forEach(function(o){t+='<text x="'+o[1]+'" y="'+(H-6)+'" font-size="8" fill="#8C99AF">'+o[0]+'</text>'; }); return t; }
+  /* T0 分组柱 */
+  var g={lab: ['<100', '100-150', '150-200', '200-250', '250-300', '>300'], apt: [26, 27, 10, 6, 3, 2], twn: [10, 19, 22, 17, 8, 4], det: [1, 4, 12, 18, 22, 16]}, max0=30; 
+  var svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['30', T+4], ['15', (H-B+T)/2], ['0', H-B]], g.lab.map(function(l, i){return [l, L+4+i*((W-L-8)/6)]})); 
+  ['apt', 'twn', 'det'].forEach(function(k, si){var c=['#34A853', '#2E6BE6', '#F29900'][si]; g[k].forEach(function(v, i){var gw=(W-L-8)/6, x=L+i*gw+5+si*8, h=(v/max0)*(H-B-T); svg+='<rect x="'+x+'" y="'+(H-B-h)+'" width="6.5" height="'+h+'" rx="1.5" fill="'+c+'"/>'; }); }); 
+  document.getElementById('mc0').innerHTML=svg+'</svg>'; 
+  /* T1 三线 */
+  var apt=[0.77, 0.76, 0.78, 0.77, 0.78, 0.79, 0.78, 0.79, 0.80, 0.79, 0.80, 0.80], twn=[1.30, 1.31, 1.30, 1.32, 1.33, 1.32, 1.34, 1.33, 1.35, 1.34, 1.35, 1.36], det=[2.55, 2.53, 2.56, 2.58, 2.57, 2.60, 2.59, 2.62, 2.61, 2.63, 2.62, 2.66]; 
+  var mons=[['Jan', L], ['3', L+2*(W-L-8)/11], ['5', L+4*(W-L-8)/11], ['7', L+6*(W-L-8)/11], ['9', L+8*(W-L-8)/11], ['11', L+10*(W-L-8)/11]]; 
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['3.0M', T+4], ['1.5M', (H-B+T)/2], ['0', H-B]], mons); 
+  [[apt, '#34A853'], [twn, '#2E6BE6'], [det, '#F29900']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0], 3, 0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>'; }); 
+  document.getElementById('mc1').innerHTML=svg+'</svg>'; 
+  /* T2 柱+双线 */
+  var act=[118, 112, 120, 131, 126, 129, 135, 128, 122, 117, 124, 132], nw=[42, 38, 45, 50, 44, 47, 52, 46, 40, 38, 43, 48], sd=[35, 33, 38, 41, 39, 42, 45, 40, 36, 34, 39, 44]; 
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['140', T+4], ['70', (H-B+T)/2], ['0', H-B]], mons); 
+  act.forEach(function(v, i){var w=(W-L-8)/12, x=L+i*w+3, h=(v/140)*(H-B-T); svg+='<rect x="'+x+'" y="'+(H-B-h)+'" width="'+(w-6)+'" height="'+h+'" rx="2" fill="#34A853" opacity="0.85"/>'; }); 
+  [[nw, '#2E6BE6'], [sd, '#F29900']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0], 140, 0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>'; }); 
+  document.getElementById('mc2').innerHTML=svg+'</svg>'; 
+  /* T3 DOM/PDOM */
+  var dom=[24, 30, 26, 19, 32, 27, 22, 18, 25, 28, 30, 33], pd=[38, 45, 40, 31, 48, 42, 35, 30, 39, 44, 46, 50]; 
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['50', T+4], ['25', (H-B+T)/2], ['0 d', H-B]], mons); 
+  [[dom, '#2E6BE6'], [pd, '#0E9F6E']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0], 50, 0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>'; }); 
+  document.getElementById('mc3').innerHTML=svg+'</svg>'; 
+  /* T4 SALR+阈值线 */
+  var sa=[18, 29, 20, 27, 16, 19, 19, 18, 15, 13, 19, 19]; 
+  var y20=H-B-(20/30)*(H-B-T), y12=H-B-(12/30)*(H-B-T); 
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['30', T+4], ['15', (H-B+T)/2], ['0%', H-B]], mons); 
+  svg+='<line x1="'+L+'" y1="'+y20+'" x2="'+(W-4)+'" y2="'+y20+'" stroke="#E8604C" stroke-dasharray="4 3"/><text x="'+(W-52)+'" y="'+(y20-3)+'" font-size="8" fill="#E8604C">Sellers 20%</text>'; 
+  svg+='<line x1="'+L+'" y1="'+y12+'" x2="'+(W-4)+'" y2="'+y12+'" stroke="#5B8DEF" stroke-dasharray="4 3"/><text x="'+(W-52)+'" y="'+(y12+9)+'" font-size="8" fill="#5B8DEF">Buyers 12%</text>'; 
+  svg+='<polyline points="'+lineTo(sa, 30, 0)+'" fill="none" stroke="#34A853" stroke-width="1.8"/>'; 
+  document.getElementById('mc4').innerHTML=svg+'</svg>'; 
+  /* 周期 pills 视觉切换 */
+  document.querySelectorAll('.mkt-period span').forEach(function(sp){sp.onclick=function(){sp.parentElement.querySelectorAll('span').forEach(function(x){x.classList.remove('on')}); sp.classList.add('on'); }; }); 
+}
+var RISKS={
+  duplex: [
+    {s: 'tradeoff', t: 'Two-unit self-managed strata:  no fee,  shared duty', x: '$0 fee and no management company — building insurance and exterior upkeep are split with the neighbour;  confirm joint insurance before offering.', e: 'Maint Fee=$0.00 · Mgmt Co=blank · Title to Land=Freehold Strata', a: 'Confirm joint insurance'}, 
+    {s: 'tradeoff', t: 'No short-term rentals', x: 'Bylaws are otherwise unrestricted but ban sub-1-year rentals;  Airbnb-style investing is out — owner-occupancy and long-term rentals unaffected.', e: 'Short Term(<1yr) Rnt/Lse Alwd=No', a: 'Verify bylaws'}
+  ], 
+  house: [
+    {s: 'risk', t: 'MHP pad lease,  no land title', x: 'Home is MHR-registered chattel on a rented pad;  financing options are limited,  pad rent can rise,  and appreciation logic differs from a regular house.', e: 'Title to Land=Other(MHP) · PAD Rental=$1, 400/mo · MHR#=62817', a: 'Talk to a broker'}, 
+    {s: 'risk', t: 'No CSA/BCE certification on file', x: 'Certification fields are blank;  insurers and lenders usually require it for manufactured homes — verify before closing.', e: 'CSA/BCE=blank', a: 'Request certificates'}
+  ], 
+  town: [
+    {s: 'risk', t: '61 years old — renewal cycle due', x: 'Built 1965;  mechanical and envelope systems are due for replacement. Budget up for insurance and maintenance;  inspect rigorously.', e: 'Year Built=1965 · Age=61', a: 'Extended inspection'}, 
+    {s: 'risk', t: 'Heating type unspecified', x: 'Heat/Fuel is "Other" — system type and running cost unknown;  confirm equipment,  age and condition on site.', e: 'Fuel/Heating=Other', a: 'Confirm on site'}, 
+    {s: 'tradeoff', t: '448 ft² unfinished basement', x: 'Reno potential in exchange for usable space today — finished area is only 896 ft²;  mind the basis when comparing.', e: 'Basement=Full,  Unfinished · Unfinished Floor=448 ft²', a: 'Estimate reno cost'}, 
+    {s: 'tradeoff', t: 'Rental restrictions · no short-term', x: 'Rentals allowed with restrictions,  short-term banned;  get the bylaws to verify terms before investing.', e: 'Rentals Allwd w/Restrctns · Short Term=No', a: 'Request bylaws'}
+  ], 
+  apt: [
+    {s: 'risk', t: 'Co-op shares — financing limited', x: 'You buy shares,  not title;  most banks will not lend — expect a large down payment or a designated credit union.', e: 'Title to Land=Shares in Co-operative', a: 'Line up financing first'}, 
+    {s: 'risk', t: 'Estate sale,  no PDS', x: 'Sold by an executor with no PDS;  condition info is limited — full inspection and keep the inspection condition.', e: 'Property Disc.=No :  Estate Sale', a: 'Extended inspection'}, 
+    {s: 'risk', t: '58-year-old building', x: 'Built 1968;  plumbing and the torch-on roof are big-ticket renewals — scrutinize the CRF and depreciation report.', e: 'Year Built=1968 · Roof=Torch-On', a: 'Check depreciation report'}, 
+    {s: 'tradeoff', t: '30+ age restriction · no pets', x: 'Entry rules buy a quiet building — but the buyer pool and resale liquidity narrow;  confirm all occupants meet the age rule.', e: 'Restricted Age=30+ · Pets=Not Allowed', a: 'Verify bylaws'}
+  ], 
+  multi: [
+    {s: 'risk', t: 'Preserved-wood foundation (PWF)', x: 'Wood foundations carry extra lender/insurer requirements and age differently from concrete;  a structural inspection is a must.', e: 'Foundation=Preserved Wood', a: 'Structural inspection'}, 
+    {s: 'risk', t: 'No smoke detectors / sprinklers', x: 'Fire-safety baseline for rentals;  install on takeover and check for outstanding municipal orders before closing.', e: 'Smoke Detectors=No · Sprinklers=No', a: 'Budget compliance fixes'}, 
+    {s: 'tradeoff', t: 'One unit transfers tenanted', x: 'Half tenanted,  half vacant — instant cash flow in exchange for handover complexity;  the tenancy transfers under the RTA.', e: 'Occupancy=Tenant,  Vacant', a: 'Review the lease'}, 
+    {s: 'tradeoff', t: 'Propane heating', x: 'No gas line;  tank propane costs more than city gas — budget carrying costs accordingly.', e: 'Fuel/Heating=Forced Air,  Propane Gas', a: 'Estimate energy cost'}
+  ], 
+  land: [
+    {s: 'risk', t: 'No municipal water or sewer', x: 'Building requires a well and septic;  put a perc test and well assessment in your conditions and budget for both.', e: 'Water Supply=None · Sanitary Sewer=None · Perc Test=not provided', a: 'Perc test in conditions'}, 
+    {s: 'tradeoff', t: 'Power at lot line · no gas', x: 'Cheap to connect power — but heating is electric or propane only;  estimate operating costs on that basis.', e: 'Electricity=At Lot Line · Natural Gas=Not Available', a: 'Estimate hookups'}, 
+    {s: 'tradeoff', t: '474 days on market — thin liquidity', x: 'Rural lots turn over in years — strong negotiating room,  but resale is just as slow;  plan a long hold.', e: 'DOM=474', a: 'Pricing leverage'}, 
+    {s: 'tradeoff', t: 'Permitting starts from zero', x: 'No permits or plans in place;  the build timeline includes full approvals — count the time cost.', e: 'Develop Permit=No · Building Plans=Not Available', a: 'Ask the municipality'}
+  ]}; 
+function riskRender(type){
+  var el=document.getElementById('riskList'); if(!el)return; 
+  var rows=RISKS[type]||[]; 
+  el.innerHTML=rows.map(function(r){
+    return '<div class="rk-item"><div class="rk-head"><span class="rk-sev '+r.s+'">'+(r.s==='risk'?'Risk': 'Trade-off')+'</span><span class="rk-title">'+r.t+'</span><span class="rk-act">'+r.a+'</span></div><div class="rk-text">'+r.x+'</div><div class="rk-ev">Evidence:  '+r.e+'</div></div>'; 
+  }).join(''); 
+}
+var SCHOOLS={
+  pub: {k: [['Douglas Park StrongStart Centre', '4550 Douglas Park Lane · 9 min walk', null, null, false]], 
+       e: [['Edith Cavell Elementary', '500 20th Ave W · 4 min walk · Fraser Institute 2025', 7.6, '253 / 931', true], 
+          ['Emily Carr Elementary', '4070 Oak St · 15 min walk · Fraser Institute 2025', 7.9, '198 / 931', false]], 
+       s: [['Eric Hamber Secondary', '5025 Willow St · 12 min walk · Fraser Institute 2025', 8.6, '38 / 251', true]]}, 
+  cat: {k: [], 
+       e: [['St Augustine School', '2154 W 7th Ave · 2.1 km · Fraser Institute 2025', 8.4, '120 / 931', false]], 
+       s: [['Vancouver College', '5400 Cartier St · 1.9 km · Fraser Institute 2025', 9.8, '5 / 251', false]]}, 
+  pri: {k: [], 
+       e: [['Vancouver Talmud Torah', '998 W 26th Ave · 0.8 km · Fraser Institute 2025', 7.6, '153 / 931', false]], 
+       s: [['York House School', '4176 Alexandra St · 2.3 km · Fraser Institute 2025', 9.9, '2 / 251', false], 
+          ['Little Flower Academy', '4195 Alexandra St · 2.2 km · Fraser Institute 2025', 9.7, '6 / 251', false]]}}; 
+var schState={t: 'pub', l: 'e'}; 
+function schRender(){
+  var rows=SCHOOLS[schState.t][schState.l], el=document.getElementById('schList'); 
+  if(!rows.length){el.innerHTML='<div class="sch-empty">No schools listed for this level</div>'; return; }
+  el.innerHTML=rows.map(function(r){
+    return '<div class="sch-row"><span class="sch-ic">🎓</span><div style="flex: 1; min-width: 0"><div class="sch-nm">'+r[0]+(r[4]?'<span class="sch-tag">Catchment</span>': '')+'</div><div class="sch-ad">'+r[1]+'</div></div><div class="sch-score">'+(r[2]!==null?'<div class="v">'+r[2]+'</div><div class="r">'+r[3]+'</div>': '<div class="v" style="color: var(--muted)">—</div><div class="r">Unranked</div>')+'</div><span class="sch-chev">›</span></div>'; 
+  }).join(''); 
+}
+function schTab(t, el){schState.t=t; document.querySelectorAll('#schTabs .mkt-pill').forEach(function(b){b.classList.remove('on')}); el.classList.add('on'); schRender(); }
+function schLvl(l, el){schState.l=l; document.querySelectorAll('#schLvls span').forEach(function(b){b.classList.remove('on')}); el.classList.add('on'); schRender(); }
+document.addEventListener('DOMContentLoaded', schRender); 
+function iTip(b){var p=b.parentElement.querySelector('.ipop'); p.style.display=(p.style.display==='none'||!p.style.display)?'block': 'none'; }
+let dtType='duplex',  dtIdx=0; 
+function renderDetails(){
+  const d=DETAILS[dtType]; 
+  document.getElementById('dtSrc').textContent=d.src; 
+  document.getElementById('dtabs').innerHTML=d.tabs.map((tb, i)=>
+    `<div class="dtab${i===dtIdx?' on': ''}" onclick="dtIdx=${i}; renderDetails()">${tb.t}</div>`).join(''); 
+  const tb=d.tabs[dtIdx]; 
+  let h=''; 
+  (tb.chips||[]).forEach(([tone, txt])=>{
+    const cls=tone==='gold'?' gold': tone==='green'?' green': ''; 
+    h+=`<div class="ins-chip${cls}">${txt}</div>`; 
+  }); 
+  h+=`<div class="kv" style="padding-top: 8px; grid-template-columns: 1fr">`+tb.kv.map(([k, v])=>
+    k==='@'?`<div class="subh">${v}</div>`: `<div class="row"><span class="k">${k}</span><span class="v" style="font-family: var(--cjk)">${v}</span></div>`).join('')+`</div>`; 
+  if(tb.areas){
+    h+=`<details class="fold-blk"><summary>Floor Areas<em>Total ${tb.areas[tb.areas.length-1][1]}</em></summary><div class="rooms" style="margin-top: 0"><table><tr><th>Floor</th><th>Area</th></tr>`+
+      tb.areas.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</table></div></details>`; 
+  }
+  if(tb.rooms){
+    h+=`<details class="fold-blk"><summary>Rooms & Dimensions<em>${tb.rooms.length} rooms</em></summary><div class="rooms" style="margin-top: 0"><table><tr><th>Room</th><th>Floor</th><th>Dimensions</th></tr>`+
+      tb.rooms.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')+`</table></div></details>`; 
+  }
+  if(tb.baths){
+    h+=`<details class="fold-blk"><summary>Bathrooms<em>${tb.baths.length} </em></summary><div class="rooms" style="margin-top: 0"><table><tr><th>Floor</th><th>#Pcs</th></tr>`+
+      tb.baths.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</table></div></details>`; 
+  }
+  if(tb.note){ h+=`<div class="footnote" style="padding: 0 14px 12px">${tb.note}</div>`;  }
+  if(tb.legal){
+    h+=`<details class="legal-fold"><summary>Legal Description ▾</summary><p>${tb.legal}</p></details>`; 
+  }
+  document.getElementById('dtBody').innerHTML=h; 
+}
+function setFacts(type,  btn){
+  dtType=type;  dtIdx=Math.min(dtIdx,  DETAILS[type].tabs.length-1);  renderDetails();  riskRender(type); 
+  const grid=document.getElementById('factsGrid'); 
+  grid.innerHTML=FACTS[type].items.map(([ic, v, k])=>
+    `<div class="fact"><div class="ic">${ic}</div><div class="v">${v}</div><div class="k">${k}</div></div>`).join(''); 
+  if(btn){document.querySelectorAll('[data-ft]').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
+}
+setFacts('duplex'); 
+function toggleAnno(){
+  document.body.classList.toggle('annotate'); 
+  document.getElementById('btnAnno').classList.toggle('on'); 
+}
+document.body.classList.add('annotate'); 
+// POI pill 交互示意
+document.querySelectorAll('.poi-pill').forEach(p=>{
+  p.addEventListener('click', ()=>{
+    document.querySelectorAll('.poi-pill').forEach(x=>x.classList.remove('on')); 
+    p.classList.add('on'); 
+  }); 
+}); 
+</script>
+</body>
+</html>
