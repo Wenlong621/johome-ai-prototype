@@ -219,6 +219,16 @@ body.annotate .mod-tag{display:inline-block}
 .mkt-legend i{font-style:normal;display:inline-flex;align-items:center;gap:4px}
 .mkt-legend .dotc{width:8px;height:8px;border-radius:50%;display:inline-block}
 .mkt-foot{font-size:10px;color:var(--muted);text-align:center;margin-top:5px;line-height:1.6}
+.sch-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px;background:#fff}
+.sch-ic{width:34px;height:34px;border-radius:10px;background:#F2F5F9;display:grid;place-items:center;font-size:16px;flex:none}
+.sch-nm{font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sch-tag{font-size:9px;color:#0B7A54;background:var(--ok-soft);border:1px solid #CBEBDD;border-radius:99px;padding:1px 7px;font-weight:600}
+.sch-ad{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.5}
+.sch-score{margin-left:auto;text-align:right;flex:none}
+.sch-score .v{font-family:var(--num);font-size:15px;font-weight:800;color:var(--brand)}
+.sch-score .r{font-size:10px;color:var(--muted);margin-top:1px;font-family:var(--num)}
+.sch-chev{color:#C4CBD8;font-size:15px;flex:none}
+.sch-empty{font-size:11.5px;color:var(--muted);text-align:center;padding:18px 0 10px}
 .rooms{padding:0 14px 14px}
 .rooms table{width:100%;border-collapse:collapse;font-size:11.5px}
 .rooms th{text-align:left;color:var(--muted);font-weight:500;padding:6px 0;border-bottom:1px solid var(--line);font-size:10.5px}
@@ -690,47 +700,16 @@ body.annotate .mod-tag{display:inline-block}
   <div class="card mod">
     <span class="mod-tag">新⑥ 学校改造</span>
     <div class="sec-head"><span class="sec-title">学区与学校</span></div>
-    <div class="sch-group">
-      <span class="sch-group-tag catch">🎯 对口学区(catchment · 按地址边界反查)</span>
-      <div class="school">
-        <span class="badge pub">公立<br>小学</span>
-        <div class="info">
-          <div class="nm">Edith Cavell Elementary</div>
-          <div class="meta">500 20th Ave W · 步行 4 分钟 · Fraser Institute 2025</div>
-        </div>
-        <div class="rk"><div class="n">7.6</div><div class="s">253 / 931</div></div>
-        <span class="chev">›</span>
+    <div class="card-pad" style="padding-top:6px;padding-bottom:4px">
+      <div class="mkt-pills" style="margin-top:0" id="schTabs">
+        <span class="mkt-pill on" onclick="schTab('pub',this)">公立学校 4</span>
+        <span class="mkt-pill" onclick="schTab('cat',this)">天主教学校 2</span>
+        <span class="mkt-pill" onclick="schTab('pri',this)">私立学校 3</span>
       </div>
-      <div class="school">
-        <span class="badge pub">公立<br>中学</span>
-        <div class="info">
-          <div class="nm">Eric Hamber Secondary</div>
-          <div class="meta">5025 Willow St · 步行 12 分钟 · Fraser Institute 2025</div>
-        </div>
-        <div class="rk"><div class="n">8.6</div><div class="s">38 / 251</div></div>
-        <span class="chev">›</span>
+      <div class="mkt-period" id="schLvls" style="margin-top:10px">
+        <span onclick="schLvl('k',this)">幼儿园</span><span class="on" onclick="schLvl('e',this)">小学</span><span onclick="schLvl('s',this)">中学</span>
       </div>
-    </div>
-    <div class="sch-group" style="padding-bottom:6px">
-      <span class="sch-group-tag near">📍 周边可选(私立/教会 · 非对口,标注直线距离)</span>
-      <div class="school">
-        <span class="badge pri">私立<br>K-12</span>
-        <div class="info"><div class="nm">Vancouver College</div><div class="meta">5400 Cartier St · 直线 1.9 km · Fraser Institute 2025</div></div>
-        <div class="rk"><div class="n">10</div><div class="s">1 / 870</div></div>
-        <span class="chev">›</span>
-      </div>
-      <div class="school">
-        <span class="badge pri">私立<br>小学</span>
-        <div class="info"><div class="nm">Vancouver Talmud Torah</div><div class="meta">998 W 26th Ave · 直线 0.8 km · Fraser Institute 2025</div></div>
-        <div class="rk"><div class="n">7.6</div><div class="s">153 / 870</div></div>
-        <span class="chev">›</span>
-      </div>
-      <div class="school">
-        <span class="badge pri">私立<br>中学</span>
-        <div class="info"><div class="nm">St Francis Xavier</div><div class="meta">428 Great Northern Way · 直线 2.4 km · Fraser Institute 2025</div></div>
-        <div class="rk"><div class="n">9.1</div><div class="s">48 / 870</div></div>
-        <span class="chev">›</span>
-      </div>
+      <div id="schList"></div>
     </div>
     <div class="legal" style="padding-top:4px">
       <div class="footnote">排名来源:Fraser Institute School Rankings 2025,仅供参考,不代表教学质量的唯一衡量;对口学区以教育局当年公布边界为准。点击学校可查看详情及该学区内全部在售房源。</div>
@@ -1058,6 +1037,29 @@ function mktDraw(){
   /* 周期 pills 视觉切换 */
   document.querySelectorAll('.mkt-period span').forEach(function(sp){sp.onclick=function(){sp.parentElement.querySelectorAll('span').forEach(function(x){x.classList.remove('on')});sp.classList.add('on');};});
 }
+var SCHOOLS={
+  pub:{k:[['Douglas Park StrongStart(公立学前)','4550 Douglas Park Lane · 步行 9 分钟',null,null,false]],
+       e:[['Edith Cavell Elementary','500 20th Ave W · 步行 4 分钟 · Fraser Institute 2025',7.6,'253 / 931',true],
+          ['Emily Carr Elementary','4070 Oak St · 步行 15 分钟 · Fraser Institute 2025',7.9,'198 / 931',false]],
+       s:[['Eric Hamber Secondary','5025 Willow St · 步行 12 分钟 · Fraser Institute 2025',8.6,'38 / 251',true]]},
+  cat:{k:[],
+       e:[['St Augustine School','2154 W 7th Ave · 直线 2.1 km · Fraser Institute 2025',8.4,'120 / 931',false]],
+       s:[['Vancouver College','5400 Cartier St · 直线 1.9 km · Fraser Institute 2025',9.8,'5 / 251',false]]},
+  pri:{k:[],
+       e:[['Vancouver Talmud Torah','998 W 26th Ave · 直线 0.8 km · Fraser Institute 2025',7.6,'153 / 931',false]],
+       s:[['York House School','4176 Alexandra St · 直线 2.3 km · Fraser Institute 2025',9.9,'2 / 251',false],
+          ['Little Flower Academy','4195 Alexandra St · 直线 2.2 km · Fraser Institute 2025',9.7,'6 / 251',false]]}};
+var schState={t:'pub',l:'e'};
+function schRender(){
+  var rows=SCHOOLS[schState.t][schState.l],el=document.getElementById('schList');
+  if(!rows.length){el.innerHTML='<div class="sch-empty">该学段暂无收录学校</div>';return;}
+  el.innerHTML=rows.map(function(r){
+    return '<div class="sch-row"><span class="sch-ic">🎓</span><div style="flex:1;min-width:0"><div class="sch-nm">'+r[0]+(r[4]?'<span class="sch-tag">对口 catchment</span>':'')+'</div><div class="sch-ad">'+r[1]+'</div></div><div class="sch-score">'+(r[2]!==null?'<div class="v">'+r[2]+'</div><div class="r">'+r[3]+'</div>':'<div class="v" style="color:var(--muted)">—</div><div class="r">无排名</div>')+'</div><span class="sch-chev">›</span></div>';
+  }).join('');
+}
+function schTab(t,el){schState.t=t;document.querySelectorAll('#schTabs .mkt-pill').forEach(function(b){b.classList.remove('on')});el.classList.add('on');schRender();}
+function schLvl(l,el){schState.l=l;document.querySelectorAll('#schLvls span').forEach(function(b){b.classList.remove('on')});el.classList.add('on');schRender();}
+document.addEventListener('DOMContentLoaded',schRender);
 function iTip(b){var p=b.parentElement.querySelector('.ipop');p.style.display=(p.style.display==='none'||!p.style.display)?'block':'none';}
 let dtType='duplex', dtIdx=0;
 function renderDetails(){
