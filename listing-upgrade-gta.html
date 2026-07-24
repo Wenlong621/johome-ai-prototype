@@ -880,6 +880,7 @@ const DETAILS = {
   }
 };
 function uSwap(b){var v=b.previousElementSibling;var isA=v.textContent===v.dataset.a;v.textContent=isA?v.dataset.b:v.dataset.a;b.textContent='\u21c4 '+(isA?b.dataset.u1:b.dataset.u2);}
+function rmSwap(b){var toF=b.dataset.u==='m';b.closest('table').querySelectorAll('.rmv').forEach(function(c){c.textContent=toF?c.dataset.f:c.dataset.m;});b.dataset.u=toF?'f':'m';b.textContent='\u21c4 '+(toF?'m':'ft');}
 function mktToggle(e){e.preventDefault();var p=document.getElementById('mktFull');var l=document.getElementById('mktToggleLink');var open=p.style.display==='none';p.style.display=open?'block':'none';l.textContent=open?'收起行情 ▴':'查看完整行情 ›';if(open&&!p.dataset.drawn){mktDraw();p.dataset.drawn=1;}}
 function mktTab(i,el){document.querySelectorAll('#mktPills .mkt-pill').forEach(function(b){b.classList.remove('on')});el.classList.add('on');for(var k=0;k<5;k++)document.getElementById('mp'+k).style.display=k===i?'block':'none';}
 function mktDraw(){
@@ -978,8 +979,8 @@ function renderDetails(){
       tb.areas.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</table></div></details>`;
   }
   if(tb.rooms){
-    h+=`<details class="fold-blk"><summary>房间与尺寸<em>${tb.rooms.length} 个房间</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>房间</th><th>楼层</th><th style="white-space:nowrap">尺寸(米 · 英尺)</th><th style="text-align:left">备注</th></tr>`+
-      tb.rooms.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td style="white-space:nowrap">${r[2]}</td><td style="text-align:left;color:var(--muted);font-size:10px">${r[3]||''}</td></tr>`).join('')+`</table></div></details>`;
+    h+=`<details class="fold-blk"><summary>房间与尺寸<em>${tb.rooms.length} 个房间</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>房间</th><th>楼层</th><th style="white-space:nowrap">尺寸 <button class="ubtn" data-u="m" onclick="rmSwap(this)">⇄ ft</button></th><th style="text-align:left">备注</th></tr>`+
+      tb.rooms.map(r=>{const p=r[2].split(' m(');const mv=p[0]+' m';const fv=(p[1]||'').replace(/\)$/,'');return `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="rmv" style="white-space:nowrap" data-m="${mv}" data-f="${fv}">${mv}</td><td style="text-align:left;color:var(--muted);font-size:10px">${r[3]||''}</td></tr>`}).join('')+`</table></div></details>`;
   }
   if(tb.baths){
     h+=`<details class="fold-blk"><summary>卫生间<em>${tb.baths.length} 个</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>楼层</th><th>规格 (#Pcs)</th></tr>`+
