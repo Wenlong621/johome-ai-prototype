@@ -978,8 +978,8 @@ function renderDetails(){
       tb.areas.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</table></div></details>`;
   }
   if(tb.rooms){
-    h+=`<details class="fold-blk"><summary>房间与尺寸<em>${tb.rooms.length} 个房间</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>房间</th><th>楼层</th><th style="white-space:nowrap">尺寸 <button class="ubtn" data-u="m" onclick="rmSwap(this)">⇄ ft</button></th><th style="text-align:left">备注</th></tr>`+
-      tb.rooms.map(r=>{const p=r[2].split(' m(');const mv=p[0]+' m';const fv=(p[1]||'').replace(/\)$/,'');return `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="rmv" style="white-space:nowrap" data-m="${mv}" data-f="${fv}">${mv}</td><td style="text-align:left;color:var(--muted);font-size:10px">${r[3]||''}</td></tr>`}).join('')+`</table></div></details>`;
+    h+=`<details class="fold-blk"><summary>房间与尺寸<em>${tb.rooms.length} 个房间</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>房间</th><th>楼层</th><th style="white-space:nowrap">尺寸 <button class="ubtn" data-u="m" onclick="rmSwap(this)">⇄ ft</button></th></tr>`+
+      tb.rooms.map(r=>{const p=r[2].split(' m(');const mv=p[0]+' m';const fv=(p[1]||'').replace(/\)$/,'');return `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="rmv" style="white-space:nowrap" data-m="${mv}" data-f="${fv}">${mv}</td></tr>`}).join('')+`</table></div></details>`;
   }
   if(tb.baths){
     h+=`<details class="fold-blk"><summary>卫生间<em>${tb.baths.length} 个</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>楼层</th><th>规格 (#Pcs)</th></tr>`+
