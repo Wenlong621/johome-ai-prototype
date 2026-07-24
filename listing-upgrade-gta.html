@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Johome · 房源详情页 · 大多伦多(GTA)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#2E6BE6;
+  --brand-ink:#1E4FB8;
+  --brand-soft:#EDF3FE;
+  --brand-deep:#12244D;
+  --ink:#182338;
+  --ink-2:#54627C;
+  --muted:#8C99AF;
+  --line:#E7ECF3;
+  --page:#F3F5F9;
+  --card:#FFFFFF;
+  --up:#D8402F;        /* 涨/高于(中文习惯 红=涨) */
+  --up-soft:#FDEEEC;
+  --down:#0E9F6E;      /* 跌/低于 */
+  --down-soft:#E7F6F0;
+  --ok:#0E9F6E;
+  --ok-soft:#E7F6F0;
+  --warn:#C97A06;
+  --warn-soft:#FCF3E4;
+  --live:#19B36B;
+  --ai1:#3D5CF5;
+  --ai2:#8A3DF5;
+  --canada-line:#0098C9;
+  --num:'Schibsted Grotesk',-apple-system,sans-serif;
+  --cjk:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif;
+  --r:14px;
+  --shadow:0 1px 2px rgba(24,35,56,.04),0 6px 20px -8px rgba(24,35,56,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--cjk);color:var(--ink);background:#E4E8EF;
+  min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;
+}
+/* ===== 设计演示工具条(非产品 UI,交付时可整条移除) ===== */
+.stage-head{
+  width:100%;max-width:430px;background:#EDF0F5;border-bottom:1px solid #DDE3EC;
+  padding:10px 14px 11px;display:flex;flex-direction:column;gap:8px;
+}
+.stage-title{color:#3A465C;font-size:12.5px;font-weight:700}
+.stage-title small{display:block;color:#8C99AF;font-weight:400;font-size:10.5px;margin-top:2px}
+.stage-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.stage-btn{
+  font-family:var(--cjk);font-size:11.5px;color:#54627C;background:#fff;
+  border:1px solid #D8DFE9;border-radius:99px;padding:5px 11px;cursor:pointer;transition:.18s;
+}
+.stage-btn:hover{border-color:var(--brand)}
+.stage-btn.on{background:var(--brand);border-color:var(--brand);color:#fff}
+/* ===== 页面容器(iPhone 逻辑宽度,自然滚动) ===== */
+.phone{
+  width:100%;max-width:430px;background:var(--page);position:relative;flex:1;
+  box-shadow:0 0 50px -10px rgba(24,35,56,.18);
+}
+.screen{position:relative}
+/* 状态栏 + 导航 */
+.statusbar{
+  position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.statusbar .sim{display:flex;justify-content:space-between;align-items:center;padding:10px 22px 2px;font-family:var(--num);font-size:12.5px;font-weight:600;color:var(--ink)}
+.navrow{display:flex;align-items:center;gap:10px;padding:8px 14px 10px}
+.navrow .back{width:30px;height:30px;border-radius:99px;display:grid;place-items:center;color:var(--ink);font-size:17px}
+.navrow .nav-title{font-size:14.5px;font-weight:600;flex:1;text-align:center}
+.navrow .nav-ic{width:30px;height:30px;border-radius:99px;display:grid;place-items:center;color:var(--ink-2);font-size:15px}
+/* ===== 模块标注(设计评审用) ===== */
+.mod{position:relative}
+.mod-tag{
+  display:none;position:absolute;top:-9px;right:10px;z-index:5;
+  font-size:10.5px;font-weight:700;letter-spacing:.02em;color:#fff;
+  background:linear-gradient(135deg,#FF7A45,#F53D6B);border-radius:99px;padding:3px 9px;
+  box-shadow:0 3px 10px -2px rgba(245,61,107,.5);
+}
+.mod-tag.opt{background:linear-gradient(135deg,#7A8CA8,#54627C);box-shadow:0 3px 10px -2px rgba(84,98,124,.4)}
+body.annotate .mod-tag{display:inline-block}
+/* ===== 通用卡片 ===== */
+.wrap{padding:0 12px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);margin-top:10px}
+.card-pad{padding:14px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;padding:14px 14px 0}
+.sec-title{font-size:15px;font-weight:700;letter-spacing:.01em}
+.sec-link{font-size:12px;color:var(--brand);font-weight:500;text-decoration:none}
+.footnote{font-size:10.5px;color:var(--muted);line-height:1.6}
+.num{font-family:var(--num);font-variant-numeric:tabular-nums}
+.chev{color:#B9C3D6}
+/* ===== 头图 ===== */
+.hero{position:relative;height:250px;overflow:hidden;background:#0E1B2E}
+.hero-img{position:absolute;inset:0}
+.hero-badges{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;z-index:3}
+.badge-live{background:var(--live);color:#fff;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:99px;box-shadow:0 3px 10px -2px rgba(25,179,107,.55)}
+.badge-count{background:rgba(10,16,28,.55);backdrop-filter:blur(6px);color:#fff;font-size:11px;padding:4px 10px;border-radius:99px}
+.hero-tabs{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:4px;background:rgba(10,16,28,.5);backdrop-filter:blur(8px);padding:3px;border-radius:99px;z-index:3}
+.hero-tabs span{font-size:11px;color:rgba(255,255,255,.75);padding:4px 12px;border-radius:99px;white-space:nowrap}
+.hero-tabs span.on{background:#fff;color:var(--ink);font-weight:600}
+.hero-dots{position:absolute;right:14px;bottom:16px;display:flex;gap:4px;z-index:3}
+.hero-dots i{width:5px;height:5px;border-radius:99px;background:rgba(255,255,255,.45)}
+.hero-dots i.on{background:#fff;width:14px}
+/* ===== 标题价格 ===== */
+.head-card{border-radius:0 0 var(--r) var(--r);margin-top:0}
+.price-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.price{font-family:var(--num);font-size:29px;font-weight:800;letter-spacing:-.01em}
+.price-label{font-size:11px;color:var(--muted)}
+.price-label b{color:var(--ink-2);font-weight:500}
+.addr{font-size:16.5px;font-weight:700;margin-top:8px;line-height:1.35}
+.addr-sub{font-size:12px;color:var(--ink-2);margin-top:4px}
+.mls{font-family:var(--num);color:var(--muted)}
+/* ①价格体检 */
+.pcheck{margin-top:12px;border:1px solid #F0E3D8;background:linear-gradient(180deg,#FFFDF9,#FFF9F0);border-radius:12px;padding:11px 12px}
+.pcheck-top{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.pcheck-top .t{font-size:12.5px;font-weight:700;color:#8A5A18}
+.pcheck-top .pill{margin-left:auto;font-size:10.5px;color:#A07B3F;background:#F6ECDC;border-radius:99px;padding:2px 8px}
+.pcheck-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.pc-item .k{font-size:10.5px;color:var(--muted);margin-bottom:2px}
+.pc-item .v{font-size:13px;font-weight:700;font-family:var(--num)}
+.delta-up{color:var(--up)}
+.delta-down{color:var(--down)}
+.delta-flat{color:var(--ink-2)}
+.pc-note{margin-top:9px;padding-top:8px;border-top:1px dashed #EBDCC4;font-size:11px;color:#8A6A38;line-height:1.55}
+/* ⑨归属chips */
+.chips-row{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin-top:12px}
+.chips-row::-webkit-scrollbar{display:none}
+.geo-chip{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--brand-ink);background:var(--brand-soft);border:1px solid #DCE8FC;border-radius:99px;padding:5px 11px;font-weight:500;text-decoration:none}
+.geo-chip small{color:#8FA6D4;font-weight:400}
+/* 图标行 */
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 4px;padding:14px 10px;border-top:1px solid var(--line);margin-top:14px}
+.fact{text-align:center}
+.fact .ic{font-size:17px;margin-bottom:3px}
+.fact .v{font-size:13px;font-weight:700;font-family:var(--num)}
+.fact .v small{font-size:10px;font-weight:500;color:var(--ink-2)}
+.fact .k{font-size:10px;color:var(--muted);margin-top:1px}
+/* ===== 地图区 ===== */
+.mapbox{position:relative;height:190px;border-radius:12px;overflow:hidden;margin-top:12px}
+.map-count{position:absolute;left:10px;bottom:10px;z-index:4;background:rgba(255,255,255,.94);backdrop-filter:blur(4px);font-size:10.5px;color:var(--ink-2);border-radius:99px;padding:4px 10px;box-shadow:var(--shadow)}
+.poi-pills{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:10px;padding-bottom:2px}
+.poi-pills::-webkit-scrollbar{display:none}
+.poi-pill{flex-shrink:0;font-size:11.5px;color:var(--ink-2);background:#F2F5F9;border:1px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer;display:inline-flex;gap:5px;align-items:center}
+.poi-pill b{font-family:var(--num);font-weight:600;color:var(--muted)}
+.poi-pill.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.poi-pill.on b{color:rgba(255,255,255,.8)}
+/* ③交通通勤 */
+.transit{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.transit-row{display:flex;gap:7px;flex-wrap:wrap}
+.stn-chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;background:#F2FAFD;border:1px solid #D5EEF7;border-radius:99px;padding:5px 11px;color:#0A6E92;font-weight:500}
+.stn-chip .dot{width:8px;height:8px;border-radius:99px;background:var(--canada-line)}
+.score-chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;background:#F2F5F9;border:1px solid var(--line);border-radius:99px;padding:5px 11px;color:var(--ink-2)}
+.score-chip b{font-family:var(--num);color:var(--ink)}
+.commute{margin-top:10px;display:grid;gap:6px}
+.cmt{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2)}
+.cmt .ic{width:22px;height:22px;border-radius:7px;background:#F2F5F9;display:grid;place-items:center;font-size:11px}
+.cmt b{font-family:var(--num);color:var(--ink);font-weight:600;margin-left:auto}
+.cmt.me{background:var(--ok-soft);border:1px solid #CBEBDD;border-radius:10px;padding:8px 10px;color:#0B7A54}
+.cmt.me .ic{background:#fff}
+.cmt.me b{color:#0B7A54}
+.cmt.me .ok{font-size:11px;color:#0B7A54;font-weight:600}
+/* ===== 描述 ===== */
+.desc{font-size:13.5px;line-height:1.85;color:#2A374E}
+.desc-en{margin-top:10px}
+.desc-en summary{list-style:none;cursor:pointer;font-size:12px;color:var(--brand);font-weight:500;display:inline-flex;gap:4px;align-items:center}
+.desc-en summary::-webkit-details-marker{display:none}
+.desc-en p{margin-top:8px;font-size:12.5px;line-height:1.7;color:var(--ink-2)}
+/* ⑦为你而选 */
+.fit-card{background:linear-gradient(160deg,#F4F1FF 0%,#FFFFFF 45%);border:1px solid #E6E0FA}
+.fit-head{display:flex;align-items:center;gap:8px}
+.fit-head .ai-ic{width:26px;height:26px;border-radius:9px;background:linear-gradient(135deg,var(--ai1),var(--ai2));display:grid;place-items:center;color:#fff;font-size:13px}
+.fit-head .t{font-size:15px;font-weight:700}
+.fit-head .sub{font-size:10.5px;color:var(--muted)}
+.fit-score{margin-left:auto;text-align:right}
+.fit-score .n{font-family:var(--num);font-size:21px;font-weight:800;background:linear-gradient(135deg,var(--ai1),var(--ai2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.fit-score .k{font-size:9.5px;color:var(--muted)}
+.fit-list{margin-top:12px;display:grid;gap:8px}
+.fit-item{display:flex;gap:9px;font-size:12.5px;line-height:1.55;color:#2A374E}
+.fit-item .mark{flex-shrink:0;width:17px;height:17px;border-radius:99px;display:grid;place-items:center;font-size:10px;font-weight:800;margin-top:1px}
+.fit-item.yes .mark{background:var(--ok-soft);color:var(--ok)}
+.fit-item.no .mark{background:var(--up-soft);color:var(--up)}
+.fit-item.mid .mark{background:var(--warn-soft);color:var(--warn)}
+.fit-item b{font-weight:600}
+/* ===== 表格 ===== */
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;padding:4px 14px 14px}
+.kv .row{display:flex;justify-content:space-between;padding:7.5px 0;border-bottom:1px solid #F1F4F8;font-size:12px}
+.kv .row .k{color:var(--muted)}
+.kv .row .v{font-weight:600;color:var(--ink);font-family:var(--num);text-align:right}
+.kv .subh{grid-column:1/-1;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--brand);padding:13px 0 4px}
+.kv .subh:first-child{padding-top:2px}
+.fold-blk{margin:6px 14px 10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.fold-blk summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:9px 11px;font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--brand);background:#F7F9FC}
+.fold-blk summary::-webkit-details-marker{display:none}
+.fold-blk summary em{font-style:normal;font-weight:400;color:var(--muted);font-size:10px;margin-left:auto}
+.fold-blk summary::after{content:'▾';color:var(--brand);font-size:10px;transition:transform .15s}
+.fold-blk[open] summary::after{transform:rotate(180deg)}
+.fold-blk .rooms{padding:4px 11px 10px;margin:0}
+.ubtn{border:1px solid var(--brand);color:var(--brand);background:transparent;border-radius:999px;font-size:9.5px;padding:1px 7px;margin-left:6px;cursor:pointer;font-family:inherit;vertical-align:1px}
+.ubtn:hover{background:var(--brand-soft)}
+.ibtn{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;border:1px solid var(--brand);color:var(--brand);background:transparent;font-size:9px;font-style:italic;font-family:Georgia,serif;cursor:pointer;margin-left:5px;vertical-align:1px;padding:0}
+.ibtn:hover{background:var(--brand-soft)}
+.ipop{display:none;margin:5px 0 3px;padding:6px 9px;background:#F2F5F9;border-left:2px solid var(--brand);border-radius:6px;color:var(--ink-2);font-size:10.5px;line-height:1.7;font-family:var(--cjk)}
+.mkt-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:13px}
+.mkt-pill{border:1px solid var(--line);border-radius:9px;padding:6px 10px;font-size:11.5px;background:#fff;cursor:pointer;font-family:var(--cjk);color:var(--ink-2)}
+.mkt-pill.on{background:var(--brand);color:#fff;border-color:var(--brand);font-weight:600}
+.mkt-period{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:2px;margin-top:11px;background:#fff}
+.mkt-period span{font-size:11px;padding:4px 12px;border-radius:99px;cursor:pointer;color:var(--ink-2)}
+.mkt-period span.on{background:var(--brand);color:#fff;font-weight:600}
+.mkt-title{font-size:12px;color:var(--ink-2);margin-top:11px}
+.stat4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+.stat4 .st{background:#F7F9FC;border-radius:9px;padding:7px 4px;text-align:center}
+.stat4 .st .v{font-weight:800;font-family:var(--num);font-size:12.5px;color:var(--ink)}
+.stat4 .st .k{font-size:10px;color:var(--muted);margin-top:1px}
+.mkt-sel{margin-top:9px;font-family:var(--cjk);font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink-2)}
+.mkt-chart{margin-top:8px}
+.mkt-legend{display:flex;gap:12px;justify-content:center;font-size:10.5px;color:var(--ink-2);margin-top:5px}
+.mkt-legend i{font-style:normal;display:inline-flex;align-items:center;gap:4px}
+.mkt-legend .dotc{width:8px;height:8px;border-radius:50%;display:inline-block}
+.mkt-foot{font-size:10px;color:var(--muted);text-align:center;margin-top:5px;line-height:1.6}
+.sch-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px;background:#fff}
+.sch-ic{width:34px;height:34px;border-radius:10px;background:#F2F5F9;display:grid;place-items:center;font-size:16px;flex:none}
+.sch-nm{font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sch-tag{font-size:9px;color:#0B7A54;background:var(--ok-soft);border:1px solid #CBEBDD;border-radius:99px;padding:1px 7px;font-weight:600}
+.sch-ad{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.5}
+.sch-score{margin-left:auto;text-align:right;flex:none}
+.sch-score .v{font-family:var(--num);font-size:15px;font-weight:800;color:var(--brand)}
+.sch-score .r{font-size:10px;color:var(--muted);margin-top:1px;font-family:var(--num)}
+.sch-chev{color:#C4CBD8;font-size:15px;flex:none}
+.sch-empty{font-size:11.5px;color:var(--muted);text-align:center;padding:18px 0 10px}
+.rk-item{border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-top:8px}
+.rk-head{display:flex;align-items:center;gap:7px}
+.rk-sev{font-size:9px;font-weight:700;border-radius:99px;padding:2px 8px;flex:none}
+.rk-sev.risk{color:#B4382A;background:var(--up-soft)}
+.rk-sev.tradeoff{color:#8A5A18;background:var(--warn-soft)}
+.rk-title{font-size:12.5px;font-weight:700;color:var(--ink)}
+.rk-act{margin-left:auto;font-size:9.5px;color:var(--brand-ink);background:var(--brand-soft);border-radius:99px;padding:2px 8px;flex:none;white-space:nowrap}
+.rk-text{font-size:11.5px;color:var(--ink-2);line-height:1.65;margin-top:5px}
+.rk-ev{font-size:9.5px;color:var(--muted);font-family:var(--num);margin-top:4px;line-height:1.6}
+.rooms{padding:0 14px 14px}
+.rooms table{width:100%;border-collapse:collapse;font-size:11.5px}
+.rooms th{text-align:left;color:var(--muted);font-weight:500;padding:6px 0;border-bottom:1px solid var(--line);font-size:10.5px}
+.rooms td{padding:6.5px 0;border-bottom:1px solid #F1F4F8;color:var(--ink-2)}
+.rooms td:first-child{color:var(--ink);font-weight:500}
+.rooms td:last-child,.rooms th:last-child{text-align:right;font-family:var(--num)}
+.more-collapse summary{list-style:none;cursor:pointer;text-align:center;font-size:12px;color:var(--brand);font-weight:500;padding:11px;border-top:1px solid var(--line)}
+.more-collapse summary::-webkit-details-marker{display:none}
+/* 房源资料 Tab 化 */
+.dtabs{display:flex;gap:4px;margin:10px 14px 0;background:#F2F5F9;border-radius:11px;padding:3px}
+.dtab{flex:1;text-align:center;font-size:12.5px;color:var(--ink-2);padding:8px 0;border-radius:9px;cursor:pointer;font-weight:500;transition:.15s}
+.dtab.on{background:#fff;color:var(--ink);font-weight:700;box-shadow:0 1px 4px rgba(24,35,56,.1)}
+.ins-chip{display:flex;gap:7px;align-items:flex-start;margin:10px 14px 0;background:var(--brand-soft);border:1px solid #DCE8FC;border-radius:10px;padding:8px 11px;font-size:11.5px;color:var(--brand-ink);line-height:1.55}
+.ins-chip.gold{background:#FCF6E8;border-color:#F0E2C0;color:#8A5A18}
+.ins-chip.green{background:var(--ok-soft);border-color:#CBEBDD;color:#0B7A54}
+.legal-fold{margin:6px 14px 12px}
+.legal-fold summary{list-style:none;cursor:pointer;font-size:11.5px;color:var(--brand);font-weight:500}
+.legal-fold summary::-webkit-details-marker{display:none}
+.legal-fold p{margin-top:6px;font-size:10.5px;color:var(--muted);line-height:1.6;font-family:var(--num)}
+/* ⑧投资视角 */
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
+.inv-tile{background:#F7F9FC;border:1px solid var(--line);border-radius:11px;padding:10px 11px}
+.inv-tile .k{font-size:10.5px;color:var(--muted)}
+.inv-tile .v{font-family:var(--num);font-size:16.5px;font-weight:800;margin-top:2px}
+.inv-tile .s{font-size:10px;color:var(--muted);margin-top:2px}
+.tagline{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.fact-tag{font-size:10.5px;color:var(--ink-2);background:#F2F5F9;border-radius:99px;padding:3.5px 9px}
+/* ②社区行情 */
+.trend-row{display:flex;align-items:center;gap:12px}
+.trend-meta .v{font-family:var(--num);font-size:17px;font-weight:800}
+.trend-meta .k{font-size:10.5px;color:var(--muted)}
+.trend-meta .d{font-size:11.5px;font-weight:700;font-family:var(--num)}
+.spark{margin-left:auto}
+/* ⑤画像 */
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.demo-tile{background:#F7F9FC;border:1px solid var(--line);border-radius:11px;padding:10px 11px}
+.demo-tile .v{font-family:var(--num);font-size:15.5px;font-weight:800}
+.demo-tile .v.txt{font-family:var(--cjk);font-size:12.5px;font-weight:700;line-height:1.4}
+.demo-tile .k{font-size:10.5px;color:var(--muted);margin-top:2px}
+/* ⑥学校 */
+.sch-group{padding:0 14px}
+.sch-group-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;border-radius:8px;padding:4px 9px;margin-top:12px}
+.sch-group-tag.catch{background:var(--ok-soft);color:#0B7A54}
+.sch-group-tag.near{background:#F2F5F9;color:var(--ink-2)}
+.school{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #F1F4F8}
+.school:last-child{border-bottom:none}
+.school .badge{flex-shrink:0;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:10px;font-weight:700;line-height:1.1;text-align:center}
+.school .badge.pub{background:var(--brand-soft);color:var(--brand-ink)}
+.school .badge.pri{background:#F6EFFA;color:#8A44B8}
+.school .info{flex:1;min-width:0}
+.school .nm{font-size:13px;font-weight:600}
+.school .meta{font-size:10.5px;color:var(--muted);margin-top:2px}
+.school .rk{text-align:right;flex-shrink:0}
+.school .rk .n{font-family:var(--num);font-size:14px;font-weight:800;color:var(--brand-ink)}
+.school .rk .s{font-size:9.5px;color:var(--muted)}
+/* ⑪风险 */
+.risk-item{display:flex;gap:9px;padding:9px 0;font-size:12.5px;line-height:1.6;color:#2A374E;border-bottom:1px solid #F1F4F8}
+.risk-item:last-child{border-bottom:none}
+.risk-item .ic{flex-shrink:0;width:18px;height:18px;border-radius:6px;background:var(--warn-soft);color:var(--warn);display:grid;place-items:center;font-size:10.5px;margin-top:2px}
+.risk-item .lv{flex-shrink:0;font-size:10px;color:var(--muted);background:#F2F5F9;border-radius:99px;padding:2px 7px;height:fit-content;margin-top:2px}
+/* ⑩相似房源 */
+.sim-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:12px 14px 4px}
+.sim-scroll::-webkit-scrollbar{display:none}
+.sim-card{flex-shrink:0;width:150px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.sim-card .ph{height:88px;position:relative}
+.sim-card .ph .tag{position:absolute;top:7px;left:7px;font-size:9px;color:#fff;background:rgba(10,16,28,.55);border-radius:99px;padding:2px 7px}
+.sim-card .bd{padding:8px 9px 10px}
+.sim-card .p{font-family:var(--num);font-size:13.5px;font-weight:800}
+.sim-card .p small{font-size:9.5px;font-weight:600;margin-left:3px}
+.sim-card .a{font-size:10.5px;color:var(--ink-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sim-card .m{font-size:9.5px;color:var(--muted);margin-top:3px;font-family:var(--num)}
+.alt-line{margin:10px 14px 14px;background:#F7F9FC;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:11.5px;color:var(--ink-2);line-height:1.6}
+.alt-line a{color:var(--brand);font-weight:600;text-decoration:none}
+/* 经纪人 */
+.agent{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid #F1F4F8}
+.agent:last-child{border-bottom:none}
+.agent .av{width:42px;height:42px;border-radius:99px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;font-family:var(--num)}
+.agent .nm{font-size:13.5px;font-weight:700}
+.agent .co{font-size:11px;color:var(--muted);margin-top:1px}
+.agent .tel{margin-left:auto;font-size:10.5px;color:var(--brand);font-family:var(--num);font-weight:600;white-space:nowrap}
+.agent-tag{font-size:9.5px;color:#B8860B;background:#FCF3E4;border-radius:99px;padding:2px 7px;margin-left:6px;font-weight:600}
+/* 免责+推广 */
+.legal{padding:16px 14px 8px}
+.promo{margin:10px 12px 0}
+.promo summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;background:#EEF1F6;border-radius:12px;padding:11px 14px;font-size:12px;color:var(--ink-2)}
+.promo summary::-webkit-details-marker{display:none}
+.promo .ad-mark{font-size:9.5px;color:var(--muted);border:1px solid #CBD4E2;border-radius:4px;padding:1px 5px}
+.promo .ads{display:grid;gap:8px;padding:10px 2px 0}
+.ad-card{border-radius:11px;padding:12px 14px;font-size:12px;color:#fff;position:relative;overflow:hidden}
+.ad-card .am{position:absolute;top:8px;right:10px;font-size:9px;border:1px solid rgba(255,255,255,.5);border-radius:4px;padding:1px 5px;color:rgba(255,255,255,.8)}
+.ad-card b{font-size:13px}
+.ad-card p{font-size:10.5px;opacity:.85;margin-top:3px}
+/* 底部操作条 ⑫ */
+.actionbar{
+  position:sticky;bottom:0;z-index:70;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);padding:10px 14px calc(10px + 14px);display:flex;gap:9px;align-items:center;
+}
+.ab-ic{flex-shrink:0;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:18px;border:1px solid var(--line);background:#fff}
+.ab-ic .lbl{display:none}
+.ab-ask{
+  flex:1;height:44px;border:none;border-radius:13px;cursor:pointer;
+  background:linear-gradient(135deg,var(--ai1),var(--ai2));color:#fff;font-family:var(--cjk);
+  font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;
+  box-shadow:0 8px 20px -6px rgba(93,61,245,.5);position:relative;overflow:hidden;
+}
+.ab-ask::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.25) 50%,transparent 60%);transform:translateX(-100%);animation:shine 3.2s ease-in-out infinite}
+@keyframes shine{0%,60%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.ab-call{flex-shrink:0;height:44px;padding:0 18px;border-radius:13px;background:var(--ink);color:#fff;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:6px}
+/* 载入动画 */
+.wrap>.card,.head-card{animation:rise .5s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (max-width:430px){
+  .phone{box-shadow:none}
+}
+/* iOS 安全区 */
+.actionbar{padding-bottom:calc(10px + env(safe-area-inset-bottom,14px))}
+.statusbar .sim{padding-top:calc(10px + env(safe-area-inset-top,0px))}
+</style>
+</head>
+<body>
+
+<div class="stage-head">
+  <div class="stage-title">Johome · 大多伦多房源详情页原型(设计演示工具条,非产品 UI)
+    <small>样例 C13534294 · TRREB(大多伦多) · 与大温版同构,字段按安省口径本地化</small>
+  </div>
+  <div class="stage-actions">
+    <span style="color:#8C99AF;font-size:10.5px">TRREB · Freehold 联排(附 POTL)
+    <button class="stage-btn on" id="btnAnno" onclick="toggleAnno()">显示 PRD 模块标注</button>
+  </div>
+</div>
+
+<div class="phone">
+<div class="screen" id="screen">
+
+  <!-- 状态栏 + 导航 -->
+  <div class="statusbar">
+    <div class="sim"><span>3:24</span><span style="display:inline-flex;align-items:center;gap:5px">5G
+      <svg width="16" height="10" viewBox="0 0 16 10"><g fill="#182338"><rect x="0" y="6" width="2.6" height="4" rx="1"/><rect x="4.2" y="4" width="2.6" height="6" rx="1"/><rect x="8.4" y="2" width="2.6" height="8" rx="1"/><rect x="12.6" y="0" width="2.6" height="10" rx="1"/></g></svg>
+      <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0" y="0" width="19" height="11" rx="3" fill="none" stroke="#182338" stroke-width="1.2"/><rect x="2" y="2" width="13" height="7" rx="1.5" fill="#182338"/><rect x="20" y="3.5" width="2" height="4" rx="1" fill="#182338"/></svg>
+    </span></div>
+    <div class="navrow">
+      <div class="back">‹</div>
+      <div class="nav-title num">C13534294 - Detail</div>
+      <div class="nav-ic">♡</div>
+      <div class="nav-ic">⧉</div>
+    </div>
+  </div>
+
+  <!-- 头图轮播 -->
+  <div class="hero">
+    <div class="hero-img">
+      <svg width="100%" height="100%" viewBox="0 0 390 250" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#B8D4E8"/><stop offset="1" stop-color="#E8EFF4"/>
+          </linearGradient>
+          <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#4A5A6B"/><stop offset="1" stop-color="#37465A"/>
+          </linearGradient>
+          <linearGradient id="wall2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#5B6C7E"/><stop offset="1" stop-color="#46586C"/>
+          </linearGradient>
+        </defs>
+        <rect width="390" height="250" fill="url(#sky)"/>
+        <ellipse cx="60" cy="245" rx="180" ry="40" fill="#C5D6C0"/>
+        <ellipse cx="340" cy="250" rx="200" ry="42" fill="#B7CBB2"/>
+        <rect x="70" y="70" width="180" height="150" fill="url(#wall)"/>
+        <rect x="250" y="95" width="90" height="125" fill="url(#wall2)"/>
+        <polygon points="70,70 160,38 250,70" fill="#2C3947"/>
+        <polygon points="250,95 295,72 340,95" fill="#3A4A5C"/>
+        <g fill="#DCE8F2">
+          <rect x="88" y="88" width="34" height="44" rx="2"/><rect x="132" y="88" width="34" height="44" rx="2"/>
+          <rect x="182" y="88" width="50" height="44" rx="2"/>
+          <rect x="88" y="150" width="34" height="52" rx="2"/><rect x="182" y="150" width="50" height="30" rx="2"/>
+          <rect x="264" y="110" width="26" height="30" rx="2"/><rect x="298" y="110" width="26" height="30" rx="2"/>
+          <rect x="264" y="155" width="60" height="26" rx="2"/>
+        </g>
+        <rect x="134" y="158" width="30" height="62" rx="2" fill="#C89A5B"/>
+        <rect x="60" y="205" width="290" height="8" fill="#8FA893"/>
+        <g fill="#5F7D63"><ellipse cx="38" cy="185" rx="26" ry="42"/><ellipse cx="368" cy="178" rx="24" ry="48"/><ellipse cx="345" cy="200" rx="16" ry="26"/></g>
+        <rect width="390" height="250" fill="url(#grain)" opacity=".5"/>
+      </svg>
+    </div>
+    <span style="position:absolute;top:12px;right:12px;z-index:3;background:#1FA75A;color:#fff;font-size:11px;font-weight:600;padding:5px 13px;border-radius:99px">挂牌中</span>
+    <div class="hero-tabs"><span>VR</span><span class="on">图片</span></div>
+    <div class="num" style="position:absolute;right:14px;bottom:14px;z-index:3;background:rgba(10,16,28,.55);color:#fff;font-size:10.5px;padding:3px 10px;border-radius:99px">3 / 25</div>
+  </div>
+
+  <!-- 标题 / 价格 / ①价格体检 / ⑨归属chips / 图标行 -->
+  <div class="card head-card card-pad mod">
+    <span class="mod-tag opt">O2 口径修正</span>
+    <div class="price-row">
+      <span class="price">$1,219,000</span>
+      <span class="price-label"><b>挂牌日期</b> 07/18/2026 · <span class="num">已挂 5 天(示意)</span></span>
+    </div>
+    <div class="addr">18 DEEP ROOTS TERR, Toronto ON</div>
+    <div style="font-size:12.5px;color:var(--ink-2);margin-top:3px">Englemount-Lawrence, Toronto C04, M6A 0G1</div>
+    <div class="addr-sub">联排(Att/Row/Twnhouse · 3-Storey) · Freehold 附 POTL &nbsp;|&nbsp; <span class="mls num">MLS® C13534294</span></div>
+
+    <!-- ① 价格体检 -->
+    <div class="pcheck mod">
+      <span class="mod-tag">新① 价格体检</span>
+      <div class="pcheck-top">
+        <span style="font-size:14px">🩺</span><span class="t">价格体检 · 本房 vs Englemount-Lawrence 行情</span>
+        <span class="pill">同社区 · 同房型口径</span>
+      </div>
+      <div class="pcheck-grid">
+        <div class="pc-item">
+          <div class="k">对比同社区联排售出中位 $1.15M</div>
+          <div class="v delta-up">▲ 高于中位 6%</div>
+        </div>
+        <div class="pc-item">
+          <div class="k">Englemount-Lawrence 联排 · 近一年</div>
+          <div class="v delta-up">▲ +1.8%</div>
+        </div>
+        <div class="pc-item">
+          <div class="k">同社区同房型在售</div>
+          <div class="v">9 套</div>
+        </div>
+        <div class="pc-item">
+          <div class="k">已挂天数 vs 社区平均</div>
+          <div class="v">5 天 <span style="color:var(--muted);font-weight:500">/ 15 天</span></div>
+        </div>
+        <div class="pc-item" style="grid-column:1/-1">
+          <div class="k" style="font-size:12.5px;font-weight:700;color:#8A5A18;margin-bottom:3px">vs MPAC 评估价 (2016 基准) $712K</div>
+          <div class="v delta-up">▲ 高于评估 71% <span style="font-size:10px;color:var(--muted);font-weight:500">安省评估冻结 2016 基准,差距大属正常</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图标行(O2 口径修正 · 按 MLS 房源类型自适应) -->
+    <div class="mod" style="margin-top:14px">
+      <span class="mod-tag opt" style="top:-6px">O2+ 图标行按 MLS 类型自适应</span>
+      <div class="facts" id="factsGrid" style="margin-top:0"></div>
+    </div>
+
+    <!-- ⑨ 归属上下文 chips -->
+    <div class="mod" style="margin-top:14px">
+      <span class="mod-tag">新⑨ 归属上下文</span>
+      <div class="chips-row" style="margin-top:0">
+        <a class="geo-chip" href="#"><small>社区</small> Englemount-Lawrence ›</a>
+        <a class="geo-chip" href="#"><small>片区</small> Yorkdale–Lawrence ›</a>
+        <a class="geo-chip" href="#"><small>商圈</small> Yorkdale(就近)›</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+  <!-- 平台经纪速联卡 -->
+  <div class="card card-pad" style="display:flex;align-items:center;gap:12px">
+    <div style="position:relative;flex:none">
+      <div style="width:52px;height:52px;border-radius:50%;background:#EEF1F6;display:grid;place-items:center;font-size:24px">👤</div>
+      <span style="position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;background:#F29900;color:#fff;font-size:8.5px;font-weight:700;border-radius:99px;padding:2px 7px;white-space:nowrap">☘ Realtor</span>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14.5px;font-weight:800">Mike Zhang</div>
+      <div style="font-size:11.5px;color:var(--ink-2);margin-top:2px">Nu Stream Realty Inc</div>
+      <div class="num" style="font-size:11.5px;color:var(--ink-2);margin-top:1px">+1 (778) 926-9213</div>
+      <div style="font-size:11.5px;color:var(--ink-2)">mike.zhang@Johome.com</div>
+    </div>
+  </div>
+
+  <!-- 历史记录(同一物业历次挂牌) -->
+  <div class="sec-head" style="padding:8px 4px 9px"><span class="sec-title">历史记录</span></div>
+  <div class="card">
+    <div class="card-pad" style="padding-top:12px;padding-bottom:4px">
+      <div style="display:flex;align-items:center"><div class="num" style="font-size:15px;font-weight:800">$ 1,219,000</div><span style="margin-left:auto;font-size:10px;font-weight:700;color:#0B7A54;background:var(--ok-soft);border-radius:99px;padding:3px 10px">挂牌中</span></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px" class="num">挂牌: 07/18/2026 · MLS: C13534294</div>
+    </div>
+  </div>
+
+  <!-- 地图 + ④POI + ③交通通勤 -->
+  <div class="card card-pad mod">
+    <span class="mod-tag">新③④ 交通 + POI</span>
+    <div class="sec-title" style="padding:0">位置与周边</div>
+
+    <div class="mapbox">
+      <svg width="100%" height="100%" viewBox="0 0 366 190" preserveAspectRatio="xMidYMid slice">
+        <rect width="366" height="190" fill="#EEF3EE"/>
+        <g stroke="#FFFFFF" stroke-width="7">
+          <line x1="0" y1="48" x2="366" y2="44"/><line x1="0" y1="106" x2="366" y2="102"/><line x1="0" y1="160" x2="366" y2="158"/>
+          <line x1="62" y1="0" x2="66" y2="190"/><line x1="188" y1="0" x2="184" y2="190"/><line x1="300" y1="0" x2="304" y2="190"/>
+        </g>
+        <g stroke="#FFD966" stroke-width="9"><line x1="188" y1="0" x2="184" y2="190"/></g>
+        <g stroke="#FFFFFF" stroke-width="3" opacity=".9">
+          <line x1="0" y1="76" x2="366" y2="73"/><line x1="0" y1="132" x2="366" y2="130"/>
+          <line x1="124" y1="0" x2="126" y2="190"/><line x1="244" y1="0" x2="246" y2="190"/>
+        </g>
+        <rect x="18" y="116" width="38" height="36" rx="4" fill="#BFDCB4"/>
+        <rect x="310" y="54" width="44" height="42" rx="4" fill="#BFDCB4"/>
+        <text x="326" y="79" font-size="8" fill="#5E7D57" font-family="sans-serif">公园</text>
+        <!-- Canada Line -->
+        <line x1="186" y1="0" x2="183" y2="190" stroke="#0098C9" stroke-width="3" stroke-dasharray="8 5" opacity=".85"/>
+        <circle cx="184.5" cy="96" r="6.5" fill="#0098C9" stroke="#fff" stroke-width="2.5"/>
+        <!-- POI 点位 -->
+        <g>
+          <circle cx="96" cy="60" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="150" cy="140" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="262" cy="66" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="216" cy="150" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="322" cy="132" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="42" cy="82" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+        </g>
+        <!-- 本房 pin -->
+        <g transform="translate(120,88)">
+          <path d="M0,-26 C-11,-26 -17,-18 -17,-10 C-17,0 0,14 0,14 C0,14 17,0 17,-10 C17,-18 11,-26 0,-26Z" fill="#2E6BE6" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="0" cy="-11" r="5" fill="#fff"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- ④ POI 类型 pills -->
+    <div class="poi-pills">
+      <span class="poi-pill on">🍜 餐饮 <b>46</b></span>
+      <span class="poi-pill">🛒 超市 <b>8</b></span>
+      <span class="poi-pill">☕ 咖啡 <b>21</b></span>
+      <span class="poi-pill">🌳 公园 <b>12</b></span>
+      <span class="poi-pill">💪 健身 <b>9</b></span>
+      <span class="poi-pill">🏥 医疗 <b>15</b></span>
+    </div>
+
+    <!-- ③ 交通与通勤 -->
+    <div class="transit">
+      <div class="transit-row">
+        <span class="stn-chip"><span class="dot"></span>Line 1 · Yorkdale 站 <b class="num">步行 12 分</b></span>
+        <span class="stn-chip"><span class="dot"></span>Line 1 · Lawrence West 站 <b class="num">步行 14 分</b></span>
+      </div>
+      </div>
+  </div>
+
+  <!-- 房源描述(O3 中文优先) -->
+  <div class="card mod">
+    <span class="mod-tag opt">O3 中文置前 · 英文折叠</span>
+    <div class="sec-head"><span class="sec-title">房源描述 <span style="font-size:10px;font-weight:600;color:var(--brand-ink);background:var(--brand-soft);border:1px solid #DCE8FC;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:2px">采用 AI 翻译</span></span></div>
+    <div class="card-pad" style="padding-top:10px">
+      <p class="desc">位于 Lawrence Heights 的全新现代 freehold 联排,采光、私密与家庭功能兼备。前后均为开阔视野,后方无正对邻排;正面公园景观,家庭厅/餐区、后院与主卧均为明亮南向,全天自然光充足。约 2,006 平方英尺的布局 + 宽敞地下室 + 私家后院 + 独立车库;4 卧外加灵活 den 空间(宜作家庭办公),4 卫,主层 9 英尺天花开放式起居。现代厨房配石英台面、集成餐储、玻璃砖防溅墙、柜下照明、不锈钢电器与早餐吧大操作台。主卧套房设双步入式衣柜与独立卫浴。经私家后巷进入独立车库。家庭友好社区,步行可达地铁站、公园、Yorkdale 商场、学校与主干道。</p>
+      <details class="desc-en">
+        <summary>查看英文原文 ▾</summary>
+        <p>Modern new and spacious freehold townhome in Lawrence Heights offering an exceptional combination of natural light, privacy, and functional family living. Rarely found open views both front and back with no direct rear neighbours. Thoughtfully designed approx. 2,006 sq.ft. layout + spacious basement + private backyard + private garage; featuring 4 bedrooms and flexible den space, 4 bathrooms, and an open-concept main living area with 9 ft ceilings. Contemporary kitchen with quartz countertops, integrated pantry, glass tile backsplash, undercabinet lighting, stainless steel appliances. Spacious primary retreat features double walk-in closets and private ensuite. Detached garage through a private alley. Steps to subway station, parks, Yorkdale Mall, schools, shopping, and major highways.</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- ⑦ 为你而选 -->
+  <div class="card fit-card card-pad mod">
+    <span class="mod-tag">新⑦ 为你而选</span>
+    <div class="fit-head">
+      <div class="ai-ic">✦</div>
+      <div><div class="t">为你而选</div><div class="sub">基于你的购房档案逐条比对 · 仅你可见</div></div>
+      <div class="fit-score"><div class="n">82</div><div class="k">匹配度</div></div>
+    </div>
+    <div class="fit-list">
+      <div class="fit-item no"><span class="mark">✕</span><span><b>预算:</b>超出你的预算档($2.5M)约 <b class="num">$188,000</b>,如可上浮 8% 以内则在可谈范围</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>房型:</b>3 卧 + 独立办公室,与你「3 房以上 · 双拼/联排」意向一致</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>通勤:</b>到 Broadway Tech Centre 18 分钟,在你的 30 分钟等时圈内</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>学区:</b>你关注学区——对口 Eric Hamber Secondary(Fraser Institute 2025 · <span class="num">8.6 分</span>)</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>景观:</b>描述提及山景(mountain views),契合你的山景偏好</span></div>
+      <div class="fit-item mid"><span class="mark">!</span><span><b>车位:</b>仅 1 车位,你的档案为「2 车位优先」,街区可路边停车</span></div>
+    </div>
+    <div class="footnote" style="margin-top:11px">比对基于你在 Buying AI 中的档案;不匹配项如实标注。修改档案可在「我的-购房偏好」中更新。</div>
+  </div>
+
+  <!-- 房源资料(Tab 化重组:去重 + 信号提炼,内容随 MLS 类型切换) -->
+  <div class="card mod">
+    <span class="mod-tag opt">O2+ 资料 Tab 化 · 去重 + 信号提炼</span>
+    <div class="sec-head"><span class="sec-title">房源资料</span><span style="font-size:10px;color:var(--muted)" id="dtSrc"></span></div>
+    <div class="dtabs" id="dtabs"></div>
+    <div id="dtBody"></div>
+  </div>
+
+  <!-- 政府评估价(BC Assessment) -->
+  <div class="sec-head" style="padding:8px 4px 9px"><span class="sec-title">MPAC 评估价 <span style="font-size:10px;color:var(--muted);font-weight:400">Municipal Property Assessment Corp.</span></span></div>
+  <div class="card">
+    <div class="card-pad" style="padding-top:12px;padding-bottom:4px">
+      <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px"><div class="num" style="font-size:18px;font-weight:800;letter-spacing:.5px">$712,000</div><span style="font-size:10.5px;color:var(--muted)">2016 基准年 · 现行税年适用</span><span style="margin-left:auto;font-size:11px;font-weight:700" class="delta-up">挂牌高于评估 71%</span></div>
+      <div style="font-size:11px;color:var(--ink-2);line-height:1.7;margin-top:9px;background:#F7F9FC;border-radius:9px;padding:8px 11px">安省 MPAC 评估基准冻结于 2016 年,与当前市价差距大属普遍现象;评估价主要用于地税计算,不代表市场价值。</div>
+      <div class="footnote" style="padding:10px 0 8px">来源:MPAC 公开数据。</div>
+    </div>
+  </div>
+
+  <!-- ⑧ 投资视角(条件展开 · 6护栏:绑定当前房源/样本量/白盒明细/未计项/挂牌口径/客观热度) -->
+  <div class="card mod">
+    <span class="mod-tag">新⑧ 投资视角</span>
+    <div class="sec-head">
+      <span class="sec-title">投资视角</span>
+    </div>
+    <div class="card-pad" style="padding-top:10px">
+      <div class="inv-grid">
+        <div class="inv-tile"><div class="k">预估月租(挂牌口径)</div><div class="v">$4,300</div><div class="s">Englemount-Lawrence 联排 近一年租赁挂牌中位</div></div>
+        <div class="inv-tile"><div class="k">毛租售比(年)</div><div class="v">4.2%</div><div class="s">年租金 ÷ 挂牌价</div></div>
+        <div class="inv-tile"><div class="k">Cap Rate(估)</div><div class="v">3.0%</div><div class="s">(年租金 − 持有成本) ÷ 挂牌价 · 明细见下</div></div>
+        <div class="inv-tile"><div class="k">市场节奏(客观)</div><div class="v">SNLR 55%</div><div class="s">当月成交 ÷ 新增挂牌(TRREB 口径) · 社区 DOM 15 天</div></div>
+      </div>
+      <details style="margin-top:9px;border:1px solid var(--line);border-radius:10px;overflow:hidden">
+        <summary style="list-style:none;cursor:pointer;padding:8px 11px;font-size:11.5px;font-weight:700;color:var(--brand);background:#F7F9FC">Cap Rate 计算明细(白盒) ▾</summary>
+        <div style="padding:8px 11px 10px;font-size:11px;line-height:1.9;color:var(--ink-2);font-family:var(--num)">
+          <div><b>NOI ≈ $37,200 ÷ 挂牌价 $1,219,000 = 3.0%</b></div>
+          <div>年租金(挂牌中位) $51,600 <span style="color:var(--muted)">MLS 租赁挂牌 · 社区×房型 近一年中位</span></div>
+          <div>− 地税 $4,865 <span style="color:var(--ok);font-weight:600">feed 实值</span><br>
+          − POTL 月费 ×12 ≈$2,921 <span style="color:var(--ok);font-weight:600">feed 实值</span></div>
+          <div>− 保险 ≈$1,900 <span style="color:var(--warn)">估算</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">重建成本法:室内面积 × 重建单价($200–300/ft²) × 保险费率(0.5–0.7%) × 出租加成(+15–25%);Flood Plain = Y 时上浮。Strata 类只计 condo 保单固定带。参数 2026Q3,季度校准。</div></div>
+          <div>− 维护拨备 ≈$3,200 <span style="color:var(--warn)">估算</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">构件摊销法:Σ(构件更换成本 ÷ 设计寿命)——屋顶/供暖/热水罐/外墙(取 feed 的 Roof/Heat/Exterior 字段)+ 日常维护 $1.2/ft²/年,整体乘楼龄系数(10–30 年 = 1.0)。Strata 类仅计套内构件,避免与月费重复。</div></div>
+          <div>− 空置准备 ≈$1,548 <span style="color:var(--warn)">估算</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">CMHC 口径:max(CMHC 分区空置率(每年 10 月更新), 换手摩擦率 = 空窗月数 ÷ 平均租期)。本例 Toronto 联排 = 3%。</div></div>
+          <div style="color:var(--muted)">未计入:代管费(自管口径)· 贷款成本(Cap Rate 口径不含融资);资本性支出已含于构件摊销</div>
+        </div>
+      </details>
+    </div>
+  </div>
+  <!-- ② 社区行情入口 + ⑤ 人口画像速览 -->
+  <div class="card mod">
+    <span class="mod-tag">新② 社区行情入口</span>
+    <div class="sec-head"><span class="sec-title">Englemount-Lawrence 行情</span><a class="sec-link" href="#" id="mktToggleLink" onclick="mktToggle(event)">查看完整行情 ›</a></div>
+    <div class="card-pad" style="padding-top:10px">
+      <div class="trend-row">
+        <div class="trend-meta">
+          <div class="v">$1.15M</div>
+          <div class="k">联排售出中位 · 近 1 个月</div>
+          <div class="d delta-up" style="margin-top:3px">▲ 近一年 +1.8%</div>
+        </div>
+        <svg class="spark" width="150" height="54" viewBox="0 0 150 54" role="img" aria-label="Englemount-Lawrence 联排中位价近12个月走势">
+          <defs><linearGradient id="sp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E6BE6" stop-opacity=".18"/><stop offset="1" stop-color="#2E6BE6" stop-opacity="0"/></linearGradient></defs>
+          <path d="M4,34 L17,36 L30,31 L43,33 L56,28 L69,30 L82,25 L95,27 L108,22 L121,24 L134,19 L146,16 L146,52 L4,52 Z" fill="url(#sp)"/>
+          <path d="M4,34 L17,36 L30,31 L43,33 L56,28 L69,30 L82,25 L95,27 L108,22 L121,24 L134,19 L146,16" fill="none" stroke="#2E6BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="146" cy="16" r="3" fill="#2E6BE6" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div id="mktFull" style="display:none">
+        <div class="mkt-pills" id="mktPills">
+          <span class="mkt-pill on" onclick="mktTab(0,this)">售出中位价</span>
+          <span class="mkt-pill" onclick="mktTab(1,this)">价格涨跌幅</span>
+          <span class="mkt-pill" onclick="mktTab(2,this)">在售套数</span>
+          <span class="mkt-pill" onclick="mktTab(3,this)">平均售出天数</span>
+          <span class="mkt-pill" onclick="mktTab(4,this)">SNLR</span>
+        </div>
+        <div class="mkt-pane" id="mp0">
+          <div class="mkt-title">该社区已售房源的中位成交价格(GTA · 示意)</div>
+          <div class="stat4"><div class="st"><div class="v">$105万</div><div class="k">全部中位价</div></div><div class="st"><div class="v">$62万</div><div class="k">公寓</div></div><div class="st"><div class="v">$115万</div><div class="k">联排</div></div><div class="st"><div class="v">$168万</div><div class="k">独立屋</div></div></div>
+          <div class="mkt-chart" id="mc0"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>公寓</i><i><span class="dotc" style="background:#2E6BE6"></span>联排</i><i><span class="dotc" style="background:#F29900"></span>独立屋</i></div>
+          <div class="mkt-foot">横轴 = 价格区段(万) · 纵轴 = 套数(active)</div>
+        </div>
+        <div class="mkt-pane" id="mp1" style="display:none">
+          <div class="mkt-period"><span class="on">1年</span><span>3年</span><span>5年</span></div>
+          <div class="mkt-title">近1年中位价涨跌幅</div>
+          <div class="stat4"><div class="st"><div class="v">+2.1%</div><div class="k">全部</div></div><div class="st"><div class="v">+3.6%</div><div class="k">公寓</div></div><div class="st"><div class="v">+4.2%</div><div class="k">联排</div></div><div class="st"><div class="v">+4.7%</div><div class="k">独立屋</div></div></div>
+          <div class="mkt-chart" id="mc1"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>公寓</i><i><span class="dotc" style="background:#2E6BE6"></span>联排</i><i><span class="dotc" style="background:#F29900"></span>独立屋</i></div>
+          <div class="mkt-foot">纵轴 = 售出中位价($M) · 横轴 = 月份</div>
+        </div>
+        <div class="mkt-pane" id="mp2" style="display:none">
+          <div class="mkt-period"><span class="on">1年</span><span>3年</span><span>5年</span></div>
+          <div class="mkt-title">近1年各房型在售套数</div>
+          <div class="stat4"><div class="st"><div class="v">132 套</div><div class="k">全部</div></div><div class="st"><div class="v">48 套</div><div class="k">公寓</div></div><div class="st"><div class="v">39 套</div><div class="k">联排</div></div><div class="st"><div class="v">45 套</div><div class="k">独立屋</div></div></div>
+          <select class="mkt-sel"><option>全部</option><option>公寓</option><option>联排</option><option>独立屋</option></select>
+          <div class="mkt-chart" id="mc2"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>Active</i><i><span class="dotc" style="background:#2E6BE6"></span>New</i><i><span class="dotc" style="background:#F29900"></span>Sold</i></div>
+          <div class="mkt-foot">纵轴 = 套数 · 柱 = Active,线 = New / Sold</div>
+        </div>
+        <div class="mkt-pane" id="mp3" style="display:none">
+          <div class="mkt-period"><span class="on">1年</span><span>3年</span><span>5年</span></div>
+          <div class="mkt-title">近1年各房型平均售出天数</div>
+          <div class="stat4"><div class="st"><div class="v">24 天</div><div class="k">全部</div></div><div class="st"><div class="v">21 天</div><div class="k">公寓</div></div><div class="st"><div class="v">24 天</div><div class="k">联排</div></div><div class="st"><div class="v">32 天</div><div class="k">独立屋</div></div></div>
+          <select class="mkt-sel"><option>全部</option><option>公寓</option><option>联排</option><option>独立屋</option></select>
+          <div class="mkt-chart" id="mc3"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#2E6BE6"></span>DOM</i><i><span class="dotc" style="background:#0E9F6E"></span>PDOM</i></div>
+          <div class="mkt-foot">纵轴 = 天数 · DOM = 售出天数,PDOM = 累计售出天数</div>
+        </div>
+        <div class="mkt-pane" id="mp4" style="display:none">
+          <div class="mkt-period"><span class="on">1年</span><span>3年</span><span>5年</span></div>
+          <div class="mkt-title">近1年各房型 SNLR(成交÷新增挂牌)</div>
+          <div class="stat4"><div class="st"><div class="v">55%</div><div class="k">全部</div></div><div class="st"><div class="v">58%</div><div class="k">公寓</div></div><div class="st"><div class="v">54%</div><div class="k">联排</div></div><div class="st"><div class="v">50%</div><div class="k">独立屋</div></div></div>
+          <select class="mkt-sel"><option>全部</option><option>公寓</option><option>联排</option><option>独立屋</option></select>
+          <div class="mkt-chart" id="mc4"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>SNLR</i></div>
+          <div class="mkt-foot">纵轴 = SNLR:>60% 偏卖方 · 40–60% 均衡 · <40% 偏买方(TRREB 口径)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mod">
+    <span class="mod-tag">新⑤ 人口画像速览</span>
+    <div class="sec-head"><span class="sec-title">人口画像速览</span><a class="sec-link" href="#">完整人口画像 ›</a></div>
+    <div class="card-pad" style="padding-top:10px">
+      <div class="demo-grid">
+        <div class="demo-tile"><div class="v">$86,200</div><div class="k">家庭中位收入</div></div>
+        <div class="demo-tile"><div class="v">62%</div><div class="k">大专及以上学历</div></div>
+        <div class="demo-tile"><div class="v">48%</div><div class="k">住房自有率</div></div>
+        <div class="demo-tile"><div class="v txt">英语 · 他加禄语 · 俄语</div><div class="k">主要语言</div></div>
+      </div>
+      <div class="footnote" style="margin-top:9px">来源:加拿大统计局人口普查 2021(Englemount-Lawrence 对应普查区聚合)。</div>
+    </div>
+  </div>
+
+  <!-- ⑥ 学校区块改造 -->
+  <div class="card mod">
+    <span class="mod-tag">新⑥ 学校改造</span>
+    <div class="sec-head"><span class="sec-title">学区与学校</span></div>
+    <div class="card-pad" style="padding-top:6px;padding-bottom:4px">
+      <div class="mkt-pills" style="margin-top:0" id="schTabs">
+        <span class="mkt-pill on" onclick="schTab('pub',this)">公立学校 3</span>
+        <span class="mkt-pill" onclick="schTab('cat',this)">天主教学校 2</span>
+        <span class="mkt-pill" onclick="schTab('pri',this)">私立学校 2</span>
+      </div>
+      <div class="mkt-period" id="schLvls" style="margin-top:10px">
+        <span onclick="schLvl('k',this)">幼儿园</span><span class="on" onclick="schLvl('e',this)">小学</span><span onclick="schLvl('s',this)">中学</span>
+      </div>
+      <div id="schList"></div>
+    </div>
+    <div class="legal" style="padding-top:4px">
+      <div class="footnote">排名来源:Fraser Institute Ontario School Rankings 2025,仅供参考;私立校多不参与排名。</div>
+    </div>
+  </div>
+
+  <!-- ⑪ 风险与权衡 -->
+  <div class="card mod">
+    <span class="mod-tag">新⑪ 风险与权衡</span>
+    <div class="sec-head"><span class="sec-title">风险与权衡 <span style="font-size:10px;font-weight:600;color:var(--brand-ink);background:var(--brand-soft);border:1px solid #DCE8FC;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:2px">采用 AI 给出</span></span><span style="font-size:10px;color:var(--muted)">规则触发 · 每条附字段依据</span></div>
+    <div class="card-pad" style="padding-top:8px;padding-bottom:10px">
+      <div id="riskGate" style="text-align:center;padding:14px 0 10px"></div>
+      <div id="riskList"></div>
+      <div class="footnote" id="riskDisc" style="padding:9px 0 0;display:none">以上基于挂牌与公开数据的规则化提示,非专业验房/法律意见;请以验房报告与产权文件为准。</div>
+    </div>
+  </div>
+
+  <!-- ⑩ 相似房源与替代建议 -->
+  <div class="card mod">
+    <span class="mod-tag">新⑩ 相似与替代</span>
+    <div class="sec-head"><span class="sec-title">相似房源</span><span style="font-size:10px;color:var(--muted)">同社区 · 同房型 · ±15% 价格带</span></div>
+    <div class="sim-scroll">
+      <div class="sim-card">
+        <div class="ph" style="background:linear-gradient(135deg,#8FA5B8,#5E7488)"><span class="tag">挂牌中</span></div>
+        <div class="bd"><div class="p">$1.18M <small class="delta-down">低 3.2%</small></div><div class="a">12 Deep Roots Terr</div><div class="m">4卧 · 2,100 ft² · DOM 9</div></div>
+      </div>
+      <div class="sim-card">
+        <div class="ph" style="background:linear-gradient(135deg,#A89A8C,#7A6C5E)"><span class="tag">挂牌中</span></div>
+        <div class="bd"><div class="p">$1.25M <small class="delta-up">高 2.5%</small></div><div class="a">351 Ranee Ave</div><div class="m">4卧 · 2,200 ft² · DOM 15</div></div>
+      </div>
+      <div class="sim-card">
+        <div class="ph" style="background:linear-gradient(135deg,#96A88F,#69805F)"><span class="tag">已售</span></div>
+        <div class="bd"><div class="p">$1.16M <small class="delta-down">低 8.5%</small></div><div class="a">8 Deep Roots Tve</div><div class="m">3卧 · 1,705 ft² · 06/2026 成交</div></div>
+      </div>
+      <div class="sim-card">
+        <div class="ph" style="background:linear-gradient(135deg,#9BA8B8,#66788C)"><span class="tag">挂牌中</span></div>
+        <div class="bd"><div class="p">$1.31M <small class="delta-up">高 7.4%</small></div><div class="a">29 Deep Roots Terr</div><div class="m">4卧 · 2,300 ft² · DOM 32</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 挂牌经纪人 -->
+  <div class="card">
+    <div class="sec-head"><span class="sec-title">挂牌经纪人</span></div>
+    <div style="padding-top:4px">
+      <div class="agent">
+        <span class="av" style="background:linear-gradient(135deg,#5E7488,#38495C)">ST</span>
+        <div><div class="nm">Sarah Thompson PREC*</div><div class="co">RE/MAX Select Properties</div></div>
+        <span class="tel">604-785-8000</span>
+      </div>
+      <div class="agent">
+        <span class="av" style="background:linear-gradient(135deg,#8C7A5E,#5E5138)">ML</span>
+        <div><div class="nm">MARK LEE<span class="agent-tag">Broker</span></div><div class="co">REMAX YC REALTY, Brokerage</div></div>
+        <span class="tel">905-475-4750</span>
+      </div>
+      <div class="agent" style="background:#F7F9FC;border-radius:0 0 var(--r) var(--r)">
+        <span class="av" style="background:linear-gradient(135deg,#2E6BE6,#1E4FB8)">MZ</span>
+        <div><div class="nm">Mike Zhang<span class="agent-tag">持牌经纪 · 为你服务</span></div><div class="co">Nu Stream Realty Inc. · mike.zhang@johome.com</div></div>
+        <span class="tel">(778) 926-9213</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 免责 + O1 推广位治理 -->
+  <div class="legal">
+    <p class="footnote">© 2026 Toronto Regional Real Estate Board (TRREB). All rights reserved. 本页展示部分基于 TRREB 数据生成,该机构不对其准确性承担责任。信息仅供消费者个人非商业用途参考。</p>
+  </div>
+  <details class="promo mod">
+    <span class="mod-tag opt" style="top:-8px">O1 广告移出内容流</span>
+    <summary><span class="ad-mark">广告</span>推广内容(2)· 点击展开<span style="margin-left:auto" class="chev">▾</span></summary>
+    <div class="ads">
+      <div class="ad-card" style="background:linear-gradient(135deg,#1F3C88,#12244D)">
+        <span class="am">广告</span><b>汇款进中?跨境资金合规通道</b><p>支持大额购房款 · 当日到账 · 汇率优</p>
+      </div>
+      <div class="ad-card" style="background:linear-gradient(135deg,#8A2E2E,#4D1212)">
+        <span class="am">广告</span><b>无需评估收入的私人贷款 · 最高 75% LTV</b><p>住宅 | 商业 | 农地 | 开发用地 | 建筑贷款</p>
+      </div>
+    </div>
+  </details>
+
+  <div style="height:16px"></div>
+  </div><!-- /wrap -->
+
+  <!-- 底部操作条 + ⑫问AI -->
+  <div class="actionbar">
+    <div style="width:44px;height:44px;border-radius:50%;border:2px solid #D7DDE7;background:#F4F6F9;display:grid;place-items:center;font-size:20px;color:#B9C2D0;flex:none">👤</div>
+    <div style="font-size:15.5px;font-weight:800;color:var(--ink);flex:1">Mike Zhang</div>
+    <button style="border:none;width:58px;height:38px;border-radius:12px;background:#3B82F6;color:#fff;font-size:17px;cursor:pointer">💬</button>
+    <button style="border:none;width:58px;height:38px;border-radius:12px;background:#2BB24C;color:#fff;font-size:16px;cursor:pointer">📞</button>
+  </div>
+
+</div><!-- /screen -->
+</div><!-- /phone -->
+
+<script>
+/* ===== 图标行:按 GVR MLS 房源类型自适应 =====
+   共享核心 4 格(卧/卫/面积/车位)+ 类型专属 4 格;
+   厨房、壁炉等低决策权重字段下沉到「关键信息」表 */
+const FACTS = {
+  gta: {
+    note: '',
+    items: [
+      ['🏗','0–5<small> 年</small>','建造年代(区间)'],
+      ['📐','2000–2500<small> ft²</small>','室内面积(区间)'],
+      ['🛏','4+1','卧室'],
+      ['🛁','4','卫生间'],
+      ['🍳','1','厨房'],
+      ['🅿','1<small>(独立车库)</small>','停车位'],
+      ['🏛','$243<small>/月</small>','POTL 月费'],
+    ]
+  }
+};
+/* ===== 房源资料 Tab:第一 tab 为关键信息(整合全部关键字段),细节下沉后续 tab、不重复 =====
+   关键信息=身份+价格+核心数字 · 房屋·空间=建筑本体与室内布局 · 土地/物业=产权地块或 strata · 卖方披露=披露与固定装置(PDS/Fixtures;Seller Interest 接口无 · 不展示)
+   chips = 从字段组合提炼的决策信号 */
+const DETAILS = {
+  gta: {
+    src: '样例 C13534294(Toronto C04 · Englemount-Lawrence)',
+    tabs: [
+      {t:'关键信息', kv:[['@','挂牌信息'],['MLS® 编号','C13534294'],['区域 / 社区','TRREB · Toronto C04 · Englemount-Lawrence'],['地址','18 Deep Roots Terr'],['交叉路口(Dir/Cross St)','Bathurst St. & Ranee Ave.'],['邮编','M6A 0G1'],['挂牌日期 · DOM','07/18/2026 · 已挂 5 天(示意)'],['累计在市(Property DOM)','5 天(示意)'],['交房(Possession)','TBD · 90 天'],['@','物业概况'],['房屋类型','联排(Att/Row/Twnhouse · 3-Storey)'],['产权','Freehold · 附 POTL'],['室内面积','2,000–2,500 ft²(TRREB 区间口径)'],['卧室','4+1(地下 1)'],['卫生间','4(3 全 + 1 半)'],['厨房','1'],['停车','1 位(独立车库)'],['@','持有费用'],['地税','$4,864.80(2026)'],['POTL 月费','$243.46']],
+        note:'TRREB 面积按区间披露;挂牌到期日同样不对公开端展示。'},
+      {t:'房屋·空间', kv:[['@','建筑'],['建造年代(Approx Age)','0–5 年'],['建筑样式(Style)','三层联排(3-Storey)'],['外墙','砖 · 混凝土(Brick, Concrete)'],['车库类型(Garage Type)','独立车库(Detached)'],['供水','市政(Municipal)'],['排水','市政(Sewers)'],['@','内部'],['供暖','强制风暖 · 天然气(Forced Air · Gas)'],['空调','中央空调(Central Air)'],['地下室','全地下(Full)'],['洗衣楼层(Laundry Level)','上层(Upper)'],['房间总数','7+1'],['@','外部'],['朝向(Fronting On)','南(S)'],['车位形式','后巷(Lane) · 独立车库 ×1'],['景观(View)','开阔无遮挡(Clear View)']],
+        rooms:[['家庭厅','主层','5.49×4.27 m(18.0×14.0 ft)','强化地板 · 大窗 · 开放式'],['餐厅','主层','5.49×4.27 m(18.0×14.0 ft)','与客厅相连 · 开放式'],['厨房','主层','3.81×3.30 m(12.5×10.8 ft)','早餐吧 · 不锈钢电器'],['客厅','主层','3.53×3.05 m(11.6×10.0 ft)','大窗 · 开放式'],['2 号卧室','二层','3.53×3.23 m(11.6×10.6 ft)','大窗 · 大衣柜'],['3 号卧室','二层','4.27×3.51 m(14.0×11.5 ft)','4 件套套内卫浴'],['主卧室','三层','4.57×4.27 m(15.0×14.0 ft)','步入式衣柜 · 4 件套套内'],['4 号卧室','三层','4.27×2.74 m(14.0×9.0 ft)','大窗 · 大衣柜']],
+        baths:[['三层','4 件套 · 主卧套内'],['二层','4 件套 · 套内'],['二层','4 件套'],['首层','2 件套(半卫)']]},
+      {t:'土地·物业', chips:[['gold','⚑ Freehold + POTL:房屋为独立产权,私巷与公共部分按月分摊 $243.46(Parcel of Tied Land),非公寓法人但有共同费用']],
+        kv:[['PIN#','102230171'],['地块与周边(Features)','开阔景观 · 公园 · 宗教场所 · 公共交通 · 社区中心'],['面宽(Frontage)','<span class="uv" data-a="14.78 ft" data-b="4.50 m">14.78 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'],['进深(Depth)','<span class="uv" data-a="102.44 ft" data-b="31.22 m">102.44 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'],['特殊产权标注(Special Designations)','未明示(Unknown)']],
+        legal:'PLAN 66M2586 PT BLK 1 RP 66R34377 PART 20'},
+    ]
+  }
+};
+function uSwap(b){var v=b.previousElementSibling;var isA=v.textContent===v.dataset.a;v.textContent=isA?v.dataset.b:v.dataset.a;b.textContent='\u21c4 '+(isA?b.dataset.u1:b.dataset.u2);}
+function mktToggle(e){e.preventDefault();var p=document.getElementById('mktFull');var l=document.getElementById('mktToggleLink');var open=p.style.display==='none';p.style.display=open?'block':'none';l.textContent=open?'收起行情 ▴':'查看完整行情 ›';if(open&&!p.dataset.drawn){mktDraw();p.dataset.drawn=1;}}
+function mktTab(i,el){document.querySelectorAll('#mktPills .mkt-pill').forEach(function(b){b.classList.remove('on')});el.classList.add('on');for(var k=0;k<5;k++)document.getElementById('mp'+k).style.display=k===i?'block':'none';}
+function mktDraw(){
+  var W=320,H=150,L=30,B=20,T=8;
+  function lineTo(pts,max,min){var w=(W-L-8)/(pts.length-1);return pts.map(function(v,i){return (L+i*w).toFixed(1)+','+(H-B-((v-min)/(max-min))*(H-B-T)).toFixed(1)}).join(' ');}
+  function axis(yl,xl){var t='';yl.forEach(function(o){t+='<text x="2" y="'+o[1]+'" font-size="8" fill="#8C99AF">'+o[0]+'</text><line x1="'+L+'" y1="'+o[1]+'" x2="'+(W-4)+'" y2="'+o[1]+'" stroke="#EEF1F6"/>';});xl.forEach(function(o){t+='<text x="'+o[1]+'" y="'+(H-6)+'" font-size="8" fill="#8C99AF">'+o[0]+'</text>';});return t;}
+  /* T0 分组柱 */
+  var g={lab:['<100','100-150','150-200','200-250','250-300','>300'],apt:[26,27,10,6,3,2],twn:[10,19,22,17,8,4],det:[1,4,12,18,22,16]},max0=30;
+  var svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['30',T+4],['15',(H-B+T)/2],['0',H-B]],g.lab.map(function(l,i){return [l,L+4+i*((W-L-8)/6)]}));
+  ['apt','twn','det'].forEach(function(k,si){var c=['#34A853','#2E6BE6','#F29900'][si];g[k].forEach(function(v,i){var gw=(W-L-8)/6,x=L+i*gw+5+si*8,h=(v/max0)*(H-B-T);svg+='<rect x="'+x+'" y="'+(H-B-h)+'" width="6.5" height="'+h+'" rx="1.5" fill="'+c+'"/>';});});
+  document.getElementById('mc0').innerHTML=svg+'</svg>';
+  /* T1 三线 */
+  var apt=[0.77,0.76,0.78,0.77,0.78,0.79,0.78,0.79,0.80,0.79,0.80,0.80],twn=[1.30,1.31,1.30,1.32,1.33,1.32,1.34,1.33,1.35,1.34,1.35,1.36],det=[2.55,2.53,2.56,2.58,2.57,2.60,2.59,2.62,2.61,2.63,2.62,2.66];
+  var mons=[['1月',L],['3',L+2*(W-L-8)/11],['5',L+4*(W-L-8)/11],['7',L+6*(W-L-8)/11],['9',L+8*(W-L-8)/11],['11',L+10*(W-L-8)/11]];
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['3.0M',T+4],['1.5M',(H-B+T)/2],['0',H-B]],mons);
+  [[apt,'#34A853'],[twn,'#2E6BE6'],[det,'#F29900']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0],3,0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>';});
+  document.getElementById('mc1').innerHTML=svg+'</svg>';
+  /* T2 柱+双线 */
+  var act=[118,112,120,131,126,129,135,128,122,117,124,132],nw=[42,38,45,50,44,47,52,46,40,38,43,48],sd=[35,33,38,41,39,42,45,40,36,34,39,44];
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['140',T+4],['70',(H-B+T)/2],['0',H-B]],mons);
+  act.forEach(function(v,i){var w=(W-L-8)/12,x=L+i*w+3,h=(v/140)*(H-B-T);svg+='<rect x="'+x+'" y="'+(H-B-h)+'" width="'+(w-6)+'" height="'+h+'" rx="2" fill="#34A853" opacity="0.85"/>';});
+  [[nw,'#2E6BE6'],[sd,'#F29900']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0],140,0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>';});
+  document.getElementById('mc2').innerHTML=svg+'</svg>';
+  /* T3 DOM/PDOM */
+  var dom=[24,30,26,19,32,27,22,18,25,28,30,33],pd=[38,45,40,31,48,42,35,30,39,44,46,50];
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['50',T+4],['25',(H-B+T)/2],['0天',H-B]],mons);
+  [[dom,'#2E6BE6'],[pd,'#0E9F6E']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0],50,0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>';});
+  document.getElementById('mc3').innerHTML=svg+'</svg>';
+  /* T4 SALR+阈值线 */
+  var sa=[58,62,55,60,52,54,55,56,50,48,55,55];
+  var y20=H-B-(60/80)*(H-B-T),y12=H-B-(40/80)*(H-B-T);
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['80',T+4],['40',(H-B+T)/2],['0%',H-B]],mons);
+  svg+='<line x1="'+L+'" y1="'+y20+'" x2="'+(W-4)+'" y2="'+y20+'" stroke="#E8604C" stroke-dasharray="4 3"/><text x="'+(W-52)+'" y="'+(y20-3)+'" font-size="8" fill="#E8604C">卖方 60%</text>';
+  svg+='<line x1="'+L+'" y1="'+y12+'" x2="'+(W-4)+'" y2="'+y12+'" stroke="#5B8DEF" stroke-dasharray="4 3"/><text x="'+(W-52)+'" y="'+(y12+9)+'" font-size="8" fill="#5B8DEF">买方 40%</text>';
+  svg+='<polyline points="'+lineTo(sa,80,0)+'" fill="none" stroke="#34A853" stroke-width="1.8"/>';
+  document.getElementById('mc4').innerHTML=svg+'</svg>';
+  /* 周期 pills 视觉切换 */
+  document.querySelectorAll('.mkt-period span').forEach(function(sp){sp.onclick=function(){sp.parentElement.querySelectorAll('span').forEach(function(x){x.classList.remove('on')});sp.classList.add('on');};});
+}
+var RISKS={
+  gta:[
+    {s:'risk',t:'特殊产权标注未明(Unknown)',x:'Special Designations 字段为 Unknown,是否存在地役权/开发协议等未明示;交易前由律师做产权检索确认。',e:'Special Designations=Unknown',a:'律师产权检索'},
+    {s:'tradeoff',t:'Freehold 附 POTL 月费',x:'独立产权换共同费用——私巷与公共部分按月分摊 $243.46,类似轻量 strata;确认 POTL 协议涵盖范围与涨费机制。',e:'POTL Monthly Fee=$243.46 · Legal=PT BLK 1',a:'查 POTL 协议'},
+    {s:'tradeoff',t:'面积为区间披露',x:'TRREB 以 2000–2500 ft² 区间披露,单价测算有 ±10% 摆动;以描述中约 2,006 ft² 与实测为准。',e:'Square Feet=2000-2500',a:'索要面积测绘'},
+    {s:'tradeoff',t:'1 车位 · 后巷独立车库',x:'仅 1 个车位且经后巷进出——双车家庭需评估街趴;换来的是主街无车道的完整前院面宽。',e:'Garage=Detached · Drive=Lane · Parking=1',a:'核实街趴政策'}
+  ]};
+var riskDone={};
+var RISK_GATE='<button onclick="riskGen()" style="border:none;cursor:pointer;font-family:var(--cjk);font-size:12.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--ai1),var(--ai2));border-radius:99px;padding:9px 20px">✦ 生成分析</button>';
+function riskGen(){var t=dtType,g=document.getElementById('riskGate');g.innerHTML='<div style="font-size:12px;color:var(--ink-2);padding:8px 0">✦ AI 正在结合字段生成…</div>';setTimeout(function(){riskDone[t]=1;riskState(t);},900);}
+function riskState(t){var g=document.getElementById('riskGate'),l=document.getElementById('riskList'),d=document.getElementById('riskDisc');if(!g)return;if(riskDone[t]){g.style.display='none';riskRender(t);d.style.display='block';}else{g.style.display='block';g.innerHTML=RISK_GATE;l.innerHTML='';d.style.display='none';}}
+function riskRender(type){
+  var el=document.getElementById('riskList');if(!el)return;
+  var rows=RISKS[type]||[];
+  el.innerHTML=rows.map(function(r){
+    return '<div class="rk-item"><div class="rk-head"><span class="rk-sev '+r.s+'">'+(r.s==='risk'?'风险':'权衡')+'</span><span class="rk-title">'+r.t+'</span><span class="rk-act">'+r.a+'</span></div><div class="rk-text">'+r.x+'</div><div class="rk-ev">依据: '+r.e+'</div></div>';
+  }).join('');
+}
+var SCHOOLS={
+  pub:{k:[['Baycrest PS(附设幼儿园 JK/SK)','145 Baycrest Ave · 步行 8 分钟',null,null,true]],
+       e:[['Baycrest Public School','145 Baycrest Ave · 步行 8 分钟 · Fraser ON 2025',6.9,'1,203 / 3,021',true]],
+       s:[['John Polanyi Collegiate Institute','640 Lawrence Ave W · 步行 15 分钟 · Fraser ON 2025',6.4,'412 / 739',true]]},
+  cat:{k:[],
+       e:[['St. Charles Catholic School','50 Claver Ave · 直线 1.1 km · Fraser ON 2025',7.2,'861 / 3,021',false]],
+       s:[['Dante Alighieri Academy','60 Playfair Ave · 直线 1.8 km · Fraser ON 2025',6.8,'302 / 739',false]]},
+  pri:{k:[],
+       e:[['Associated Hebrew Schools','252 Finch Ave W · 直线 4.6 km',null,null,false]],
+       s:[['TanenbaumCHAT','9600 Bathurst St · 直线 9.8 km',null,null,false]]}};
+var schState={t:'pub',l:'e'};
+function schRender(){
+  var rows=SCHOOLS[schState.t][schState.l],el=document.getElementById('schList');
+  if(!rows.length){el.innerHTML='<div class="sch-empty">该学段暂无收录学校</div>';return;}
+  el.innerHTML=rows.map(function(r){
+    return '<div class="sch-row"><span class="sch-ic">🎓</span><div style="flex:1;min-width:0"><div class="sch-nm">'+r[0]+(r[4]?'<span class="sch-tag">对口 catchment</span>':'')+'</div><div class="sch-ad">'+r[1]+'</div></div><div class="sch-score">'+(r[2]!==null?'<div class="v">'+r[2]+'</div><div class="r">'+r[3]+'</div>':'<div class="v" style="color:var(--muted)">—</div><div class="r">无排名</div>')+'</div><span class="sch-chev">›</span></div>';
+  }).join('');
+}
+function schTab(t,el){schState.t=t;document.querySelectorAll('#schTabs .mkt-pill').forEach(function(b){b.classList.remove('on')});el.classList.add('on');schRender();}
+function schLvl(l,el){schState.l=l;document.querySelectorAll('#schLvls span').forEach(function(b){b.classList.remove('on')});el.classList.add('on');schRender();}
+document.addEventListener('DOMContentLoaded',schRender);
+function iTip(b){var p=b.parentElement.querySelector('.ipop');p.style.display=(p.style.display==='none'||!p.style.display)?'block':'none';}
+let dtType='gta', dtIdx=0;
+function renderDetails(){
+  const d=DETAILS[dtType];
+  document.getElementById('dtSrc').textContent=d.src;
+  document.getElementById('dtabs').innerHTML=d.tabs.map((tb,i)=>
+    `<div class="dtab${i===dtIdx?' on':''}" onclick="dtIdx=${i};renderDetails()">${tb.t}</div>`).join('');
+  const tb=d.tabs[dtIdx];
+  let h='';
+  (tb.chips||[]).forEach(([tone,txt])=>{
+    const cls=tone==='gold'?' gold':tone==='green'?' green':'';
+    h+=`<div class="ins-chip${cls}">${txt}</div>`;
+  });
+  h+=`<div class="kv" style="padding-top:8px;grid-template-columns:1fr">`+tb.kv.map(([k,v])=>
+    k==='@'?`<div class="subh">${v}</div>`:`<div class="row"><span class="k">${k}</span><span class="v" style="font-family:var(--cjk)">${v}</span></div>`).join('')+`</div>`;
+  if(tb.areas){
+    h+=`<details class="fold-blk"><summary>面积明细<em>合计 ${tb.areas[tb.areas.length-1][1]}</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>楼层</th><th>面积</th></tr>`+
+      tb.areas.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</table></div></details>`;
+  }
+  if(tb.rooms){
+    h+=`<details class="fold-blk"><summary>房间与尺寸<em>${tb.rooms.length} 个房间</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>房间</th><th>楼层</th><th style="white-space:nowrap">尺寸(米 · 英尺)</th><th style="text-align:left">备注</th></tr>`+
+      tb.rooms.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td style="white-space:nowrap">${r[2]}</td><td style="text-align:left;color:var(--muted);font-size:10px">${r[3]||''}</td></tr>`).join('')+`</table></div></details>`;
+  }
+  if(tb.baths){
+    h+=`<details class="fold-blk"><summary>卫生间<em>${tb.baths.length} 个</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>楼层</th><th>规格 (#Pcs)</th></tr>`+
+      tb.baths.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</table></div></details>`;
+  }
+  if(tb.note){ h+=`<div class="footnote" style="padding:0 14px 12px">${tb.note}</div>`; }
+  if(tb.legal){
+    h+=`<details class="legal-fold"><summary>法律描述 ▾</summary><p>${tb.legal}</p></details>`;
+  }
+  document.getElementById('dtBody').innerHTML=h;
+}
+function setFacts(type, btn){
+  dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails(); riskState(type);
+  const grid=document.getElementById('factsGrid');
+  grid.innerHTML=FACTS[type].items.map(([ic,v,k])=>
+    `<div class="fact"><div class="ic">${ic}</div><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
+  if(btn){document.querySelectorAll('[data-ft]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+}
+setFacts('gta');
+function toggleAnno(){
+  document.body.classList.toggle('annotate');
+  document.getElementById('btnAnno').classList.toggle('on');
+}
+document.body.classList.add('annotate');
+// POI pill 交互示意
+document.querySelectorAll('.poi-pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.poi-pill').forEach(x=>x.classList.remove('on'));
+    p.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>
