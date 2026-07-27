@@ -361,12 +361,12 @@ body.annotate .mod-tag{display:inline-block}
 
 <div class="stage-head">
   <div class="stage-title">Johome · 大多伦多房源详情页原型(设计演示工具条,非产品 UI)
-    <small>样例 ×3:C13534294 联排 / X13573856 Co-Op 公寓 / C12280844 Condo 公寓(EXP 脏数据样本) · TRREB(大多伦多) · 与大温版同构,字段按安省口径本地化</small>
+    <small>样例 ×3:C13534294 联排 / X13573856 Co-Op 公寓 / X13608372 Condo 公寓(渥太华) · TRREB(大多伦多) · 与大温版同构,字段按安省口径本地化</small>
   </div>
   <div class="stage-actions">
     <button class="stage-btn on" data-ft="gta" onclick="setFacts('gta',this)">联排 · Freehold</button>
     <button class="stage-btn" data-ft="coop" onclick="setFacts('coop',this)">Co-Op 公寓</button>
-    <button class="stage-btn" data-ft="condo" onclick="setFacts('condo',this)">Condo 公寓 · EXP</button>
+    <button class="stage-btn" data-ft="condo" onclick="setFacts('condo',this)">Condo 公寓</button>
     <button class="stage-btn on" id="btnAnno" onclick="toggleAnno()">显示 PRD 模块标注</button>
   </div>
 </div>
@@ -878,13 +878,14 @@ const FACTS = {
   condo: {
     note: '',
     items: [
-      ['📐','1000–1199<small> ft²</small>','室内面积(区间)'],
-      ['🏛','$829<small>/月</small>','物业月费'],
+      ['🏗','1977','建造年份'],
+      ['📐','800–899<small> ft²</small>','室内面积(区间)'],
+      ['🏛','$666<small>/月</small>','物业月费'],
       ['🛏','2','卧室'],
-      ['🛁','2','卫生间'],
-      ['🏢','8<small> 层</small>','所在楼层(Level)'],
-      ['🅿','1','停车位(自有)'],
-      ['📦','自有','储物柜(Locker)'],
+      ['🛁','1','卫生间'],
+      ['🏢','14<small> 层</small>','所在楼层(Level)'],
+      ['🅿','1','停车位'],
+      ['📦','无','储物柜(Locker)'],
     ]
   }
 };
@@ -892,7 +893,7 @@ const FACTS = {
 const HEAD = {
   gta:{nav:'C13534294 - Detail',badge:['挂牌中','#1FA75A'],cnt:'3 / 25',price:'$1,219,000',plabel:'<b>挂牌日期</b> 07/07/2026 · <span class="num">已挂 20 天</span>',addr:'18 DEEP ROOTS TERR, Toronto ON',sub:'Englemount-Lawrence, Toronto C04, M6A 0G1',typ:'联排 · Freehold &nbsp;|&nbsp; <span class="mls num">MLS® C13534294</span>',chips:[['社区','Englemount-Lawrence'],['片区','Yorkdale–Lawrence'],['商圈','Yorkdale(就近)']],pc:{title:'价格体检 · 本房 vs Englemount-Lawrence 行情',pill:'同社区 · 同房型口径',items:[['对比同社区联排售出中位 $1.15M','▲ 高于中位 6%','up',''],['Englemount-Lawrence 联排 · 近一年','▲ +1.8%','up',''],['同社区同房型在售','9 套','',''],['已挂天数 vs 社区平均','20 天','','/ 15 天']],mpac:['vs MPAC 评估价 (2016 基准) $712K','▲ 高于评估 71%','安省评估冻结 2016 基准,差距大属正常']}},
   coop:{nav:'X13573856 - Detail',badge:['挂牌中','#1FA75A'],cnt:'1 / 25',price:'$425,000',plabel:'<b>挂牌日期</b> 07/16/2026 · <span class="num">已挂 11 天</span>',addr:'2418 MOUNTLAND DR #104, Peterborough ON',sub:'Peterborough, K9K 2E2',typ:'公寓 · Co-operative &nbsp;|&nbsp; <span class="mls num">MLS® X13573856</span>',chips:[['城市','Peterborough']],pc:{title:'价格体检 · 本房 vs Peterborough 公寓行情',pill:'同城 · 同房型口径 · 行情示意',items:[['对比同城公寓售出中位 $410K','▲ 高于中位 4%','up',''],['Peterborough 公寓 · 近一年','▲ +2.1%','up',''],['同城同房型在售','6 套','',''],['已挂天数 vs 同城平均','11 天','','/ 22 天']],mpac:['vs MPAC 评估价 (2016 基准) $230K','▲ 高于评估 85%','安省评估冻结 2016 基准,差距大属正常']}},
-  condo:{nav:'C12280844 - Detail',badge:['已过期','#8C99AF'],cnt:'1 / 32',price:'$9,999,888',plabel:'<b>挂牌日期</b> 07/12/2025 · <span class="num">353 天(至过期)</span>',addr:'75 QUEENS WHARF RD #801, Toronto ON',sub:'Waterfront Communities C1, Toronto C01, M5V 0J8',typ:'公寓 · Condominium &nbsp;|&nbsp; <span class="mls num">MLS® C12280844</span>',chips:[['社区','Waterfront Communities C1'],['城市','Toronto']]}
+  condo:{nav:'X13608372 - Detail',badge:['挂牌中','#1FA75A'],cnt:'1 / 37',price:'$229,000',plabel:'<b>挂牌日期</b> 07/27/2026 · <span class="num">今日新挂</span>',addr:'1380 PRINCE OF WALES DR #1401, Ottawa ON',sub:'Carleton Square, Mooneys Bay-Carleton Heights, K2C 3N5',typ:'公寓 · Condominium &nbsp;|&nbsp; <span class="mls num">MLS® X13608372</span>',chips:[['社区','Carleton Square'],['城市','Ottawa']],pc:{title:'价格体检 · 本房 vs Carleton Square 行情',pill:'同社区 · 同房型口径 · 行情示意',items:[['对比同社区公寓售出中位 $245K','▼ 低于中位 7%','',''],['Carleton Square 公寓 · 近一年','▲ +1.2%','up',''],['同社区同房型在售','4 套','',''],['已挂天数 vs 社区平均','0 天','','/ 26 天']],mpac:['vs MPAC 评估价 (2016 基准) $195K','▲ 高于评估 17%','安省评估冻结 2016 基准,差距大属正常']}}
 };
 function applyHead(t){var h=HEAD[t];if(!h)return;
   document.getElementById('navTitle').textContent=h.nav;
@@ -941,14 +942,14 @@ const DETAILS = {
     ]
   },
   condo: {
-    src: '样例 C12280844(REALM · Toronto C01 · Waterfront Communities C1 · 已过期)',
+    src: '样例 X13608372(REALM · Ottawa · Carleton Square)',
     tabs: [
-      {t:'关键信息', kv:[['@','挂牌信息'],['MLS® 编号','C12280844'],['状态(Status)','已过期(EXP)'],['区域 / 社区','TRREB · Toronto C01 · Waterfront Communities C1'],['地址','75 Queens Wharf Rd #801'],['交叉路口(Dir/Cross St)','Spadina And Fort York'],['邮编','M5V 0J8'],['挂牌日期 · DOM','07/12/2025 · 353 天(至过期)'],['累计在市(Property DOM)','353 天'],['交房(Possession)','30–59 天'],['@','物业概况'],['房屋类型','公寓(Condo Apt · Apartment)'],['产权','Condominium(分契式共管)'],['所在楼层','8 层'],['室内面积','1,000–1,199 ft²'],['地上完成面积(Above Grade)','1,008 ft²'],['卧室','2'],['卫生间','2'],['厨房','1'],['停车','1 位(地下车库 · 产权自有)'],['@','持有费用'],['物业月费(Maintenance)','$829.33/月'],['月费包含','楼宇保险 · 中央空调 · 暖气 · 车位 · 水(Building Insurance · Central AC · Heat · Parking · Water)'],['地税','$4,580(2025)'],['HST','售价已含(Included In)']],
+      {t:'关键信息', kv:[['@','挂牌信息'],['MLS® 编号','X13608372'],['区域 / 社区','TRREB · Mooneys Bay-Carleton Heights · Carleton Square'],['地址','1380 Prince Of Wales Dr #1401'],['交叉路口(Dir/Cross St)','Meadowlands and Prince of Wales'],['邮编','K2C 3N5'],['挂牌日期 · DOM','07/27/2026 · 今日新挂'],['累计在市(Property DOM)','0 天'],['交房(Possession)','即时(Immediate)'],['@','物业概况'],['房屋类型','公寓(Condo Apt · Apartment)'],['产权','Condominium(分契式共管)'],['建造年份(Year Built Exact)','1977'],['所在楼层','14 层'],['室内面积','800–899 ft²'],['地上完成面积(Above Grade)','871 ft²'],['卧室','2'],['卫生间','1(4 件)'],['厨房','1'],['停车','1 位(地下车库)'],['@','持有费用'],['物业月费(Maintenance)','$666.10/月'],['月费包含','楼宇保险 · 水(Building Insurance · Water)'],['地税','$2,340.74(2026)'],['HST','售价已含(Included In)']],
         note:'REALM 面积按区间披露;佣金、卖方信息、展示要求、Expiry/Occupancy 等经纪端字段不对公开端展示。'},
-      {t:'房屋·空间', kv:[['@','建筑'],['建筑样式(Style)','Apartment 高层单元 · 位于 8 层'],['外墙','混凝土(Concrete)'],['@','内部'],['供暖','强制风暖 · 天然气(Forced Air · Gas)'],['空调','中央空调(Central Air)'],['洗衣','套内洗衣(Ensuite Laundry)'],['室内特征(Interior Features)','独立电表(Separate Hydro Meter)'],['房间总数','2'],['包含设备(Inclusions)','不锈钢厨电(炉灶 · 冰箱 · 内置洗碗机 · 内置微波炉/抽油烟) · 全尺寸叠放洗衣/烘干机 · 全部灯具与窗帘'],['@','外部'],['朝向(Exposure)','东北(NE)'],['阳台(Balcony)','开放式(Open)'],['储物柜(Locker)','自有(Owned)'],['车位形式','共 1 位 · 地下车库 ×1(产权自有)']],
-        rooms:[['客厅','主层','4.02×3.54 m(13.19×11.61 ft)'],['餐厅','主层','3.74×3.32 m(12.27×10.89 ft)'],['主卧室','主层','3.51×3.31 m(11.52×10.86 ft)'],['2 号卧室','主层','3.11×3.30 m(10.2×10.83 ft)']],
-        baths:[['—','3 件套 ×2']]},
-      {t:'土地·物业', kv:[['共管公司(Condo Corp)','TSCC 2458'],['物业管理公司(Property Mgmt Co)','Elite Property Management Inc.'],['状态证书(Status Certificate)','未提供(N)'],['特殊产权标注(Special Designations)','未明示(Unknown)']]},
+      {t:'房屋·空间', kv:[['@','建筑'],['建筑样式(Style)','Apartment 高层单元'],['外墙','砖 · 混凝土砌块(Brick · Concrete Block)'],['@','内部'],['供暖','踢脚线电暖(Baseboard · Electric)'],['空调','无(None)'],['洗衣','楼内洗衣房(In Building · Laundry Room)'],['室内特征(Interior Features)','无地毯 · 储物间(Carpet Free · Storage)'],['房间总数','5'],['包含设备(Inclusions)','炉灶 · 抽油烟机 · 冰箱'],['@','外部'],['朝向(Exposure)','西南'],['阳台(Balcony)','开放式(Open)'],['车位形式','共 1 位 · 地下车库 ×1(专属使用)']],
+        rooms:[['客厅','主层','4.5×4.0 m(14.76×13.12 ft)'],['厨房','主层','3.2×2.43 m(10.5×7.97 ft)'],['主卧室','主层','4.31×3.04 m(14.14×9.97 ft)'],['2 号卧室','主层','3.2×2.9 m(10.5×9.51 ft)']],
+        baths:[['—','4 件套 ×1']]},
+      {t:'土地·物业', kv:[['PIN#','151110115'],['ARN#','061407420109814'],['特色(Features)','宠物有限制(Pets Allowed with Restrictions)'],['共管公司(Condo Corp)','CCC 111'],['物业管理公司(Property Mgmt Co)','Sentinel Management'],['状态证书(Status Certificate)','未提供(N)'],['特殊产权标注(Special Designations)','未明示(Unknown)']]},
     ]
   }
 };
@@ -1007,10 +1008,10 @@ var RISKS={
     {s:'tradeoff',t:'宠物有限制 · 无阳台/储物柜',x:'宠物需符合合作社限制条款;单元无阳台、无储物柜,但带首层专属露台——按生活方式硬条件核对取舍。',e:'Pets=Restrictions · Balcony=None · Locker=None · Patio=Yes',a:'查合作社条款'}
   ],
   condo:[
-    {s:'risk',t:'已过期盘(EXP · 353 天)',x:'该挂牌已到期下架,非在售状态;C 端不应作为可约看房源展示,只适合出现在历史记录/行情对照场景。',e:'Status=EXP · DOM=353 · Possession Date=09/01/2025(已过)',a:'仅作历史参考'},
-    {s:'risk',t:'挂牌价为占位价,不可信',x:'List $9,999,888 与 Original List $999,888 相差十倍,地税 $4,580(2025) 印证真实价值量级在百万级;过期盘乱改价是常见脏数据,该价格不应参与任何展示或统计。',e:'List=$9,999,888 · Original=$999,888 · Taxes=$4,580',a:'价格字段剔除'},
-    {s:'tradeoff',t:'字段完备性差的典型样本',x:'卫生间明细(一行 ×3 件)与总数 2 的口径不一、厨房房间无尺寸(已按空值规则隐藏)、Rooms=2 与房间明细 4+ 行矛盾——入库时需做一致性校验与降级显示。',e:'Washrooms=2 vs 明细 2×3pc · Kitchen dims=空 · Rooms=2',a:'定校验规则'},
-    {s:'tradeoff',t:'月费 $829.33/月 含项丰富',x:'含楼宇保险、中央空调、暖气、车位与水费,电费走独立电表自付;与只含基础项的低月费楼盘比价时,先对齐含项口径。',e:'Included=Insurance, Central AC, Heat, Parking, Water · Separate Hydro Meter',a:'对齐月费口径'}
+    {s:'risk',t:'无空调 · 电踢脚线采暖',x:'单元无空调,夏季降温靠自购设备;踢脚线电暖意味着冬季电费自担且不在月费内——加装挂机/热泵前先查共管章程是否允许。',e:'A/C=None · Heating=Baseboard Electric',a:'核实加装政策'},
+    {s:'risk',t:'1977 年老楼 · 状态证书未备(N)',x:'近 50 年楼龄,电梯、外墙、管线的大修周期与储备金状况是核心风险点;状态证书未预备,条件 offer 必须保留证书审阅条款。',e:'Year Built=1977 · Status Certificate=N · Mgmt=Sentinel Management',a:'索要状态证书'},
+    {s:'tradeoff',t:'月费 $666.10/月 但含项少',x:'871 ft² 对应约 $0.77/ft²/月,含项只有楼宇保险和水;电暖自付下实际持有成本要按月费+水电合并测算,再和含暖气/空调的楼盘比价。',e:'Maintenance=$666.10 · Included=Building Insurance, Water',a:'算全持有成本'},
+    {s:'tradeoff',t:'车位为专属使用权 · 无储物柜',x:'Parking Type=Exclusive 是公共部分的专属使用权,不是可单独转让的产权车位;无 Locker,但单元内带储物间可部分弥补。',e:'Parking Type=Exclusive · Locker=None · Interior=Storage',a:'确认车位性质'}
   ]};
 var riskDone={};
 var RISK_GATE='<button onclick="riskGen()" style="border:none;cursor:pointer;font-family:var(--cjk);font-size:12.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--ai1),var(--ai2));border-radius:99px;padding:9px 20px">✦ 生成分析</button>';
