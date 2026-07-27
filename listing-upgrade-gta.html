@@ -925,7 +925,7 @@ const DETAILS = {
       {t:'房屋·空间', kv:[['@','建筑'],['建造年代','约 31–50 年(Approx Age)'],['建筑样式(Style)','2-Storey 低层 · 单元位于 1 层'],['外墙','砖(Brick)'],['@','内部'],['供暖','踢脚线电暖(Baseboard · Electric)'],['空调','壁挂式(Wall Unit)'],['洗衣','套内洗衣(In-Suite Laundry)'],['室内特征(Interior Features)','对讲机(Intercom)'],['房间总数','7'],['包含设备(Inclusions)','冰箱 · 炉灶 · 洗碗机 · 洗衣机 · 烘干机 · 电壁炉 · 移动空调 · 窗帘'],['@','外部'],['朝向(Exposure)','东(E)'],['车位形式','专属车位 ×1(Reserved/Assigned · 公共车场)'],['外部特征(Exterior Features)','门禁入口(Controlled Entry) · 露台(Patio)']],
         rooms:[['—','主层','1.84×3.25 m(6.04×10.66 ft)'],['客厅','主层','4.04×7.01 m(13.25×23 ft)'],['厨房','主层','3.01×3.30 m(9.88×10.83 ft)'],['2 号卧室','主层','3.05×2.63 m(10.01×8.63 ft)'],['主卧室','主层','3.42×4.26 m(11.22×13.98 ft)'],['洗衣间','主层','1.28×3.30 m(4.2×10.83 ft)']],
         baths:[['主层','3 件套 ×1']]},
-      {t:'物业·法团', kv:[['PIN#','287420004'],['ARN#','151402001076742'],['法团编号(Condo Corp#)','42'],['物业管理(Property Mgmt Co)','Granite'],['宠物(Pets)','允许 · 有限制(Allowed with Restrictions)'],['状态证书(Status Certificate)','未提供(N)'],['特殊产权标注(Special Designations)','未明示(Unknown)']]},
+      {t:'土地·物业', kv:[['PIN#','287420004'],['ARN#','151402001076742'],['合作社编号(Condo Corp#)','42'],['物业管理(Property Mgmt Co)','Granite'],['宠物(Pets)','允许 · 有限制(Allowed with Restrictions)'],['状态证书(Status Certificate)','未提供(N)'],['特殊产权标注(Special Designations)','未明示(Unknown)']]},
     ]
   },
   condo: {
@@ -936,7 +936,7 @@ const DETAILS = {
       {t:'房屋·空间', kv:[['@','建筑'],['建筑样式(Style)','Apartment 高层单元 · 位于 8 层'],['外墙','混凝土(Concrete)'],['@','内部'],['供暖','强制风暖 · 天然气(Forced Air · Gas)'],['空调','中央空调(Central Air)'],['洗衣','套内洗衣(Ensuite Laundry)'],['室内特征(Interior Features)','独立电表(Separate Hydro Meter)'],['房间总数','2'],['包含设备(Inclusions)','不锈钢厨电(炉灶 · 冰箱 · 内置洗碗机 · 内置微波炉/抽油烟) · 全尺寸叠放洗衣/烘干机 · 全部灯具与窗帘'],['@','外部'],['朝向(Exposure)','东北(NE)'],['阳台(Balcony)','开放式(Open)'],['储物柜(Locker)','自有(Owned)'],['车位形式','地下 ×1(Underground · 产权自有)']],
         rooms:[['客厅','主层','4.02×3.54 m(13.19×11.61 ft)'],['餐厅','主层','3.74×3.32 m(12.27×10.89 ft)'],['主卧室','主层','3.51×3.31 m(11.52×10.86 ft)'],['2 号卧室','主层','3.11×3.30 m(10.2×10.83 ft)']],
         baths:[['—','3 件套 ×2']]},
-      {t:'物业·法团', kv:[['法团(Condo Corp)','TSCC 2458'],['物业管理(Property Mgmt Co)','Elite Property Management Inc.'],['状态证书(Status Certificate)','未提供(N)'],['特殊产权标注(Special Designations)','未明示(Unknown)']]},
+      {t:'土地·物业', kv:[['共管公司(Condo Corp)','TSCC 2458'],['物业管理(Property Mgmt Co)','Elite Property Management Inc.'],['状态证书(Status Certificate)','未提供(N)'],['特殊产权标注(Special Designations)','未明示(Unknown)']]},
     ]
   }
 };
@@ -989,10 +989,10 @@ var RISKS={
     {s:'tradeoff',t:'1 车位 · 后巷独立车库',x:'仅 1 个车位且经后巷进出——双车家庭需评估街趴;换来的是主街无车道的完整前院面宽。',e:'Garage=Detached · Drive=Lane · Parking=1',a:'核实街趴政策'}
   ],
   coop:[
-    {s:'risk',t:'Co-op 合作社产权,融资受限',x:'买的是法团股份+专属使用权,不是独立产权;多数银行不做常规按揭,通常要求更高首付或专门的股份贷款,下 offer 前先确认可贷性。',e:'Type=Co-Op Apt · Condo Corp#=42',a:'确认贷款渠道'},
-    {s:'risk',t:'状态证书未备(Status Certificate=N)',x:'法团财务、储备金、特殊摊派与诉讼信息都在状态证书里;当前未提供,条件 offer 必须保留证书审阅条款。',e:'Status Certificate=N · Property Mgmt=Granite',a:'索要状态证书'},
+    {s:'risk',t:'Co-op 合作社产权,融资受限',x:'买的是合作社股份+专属使用权,不是独立产权;多数银行不做常规按揭,通常要求更高首付或专门的股份贷款,下 offer 前先确认可贷性。',e:'Type=Co-Op Apt · Condo Corp#=42',a:'确认贷款渠道'},
+    {s:'risk',t:'状态证书未备(Status Certificate=N)',x:'合作社财务、储备金、特殊摊派与诉讼信息都在状态证书里;当前未提供,条件 offer 必须保留证书审阅条款。',e:'Status Certificate=N · Property Mgmt=Granite',a:'索要状态证书'},
     {s:'tradeoff',t:'月费 $440.66/月 的含项口径',x:'含楼宇保险与公共部分维护,不含单元内保险与水电;电踢脚线采暖意味着冬季电费自担,对比同价位 condo 时注意口径差异。',e:'Maintenance=$440.66 · Included=Building Insurance, Common Elements · Heating=Baseboard Electric',a:'算全持有成本'},
-    {s:'tradeoff',t:'宠物有限制 · 无阳台/储物柜',x:'宠物需符合法团限制条款;单元无阳台、无储物柜,但带首层专属露台——按生活方式硬条件核对取舍。',e:'Pets=Restrictions · Balcony=None · Locker=None · Patio=Yes',a:'查法团条款'}
+    {s:'tradeoff',t:'宠物有限制 · 无阳台/储物柜',x:'宠物需符合合作社限制条款;单元无阳台、无储物柜,但带首层专属露台——按生活方式硬条件核对取舍。',e:'Pets=Restrictions · Balcony=None · Locker=None · Patio=Yes',a:'查合作社条款'}
   ],
   condo:[
     {s:'risk',t:'已过期盘(EXP · 353 天)',x:'该挂牌已到期下架,非在售状态;C 端不应作为可约看房源展示,只适合出现在历史记录/行情对照场景。',e:'Status=EXP · DOM=353 · Possession Date=09/01/2025(已过)',a:'仅作历史参考'},
