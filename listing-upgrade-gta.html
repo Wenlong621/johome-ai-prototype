@@ -361,11 +361,12 @@ body.annotate .mod-tag{display:inline-block}
 
 <div class="stage-head">
   <div class="stage-title">Johome · 大多伦多房源详情页原型(设计演示工具条,非产品 UI)
-    <small>样例 ×2:C13534294 联排 / X13573856 Co-Op 公寓 · TRREB(大多伦多) · 与大温版同构,字段按安省口径本地化</small>
+    <small>样例 ×3:C13534294 联排 / X13573856 Co-Op 公寓 / C12280844 Condo 公寓(EXP 脏数据样本) · TRREB(大多伦多) · 与大温版同构,字段按安省口径本地化</small>
   </div>
   <div class="stage-actions">
     <button class="stage-btn on" data-ft="gta" onclick="setFacts('gta',this)">联排 · Freehold</button>
     <button class="stage-btn" data-ft="coop" onclick="setFacts('coop',this)">Co-Op 公寓</button>
+    <button class="stage-btn" data-ft="condo" onclick="setFacts('condo',this)">Condo 公寓 · EXP</button>
     <button class="stage-btn on" id="btnAnno" onclick="toggleAnno()">显示 PRD 模块标注</button>
   </div>
 </div>
@@ -871,6 +872,17 @@ const FACTS = {
       ['🏢','1<small> 层</small>','所在楼层(Level)'],
       ['🅿','1','停车位'],
     ]
+  },
+  condo: {
+    note: '',
+    items: [
+      ['📐','1000–1199<small> ft²</small>','室内面积(区间)'],
+      ['🛏','2','卧室'],
+      ['🛁','2','卫生间'],
+      ['🏢','8<small> 层</small>','所在楼层(Level)'],
+      ['🅿','1','停车位(自有)'],
+      ['🏛','$829<small>/月</small>','物业月费'],
+    ]
   }
 };
 /* ===== 房源资料 Tab:第一 tab 为关键信息(整合全部关键字段),细节下沉后续 tab、不重复 =====
@@ -898,6 +910,17 @@ const DETAILS = {
         rooms:[['—','主层','1.84×3.25 m(6.04×10.66 ft)'],['客厅','主层','4.04×7.01 m(13.25×23 ft)'],['厨房','主层','3.01×3.30 m(9.88×10.83 ft)'],['2 号卧室','主层','3.05×2.63 m(10.01×8.63 ft)'],['主卧室','主层','3.42×4.26 m(11.22×13.98 ft)'],['洗衣间','主层','1.28×3.30 m(4.2×10.83 ft)']],
         baths:[['主层','3 件套 ×1']]},
       {t:'物业·法团', kv:[['PIN#','287420004'],['ARN#','151402001076742'],['法团编号(Condo Corp#)','42'],['物业管理(Property Mgmt Co)','Granite'],['宠物(Pets)','允许 · 有限制(Allowed with Restrictions)'],['状态证书(Status Certificate)','未提供(N)'],['特殊产权标注(Special Designations)','未明示(Unknown)']]},
+    ]
+  },
+  condo: {
+    src: '样例 C12280844(REALM · Toronto C01 · Waterfront Communities C1 · 已过期)',
+    tabs: [
+      {t:'关键信息', kv:[['@','挂牌信息'],['MLS® 编号','C12280844'],['状态(Status)','已过期(EXP)'],['区域 / 社区','TRREB · Toronto C01 · Waterfront Communities C1'],['地址','75 Queens Wharf Rd #801'],['交叉路口(Dir/Cross St)','Spadina And Fort York'],['邮编','M5V 0J8'],['挂牌日期 · DOM','07/12/2025 · 353 天(至过期)'],['累计在市(Property DOM)','353 天'],['交房(Possession)','30–59 天'],['@','物业概况'],['房屋类型','公寓(Condo Apt · Apartment)'],['产权','Condominium(分契式共管)'],['所在楼层 · 单元','8 层 · #801'],['室内面积','1,000–1,199 ft²'],['地上完成面积(Above Grade)','1,008 ft²'],['卧室','2'],['卫生间','2'],['厨房','1'],['停车','1 位(地下车库 · 产权自有)'],['@','持有费用'],['物业月费(Maintenance)','$829.33/月'],['月费包含','楼宇保险 · 中央空调 · 暖气 · 车位 · 水(Building Insurance · Central AC · Heat · Parking · Water)'],['地税','$4,580(2025)'],['HST','售价已含(Included In)']],
+        note:'REALM 面积按区间披露;佣金、卖方信息、展示要求、Expiry/Occupancy 等经纪端字段不对公开端展示。'},
+      {t:'房屋·空间', kv:[['@','建筑'],['建筑样式(Style)','Apartment 高层单元 · 位于 8 层'],['外墙','混凝土(Concrete)'],['@','内部'],['供暖','强制风暖 · 天然气(Forced Air · Gas)'],['空调','中央空调(Central Air)'],['洗衣','套内洗衣(Ensuite Laundry)'],['室内特征(Interior Features)','独立电表(Separate Hydro Meter)'],['房间总数','2'],['包含设备(Inclusions)','不锈钢厨电(炉灶 · 冰箱 · 内置洗碗机 · 内置微波炉/抽油烟) · 全尺寸叠放洗衣/烘干机 · 全部灯具与窗帘'],['@','外部'],['朝向(Exposure)','东北(NE)'],['阳台(Balcony)','开放式(Open)'],['储物柜(Locker)','自有(Owned)'],['车位形式','地下 ×1(Underground · 产权自有)']],
+        rooms:[['客厅','主层','4.02×3.54 m(13.19×11.61 ft)'],['餐厅','主层','3.74×3.32 m(12.27×10.89 ft)'],['主卧室','主层','3.51×3.31 m(11.52×10.86 ft)'],['2 号卧室','主层','3.11×3.30 m(10.2×10.83 ft)']],
+        baths:[['—','3 件套 ×2']]},
+      {t:'物业·法团', kv:[['法团(Condo Corp)','TSCC 2458'],['物业管理(Property Mgmt Co)','Elite Property Management Inc.'],['状态证书(Status Certificate)','未提供(N)'],['特殊产权标注(Special Designations)','未明示(Unknown)']]},
     ]
   }
 };
@@ -954,6 +977,12 @@ var RISKS={
     {s:'risk',t:'状态证书未备(Status Certificate=N)',x:'法团财务、储备金、特殊摊派与诉讼信息都在状态证书里;当前未提供,条件 offer 必须保留证书审阅条款。',e:'Status Certificate=N · Property Mgmt=Granite',a:'索要状态证书'},
     {s:'tradeoff',t:'月费 $440.66/月 的含项口径',x:'含楼宇保险与公共部分维护,不含单元内保险与水电;电踢脚线采暖意味着冬季电费自担,对比同价位 condo 时注意口径差异。',e:'Maintenance=$440.66 · Included=Building Insurance, Common Elements · Heating=Baseboard Electric',a:'算全持有成本'},
     {s:'tradeoff',t:'宠物有限制 · 无阳台/储物柜',x:'宠物需符合法团限制条款;单元无阳台、无储物柜,但带首层专属露台——按生活方式硬条件核对取舍。',e:'Pets=Restrictions · Balcony=None · Locker=None · Patio=Yes',a:'查法团条款'}
+  ],
+  condo:[
+    {s:'risk',t:'已过期盘(EXP · 353 天)',x:'该挂牌已到期下架,非在售状态;C 端不应作为可约看房源展示,只适合出现在历史记录/行情对照场景。',e:'Status=EXP · DOM=353 · Possession Date=09/01/2025(已过)',a:'仅作历史参考'},
+    {s:'risk',t:'挂牌价为占位价,不可信',x:'List $9,999,888 与 Original List $999,888 相差十倍,地税 $4,580(2025) 印证真实价值量级在百万级;过期盘乱改价是常见脏数据,该价格不应参与任何展示或统计。',e:'List=$9,999,888 · Original=$999,888 · Taxes=$4,580',a:'价格字段剔除'},
+    {s:'tradeoff',t:'字段完备性差的典型样本',x:'卫生间明细(一行 ×3 件)与总数 2 的口径不一、厨房房间无尺寸(已按空值规则隐藏)、Rooms=2 与房间明细 4+ 行矛盾——入库时需做一致性校验与降级显示。',e:'Washrooms=2 vs 明细 2×3pc · Kitchen dims=空 · Rooms=2',a:'定校验规则'},
+    {s:'tradeoff',t:'月费 $829.33/月 含项丰富',x:'含楼宇保险、中央空调、暖气、车位与水费,电费走独立电表自付;与只含基础项的低月费楼盘比价时,先对齐含项口径。',e:'Included=Insurance, Central AC, Heat, Parking, Water · Separate Hydro Meter',a:'对齐月费口径'}
   ]};
 var riskDone={};
 var RISK_GATE='<button onclick="riskGen()" style="border:none;cursor:pointer;font-family:var(--cjk);font-size:12.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--ai1),var(--ai2));border-radius:99px;padding:9px 20px">✦ 生成分析</button>';
