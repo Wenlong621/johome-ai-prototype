@@ -628,7 +628,7 @@ body.annotate .mod-tag{display:inline-block}
       <span class="sec-title">投资视角</span>
     </div>
     <div class="card-pad" style="padding-top:10px">
-      <div class="inv-grid">
+      <div class="inv-grid" id="invGrid">
         <div class="inv-tile"><div class="k">预估月租(挂牌口径)</div><div class="v">$4,300</div><div class="s">Englemount-Lawrence 联排 近一年租赁挂牌中位</div></div>
         <div class="inv-tile"><div class="k">毛租售比(年)</div><div class="v">4.2%</div><div class="s">年租金 ÷ 挂牌价</div></div>
         <div class="inv-tile"><div class="k">Cap Rate(估)</div><div class="v">3.0%</div><div class="s">(年租金 − 持有成本) ÷ 挂牌价 · 明细见下</div></div>
@@ -636,7 +636,7 @@ body.annotate .mod-tag{display:inline-block}
       </div>
       <details style="margin-top:9px;border:1px solid var(--line);border-radius:10px;overflow:hidden">
         <summary style="list-style:none;cursor:pointer;padding:8px 11px;font-size:11.5px;font-weight:700;color:var(--brand);background:#F7F9FC">Cap Rate 计算明细(白盒) ▾</summary>
-        <div style="padding:8px 11px 10px;font-size:11px;line-height:1.9;color:var(--ink-2);font-family:var(--num)">
+        <div id="invDet" style="padding:8px 11px 10px;font-size:11px;line-height:1.9;color:var(--ink-2);font-family:var(--num)">
           <div><b>NOI ≈ $37,200 ÷ 挂牌价 $1,219,000 = 3.0%</b></div>
           <div>年租金(挂牌中位) $51,600 <span style="color:var(--muted)">MLS 租赁挂牌 · 社区×房型 近一年中位</span></div>
           <div>− 地税 $4,865 <span style="color:var(--ok);font-weight:600">feed 实值</span><br>
@@ -895,7 +895,16 @@ const HEAD = {
   coop:{nav:'X13573856 - Detail',badge:['挂牌中','#1FA75A'],cnt:'1 / 25',price:'$425,000',plabel:'<b>挂牌日期</b> 07/16/2026 · <span class="num">已挂 11 天</span>',addr:'2418 MOUNTLAND DR #104, Peterborough ON',sub:'Peterborough, K9K 2E2',typ:'公寓 · Co-operative &nbsp;|&nbsp; <span class="mls num">MLS® X13573856</span>',chips:[['城市','Peterborough']],pc:{title:'价格体检 · 本房 vs Peterborough 公寓行情',pill:'同城 · 同房型口径 · 行情示意',items:[['对比同城公寓售出中位 $410K','▲ 高于中位 4%','up',''],['Peterborough 公寓 · 近一年','▲ +2.1%','up',''],['同城同房型在售','6 套','',''],['已挂天数 vs 同城平均','11 天','','/ 22 天']],mpac:['vs MPAC 评估价 (2016 基准) $230K','▲ 高于评估 85%','安省评估冻结 2016 基准,差距大属正常']}},
   condo:{nav:'X13608372 - Detail',badge:['挂牌中','#1FA75A'],cnt:'1 / 37',price:'$229,000',plabel:'<b>挂牌日期</b> 07/27/2026 · <span class="num">今日新挂</span>',addr:'1380 PRINCE OF WALES DR #1401, Ottawa ON',sub:'Carleton Square, Mooneys Bay-Carleton Heights, K2C 3N5',typ:'公寓 · Condominium &nbsp;|&nbsp; <span class="mls num">MLS® X13608372</span>',chips:[['社区','Carleton Square'],['城市','Ottawa']],pc:{title:'价格体检 · 本房 vs Carleton Square 行情',pill:'同社区 · 同房型口径 · 行情示意',items:[['对比同社区公寓售出中位 $245K','▼ 低于中位 7%','',''],['Carleton Square 公寓 · 近一年','▲ +1.2%','up',''],['同社区同房型在售','4 套','',''],['已挂天数 vs 社区平均','0 天','','/ 26 天']],mpac:['vs MPAC 评估价 (2016 基准) $195K','▲ 高于评估 17%','安省评估冻结 2016 基准,差距大属正常']}}
 };
+const INV = {
+  gta:{},
+  coop:{grid:'<div class="inv-tile"><div class="k">预估月租(挂牌口径 · 示意)</div><div class="v">$1,900</div><div class="s">Peterborough 公寓 近一年租赁挂牌中位(示意)</div></div><div class="inv-tile"><div class="k">毛租售比(年)</div><div class="v">5.4%</div><div class="s">年租金 ÷ 挂牌价</div></div><div class="inv-tile"><div class="k">Cap Rate(估)</div><div class="v">2.7%</div><div class="s">(年租金 − 持有成本) ÷ 挂牌价 · 明细见下</div></div><div class="inv-tile"><div class="k">市场节奏(客观)</div><div class="v">SNLR 52%</div><div class="s">当月成交 ÷ 新增挂牌(示意) · 同城 DOM 22 天</div></div>',
+    det:'<div><b>NOI ≈ $11,300 ÷ 挂牌价 $425,000 = 2.7%</b></div><div>年租金(挂牌中位 · 示意) $22,800 <span style="color:var(--muted)">MLS 租赁挂牌 · 同城×房型 近一年中位</span></div><div>− 地税 $3,363 <span style="color:var(--ok);font-weight:600">feed 实值</span><br>− 物业月费 ×12 ≈$5,288 <span style="color:var(--ok);font-weight:600">feed 实值</span></div><div>− 保险 ≈$650 <span style="color:var(--warn)">估算</span></div><div>− 维护拨备 ≈$1,500 <span style="color:var(--warn)">估算</span></div><div>− 空置准备 ≈$684 <span style="color:var(--warn)">估算</span> <span style="color:var(--muted)">(3%)</span></div><div style="color:var(--warn);font-weight:600">⚠ 合作社普遍限制出租(许可/比例/审批),以占用权协议与章程为准,投资口径仅作参考</div><div style="color:var(--muted)">未计入:代管费(自管口径)· 贷款成本(Cap Rate 口径不含融资)</div>'},
+  condo:{grid:'<div class="inv-tile"><div class="k">预估月租(挂牌口径 · 示意)</div><div class="v">$1,950</div><div class="s">Carleton Square 公寓 近一年租赁挂牌中位(示意)</div></div><div class="inv-tile"><div class="k">毛租售比(年)</div><div class="v">10.2%</div><div class="s">年租金 ÷ 挂牌价</div></div><div class="inv-tile"><div class="k">Cap Rate(估)</div><div class="v">4.4%</div><div class="s">(年租金 − 持有成本) ÷ 挂牌价 · 明细见下</div></div><div class="inv-tile"><div class="k">市场节奏(客观)</div><div class="v">SNLR 48%</div><div class="s">当月成交 ÷ 新增挂牌(示意) · 社区 DOM 26 天</div></div>',
+    det:'<div><b>NOI ≈ $10,100 ÷ 挂牌价 $229,000 = 4.4%</b></div><div>年租金(挂牌中位 · 示意) $23,400 <span style="color:var(--muted)">MLS 租赁挂牌 · 社区×房型 近一年中位</span></div><div>− 地税 $2,341 <span style="color:var(--ok);font-weight:600">feed 实值</span><br>− 物业月费 ×12 ≈$7,993 <span style="color:var(--ok);font-weight:600">feed 实值</span></div><div>− 保险 ≈$500 <span style="color:var(--warn)">估算</span></div><div>− 维护拨备 ≈$1,800 <span style="color:var(--warn)">估算</span> <span style="color:var(--muted)">(1977 年楼龄系数上沿)</span></div><div>− 空置准备 ≈$702 <span style="color:var(--warn)">估算</span> <span style="color:var(--muted)">(3%)</span></div><div style="color:var(--muted)">未计入:代管费(自管口径)· 贷款成本(Cap Rate 口径不含融资);电暖水电归属按租约口径另算</div>'}
+};
 function applyHead(t){var h=HEAD[t];if(!h)return;
+  var ig=document.getElementById('invGrid'),idt=document.getElementById('invDet');
+  if(ig&&idt){if(!INV.gta.grid){INV.gta.grid=ig.innerHTML;INV.gta.det=idt.innerHTML;}var iv=INV[t]&&INV[t].grid?INV[t]:INV.gta;ig.innerHTML=iv.grid;idt.innerHTML=iv.det;}
   document.getElementById('navTitle').textContent=h.nav;
   var b=document.getElementById('heroBadge');b.textContent=h.badge[0];b.style.background=h.badge[1];
   document.getElementById('heroCnt').textContent=h.cnt;
