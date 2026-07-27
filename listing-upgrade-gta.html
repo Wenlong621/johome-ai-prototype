@@ -596,7 +596,7 @@ body.annotate .mod-tag{display:inline-block}
       <div class="fit-item no"><span class="mark">✕</span><span><b>预算:</b>超出你的预算档($2.5M)约 <b class="num">$188,000</b>,如可上浮 8% 以内则在可谈范围</span></div>
       <div class="fit-item yes"><span class="mark">✓</span><span><b>房型:</b>3 卧 + 独立办公室,与你「3 房以上 · 双拼/联排」意向一致</span></div>
       <div class="fit-item yes"><span class="mark">✓</span><span><b>通勤:</b>到 Broadway Tech Centre 18 分钟,在你的 30 分钟等时圈内</span></div>
-      <div class="fit-item yes"><span class="mark">✓</span><span><b>学区:</b>你关注学区——对口 Eric Hamber Secondary(Fraser Institute 2025 · <span class="num">8.6 分</span>)</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>学区:</b>你关注学区——就近 John Polanyi Collegiate(Fraser ON 2025 · <span class="num">6.4 分</span>)</span></div>
       <div class="fit-item yes"><span class="mark">✓</span><span><b>景观:</b>描述提及山景(mountain views),契合你的山景偏好</span></div>
       <div class="fit-item mid"><span class="mark">!</span><span><b>车位:</b>仅 1 车位,你的档案为「2 车位优先」,街区可路边停车</span></div>
     </div>
@@ -1038,7 +1038,7 @@ function schRender(){
   var rows=SCHOOLS[schState.t][schState.l],el=document.getElementById('schList');
   if(!rows.length){el.innerHTML='<div class="sch-empty">该学段暂无收录学校</div>';return;}
   el.innerHTML=rows.map(function(r){
-    return '<div class="sch-row"><span class="sch-ic">🎓</span><div style="flex:1;min-width:0"><div class="sch-nm">'+r[0]+(r[4]?'<span class="sch-tag">对口 catchment</span>':'')+'</div><div class="sch-ad">'+r[1]+'</div></div><div class="sch-score">'+(r[2]!==null?'<div class="v">'+r[2]+'</div><div class="r">'+r[3]+'</div>':'<div class="v" style="color:var(--muted)">—</div><div class="r">无排名</div>')+'</div><span class="sch-chev">›</span></div>';
+    return '<div class="sch-row"><span class="sch-ic">🎓</span><div style="flex:1;min-width:0"><div class="sch-nm">'+r[0]+'</div><div class="sch-ad">'+r[1]+'</div></div><div class="sch-score">'+(r[2]!==null?'<div class="v">'+r[2]+'</div><div class="r">'+r[3]+'</div>':'<div class="v" style="color:var(--muted)">—</div><div class="r">无排名</div>')+'</div><span class="sch-chev">›</span></div>';
   }).join('');
 }
 function schTab(t,el){schState.t=t;document.querySelectorAll('#schTabs .mkt-pill').forEach(function(b){b.classList.remove('on')});el.classList.add('on');schRender();}
