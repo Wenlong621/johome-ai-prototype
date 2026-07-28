@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Johome · Listing Detail · GTA (EN)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#2E6BE6;
+  --brand-ink:#1E4FB8;
+  --brand-soft:#EDF3FE;
+  --brand-deep:#12244D;
+  --ink:#182338;
+  --ink-2:#54627C;
+  --muted:#8C99AF;
+  --line:#E7ECF3;
+  --page:#F3F5F9;
+  --card:#FFFFFF;
+  --up:#D8402F;        /* 涨/高于(中文习惯 红=涨) */
+  --up-soft:#FDEEEC;
+  --down:#0E9F6E;      /* 跌/低于 */
+  --down-soft:#E7F6F0;
+  --ok:#0E9F6E;
+  --ok-soft:#E7F6F0;
+  --warn:#C97A06;
+  --warn-soft:#FCF3E4;
+  --live:#19B36B;
+  --ai1:#3D5CF5;
+  --ai2:#8A3DF5;
+  --canada-line:#0098C9;
+  --num:'Schibsted Grotesk',-apple-system,sans-serif;
+  --cjk:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif;
+  --r:14px;
+  --shadow:0 1px 2px rgba(24,35,56,.04),0 6px 20px -8px rgba(24,35,56,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--cjk);color:var(--ink);background:#E4E8EF;
+  min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;
+}
+/* ===== 设计演示工具条(非产品 UI,交付时可整条移除) ===== */
+.stage-head{
+  width:100%;max-width:430px;background:#EDF0F5;border-bottom:1px solid #DDE3EC;
+  padding:10px 14px 11px;display:flex;flex-direction:column;gap:8px;
+}
+.stage-title{color:#3A465C;font-size:12.5px;font-weight:700}
+.stage-title small{display:block;color:#8C99AF;font-weight:400;font-size:10.5px;margin-top:2px}
+.stage-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.stage-btn{
+  font-family:var(--cjk);font-size:11.5px;color:#54627C;background:#fff;
+  border:1px solid #D8DFE9;border-radius:99px;padding:5px 11px;cursor:pointer;transition:.18s;
+}
+.stage-btn:hover{border-color:var(--brand)}
+.stage-btn.on{background:var(--brand);border-color:var(--brand);color:#fff}
+/* ===== 页面容器(iPhone 逻辑宽度,自然滚动) ===== */
+.phone{
+  width:100%;max-width:430px;background:var(--page);position:relative;flex:1;
+  box-shadow:0 0 50px -10px rgba(24,35,56,.18);
+}
+.screen{position:relative}
+/* 状态栏 + 导航 */
+.statusbar{
+  position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.statusbar .sim{display:flex;justify-content:space-between;align-items:center;padding:10px 22px 2px;font-family:var(--num);font-size:12.5px;font-weight:600;color:var(--ink)}
+.navrow{display:flex;align-items:center;gap:10px;padding:8px 14px 10px}
+.navrow .back{width:30px;height:30px;border-radius:99px;display:grid;place-items:center;color:var(--ink);font-size:17px}
+.navrow .nav-title{font-size:14.5px;font-weight:600;flex:1;text-align:center}
+.navrow .nav-ic{width:30px;height:30px;border-radius:99px;display:grid;place-items:center;color:var(--ink-2);font-size:15px}
+/* ===== 模块标注(设计评审用) ===== */
+.mod{position:relative}
+.mod-tag{
+  display:none;position:absolute;top:-9px;right:10px;z-index:5;
+  font-size:10.5px;font-weight:700;letter-spacing:.02em;color:#fff;
+  background:linear-gradient(135deg,#FF7A45,#F53D6B);border-radius:99px;padding:3px 9px;
+  box-shadow:0 3px 10px -2px rgba(245,61,107,.5);
+}
+.mod-tag.opt{background:linear-gradient(135deg,#7A8CA8,#54627C);box-shadow:0 3px 10px -2px rgba(84,98,124,.4)}
+body.annotate .mod-tag{display:inline-block}
+/* ===== 通用卡片 ===== */
+.wrap{padding:0 12px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);margin-top:10px}
+.card-pad{padding:14px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;padding:14px 14px 0}
+.sec-title{font-size:15px;font-weight:700;letter-spacing:.01em}
+.sec-link{font-size:12px;color:var(--brand);font-weight:500;text-decoration:none}
+.footnote{font-size:10.5px;color:var(--muted);line-height:1.6}
+.num{font-family:var(--num);font-variant-numeric:tabular-nums}
+.chev{color:#B9C3D6}
+/* ===== 头图 ===== */
+.hero{position:relative;height:250px;overflow:hidden;background:#0E1B2E}
+.hero-img{position:absolute;inset:0}
+.hero-badges{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;z-index:3}
+.badge-live{background:var(--live);color:#fff;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:99px;box-shadow:0 3px 10px -2px rgba(25,179,107,.55)}
+.badge-count{background:rgba(10,16,28,.55);backdrop-filter:blur(6px);color:#fff;font-size:11px;padding:4px 10px;border-radius:99px}
+.hero-tabs{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:4px;background:rgba(10,16,28,.5);backdrop-filter:blur(8px);padding:3px;border-radius:99px;z-index:3}
+.hero-tabs span{font-size:11px;color:rgba(255,255,255,.75);padding:4px 12px;border-radius:99px;white-space:nowrap}
+.hero-tabs span.on{background:#fff;color:var(--ink);font-weight:600}
+.hero-dots{position:absolute;right:14px;bottom:16px;display:flex;gap:4px;z-index:3}
+.hero-dots i{width:5px;height:5px;border-radius:99px;background:rgba(255,255,255,.45)}
+.hero-dots i.on{background:#fff;width:14px}
+/* ===== 标题价格 ===== */
+.head-card{border-radius:0 0 var(--r) var(--r);margin-top:0}
+.price-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.price{font-family:var(--num);font-size:29px;font-weight:800;letter-spacing:-.01em}
+.price-label{font-size:11px;color:var(--muted)}
+.price-label b{color:var(--ink-2);font-weight:500}
+.addr{font-size:16.5px;font-weight:700;margin-top:8px;line-height:1.35}
+.addr-sub{font-size:12px;color:var(--ink-2);margin-top:4px}
+.mls{font-family:var(--num);color:var(--muted)}
+/* ①价格体检 */
+.pcheck{margin-top:12px;border:1px solid #F0E3D8;background:linear-gradient(180deg,#FFFDF9,#FFF9F0);border-radius:12px;padding:11px 12px}
+.pcheck-top{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.pcheck-top .t{font-size:12.5px;font-weight:700;color:#8A5A18}
+.pcheck-top .pill{margin-left:auto;font-size:10.5px;color:#A07B3F;background:#F6ECDC;border-radius:99px;padding:2px 8px;white-space:nowrap;flex:none;align-self:flex-start}
+.pcheck-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.pc-item .k{font-size:10.5px;color:var(--muted);margin-bottom:2px}
+.pc-item .v{font-size:13px;font-weight:700;font-family:var(--num)}
+.delta-up{color:var(--up)}
+.delta-down{color:var(--down)}
+.delta-flat{color:var(--ink-2)}
+.pc-note{margin-top:9px;padding-top:8px;border-top:1px dashed #EBDCC4;font-size:11px;color:#8A6A38;line-height:1.55}
+/* ⑨归属chips */
+.chips-row{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin-top:12px}
+.chips-row::-webkit-scrollbar{display:none}
+.geo-chip{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--brand-ink);background:var(--brand-soft);border:1px solid #DCE8FC;border-radius:99px;padding:5px 11px;font-weight:500;text-decoration:none}
+.geo-chip small{color:#8FA6D4;font-weight:400}
+/* 图标行 */
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 4px;padding:14px 10px;border-top:1px solid var(--line);margin-top:14px}
+.fact{text-align:center}
+.fact .ic{font-size:17px;margin-bottom:3px}
+.fact .v{font-size:13px;font-weight:700;font-family:var(--num)}
+.fact .v small{font-size:10px;font-weight:500;color:var(--ink-2)}
+.fact .k{font-size:10px;color:var(--muted);margin-top:1px}
+/* ===== 地图区 ===== */
+.mapbox{position:relative;height:190px;border-radius:12px;overflow:hidden;margin-top:12px}
+.map-count{position:absolute;left:10px;bottom:10px;z-index:4;background:rgba(255,255,255,.94);backdrop-filter:blur(4px);font-size:10.5px;color:var(--ink-2);border-radius:99px;padding:4px 10px;box-shadow:var(--shadow)}
+.poi-pills{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:10px;padding-bottom:2px}
+.poi-pills::-webkit-scrollbar{display:none}
+.poi-pill{flex-shrink:0;font-size:11.5px;color:var(--ink-2);background:#F2F5F9;border:1px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer;display:inline-flex;gap:5px;align-items:center}
+.poi-pill b{font-family:var(--num);font-weight:600;color:var(--muted)}
+.poi-pill.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.poi-pill.on b{color:rgba(255,255,255,.8)}
+/* ③交通通勤 */
+.transit{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.transit-row{display:flex;gap:7px;flex-wrap:wrap}
+.stn-chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;background:#F2FAFD;border:1px solid #D5EEF7;border-radius:99px;padding:5px 11px;color:#0A6E92;font-weight:500}
+.stn-chip .dot{width:8px;height:8px;border-radius:99px;background:var(--canada-line)}
+.score-chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;background:#F2F5F9;border:1px solid var(--line);border-radius:99px;padding:5px 11px;color:var(--ink-2)}
+.score-chip b{font-family:var(--num);color:var(--ink)}
+.commute{margin-top:10px;display:grid;gap:6px}
+.cmt{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2)}
+.cmt .ic{width:22px;height:22px;border-radius:7px;background:#F2F5F9;display:grid;place-items:center;font-size:11px}
+.cmt b{font-family:var(--num);color:var(--ink);font-weight:600;margin-left:auto}
+.cmt.me{background:var(--ok-soft);border:1px solid #CBEBDD;border-radius:10px;padding:8px 10px;color:#0B7A54}
+.cmt.me .ic{background:#fff}
+.cmt.me b{color:#0B7A54}
+.cmt.me .ok{font-size:11px;color:#0B7A54;font-weight:600}
+/* ===== 描述 ===== */
+.desc{font-size:13.5px;line-height:1.85;color:#2A374E}
+.desc-en{margin-top:10px}
+.desc-en summary{list-style:none;cursor:pointer;font-size:12px;color:var(--brand);font-weight:500;display:inline-flex;gap:4px;align-items:center}
+.desc-en summary::-webkit-details-marker{display:none}
+.desc-en p{margin-top:8px;font-size:12.5px;line-height:1.7;color:var(--ink-2)}
+/* ⑦为你而选 */
+.fit-card{background:linear-gradient(160deg,#F4F1FF 0%,#FFFFFF 45%);border:1px solid #E6E0FA}
+.fit-head{display:flex;align-items:center;gap:8px}
+.fit-head .ai-ic{width:26px;height:26px;border-radius:9px;background:linear-gradient(135deg,var(--ai1),var(--ai2));display:grid;place-items:center;color:#fff;font-size:13px}
+.fit-head .t{font-size:15px;font-weight:700}
+.fit-head .sub{font-size:10.5px;color:var(--muted)}
+.fit-score{margin-left:auto;text-align:right}
+.fit-score .n{font-family:var(--num);font-size:21px;font-weight:800;background:linear-gradient(135deg,var(--ai1),var(--ai2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.fit-score .k{font-size:9.5px;color:var(--muted)}
+.fit-list{margin-top:12px;display:grid;gap:8px}
+.fit-item{display:flex;gap:9px;font-size:12.5px;line-height:1.55;color:#2A374E}
+.fit-item .mark{flex-shrink:0;width:17px;height:17px;border-radius:99px;display:grid;place-items:center;font-size:10px;font-weight:800;margin-top:1px}
+.fit-item.yes .mark{background:var(--ok-soft);color:var(--ok)}
+.fit-item.no .mark{background:var(--up-soft);color:var(--up)}
+.fit-item.mid .mark{background:var(--warn-soft);color:var(--warn)}
+.fit-item b{font-weight:600}
+/* ===== 表格 ===== */
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;padding:4px 14px 14px}
+.kv .row{display:flex;justify-content:space-between;padding:7.5px 0;border-bottom:1px solid #F1F4F8;font-size:12px}
+.kv .row .k{color:var(--muted)}
+.kv .row .v{font-weight:600;color:var(--ink);font-family:var(--num);text-align:right}
+.kv .subh{grid-column:1/-1;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--brand);padding:13px 0 4px}
+.kv .subh:first-child{padding-top:2px}
+.fold-blk{margin:6px 14px 10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.fold-blk summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:9px 11px;font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--brand);background:#F7F9FC}
+.fold-blk summary::-webkit-details-marker{display:none}
+.fold-blk summary em{font-style:normal;font-weight:400;color:var(--muted);font-size:10px;margin-left:auto}
+.fold-blk summary::after{content:'▾';color:var(--brand);font-size:10px;transition:transform .15s}
+.fold-blk[open] summary::after{transform:rotate(180deg)}
+.fold-blk .rooms{padding:4px 11px 10px;margin:0}
+.ubtn{border:1px solid var(--brand);color:var(--brand);background:transparent;border-radius:999px;font-size:9.5px;padding:1px 7px;margin-left:6px;cursor:pointer;font-family:inherit;vertical-align:1px}
+.ubtn:hover{background:var(--brand-soft)}
+.ibtn{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;border:1px solid var(--brand);color:var(--brand);background:transparent;font-size:9px;font-style:italic;font-family:Georgia,serif;cursor:pointer;margin-left:5px;vertical-align:1px;padding:0}
+.ibtn:hover{background:var(--brand-soft)}
+.ipop{display:none;margin:5px 0 3px;padding:6px 9px;background:#F2F5F9;border-left:2px solid var(--brand);border-radius:6px;color:var(--ink-2);font-size:10.5px;line-height:1.7;font-family:var(--cjk)}
+.mkt-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:13px}
+.mkt-pill{border:1px solid var(--line);border-radius:9px;padding:6px 10px;font-size:11.5px;background:#fff;cursor:pointer;font-family:var(--cjk);color:var(--ink-2)}
+.mkt-pill.on{background:var(--brand);color:#fff;border-color:var(--brand);font-weight:600}
+.mkt-period{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:2px;margin-top:11px;background:#fff}
+.mkt-period span{font-size:11px;padding:4px 12px;border-radius:99px;cursor:pointer;color:var(--ink-2)}
+.mkt-period span.on{background:var(--brand);color:#fff;font-weight:600}
+.mkt-title{font-size:12px;color:var(--ink-2);margin-top:11px}
+.stat4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+.stat4 .st{background:#F7F9FC;border-radius:9px;padding:7px 4px;text-align:center}
+.stat4 .st .v{font-weight:800;font-family:var(--num);font-size:12.5px;color:var(--ink)}
+.stat4 .st .k{font-size:10px;color:var(--muted);margin-top:1px}
+.mkt-sel{margin-top:9px;font-family:var(--cjk);font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink-2)}
+.mkt-chart{margin-top:8px}
+.mkt-legend{display:flex;gap:12px;justify-content:center;font-size:10.5px;color:var(--ink-2);margin-top:5px}
+.mkt-legend i{font-style:normal;display:inline-flex;align-items:center;gap:4px}
+.mkt-legend .dotc{width:8px;height:8px;border-radius:50%;display:inline-block}
+.mkt-foot{font-size:10px;color:var(--muted);text-align:center;margin-top:5px;line-height:1.6}
+.sch-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px;background:#fff}
+.sch-ic{width:34px;height:34px;border-radius:10px;background:#F2F5F9;display:grid;place-items:center;font-size:16px;flex:none}
+.sch-nm{font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sch-tag{font-size:9px;color:#0B7A54;background:var(--ok-soft);border:1px solid #CBEBDD;border-radius:99px;padding:1px 7px;font-weight:600}
+.sch-ad{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.5}
+.sch-score{margin-left:auto;text-align:right;flex:none}
+.sch-score .v{font-family:var(--num);font-size:15px;font-weight:800;color:var(--brand)}
+.sch-score .r{font-size:10px;color:var(--muted);margin-top:1px;font-family:var(--num)}
+.sch-chev{color:#C4CBD8;font-size:15px;flex:none}
+.sch-empty{font-size:11.5px;color:var(--muted);text-align:center;padding:18px 0 10px}
+.rk-item{border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-top:8px}
+.rk-head{display:flex;align-items:center;gap:7px}
+.rk-sev{font-size:9px;font-weight:700;border-radius:99px;padding:2px 8px;flex:none}
+.rk-sev.risk{color:#B4382A;background:var(--up-soft)}
+.rk-sev.tradeoff{color:#8A5A18;background:var(--warn-soft)}
+.rk-title{font-size:12.5px;font-weight:700;color:var(--ink)}
+.rk-act{margin-left:auto;font-size:9.5px;color:var(--brand-ink);background:var(--brand-soft);border-radius:99px;padding:2px 8px;flex:none;white-space:nowrap}
+.rk-text{font-size:11.5px;color:var(--ink-2);line-height:1.65;margin-top:5px}
+.rk-ev{font-size:9.5px;color:var(--muted);font-family:var(--num);margin-top:4px;line-height:1.6}
+.rooms{padding:0 14px 14px}
+.rooms table{width:100%;border-collapse:collapse;font-size:11.5px}
+.rooms th{text-align:left;color:var(--muted);font-weight:500;padding:6px 0;border-bottom:1px solid var(--line);font-size:10.5px}
+.rooms td{padding:6.5px 0;border-bottom:1px solid #F1F4F8;color:var(--ink-2)}
+.rooms td:first-child{color:var(--ink);font-weight:500}
+.rooms td:last-child,.rooms th:last-child{text-align:right;font-family:var(--num)}
+.more-collapse summary{list-style:none;cursor:pointer;text-align:center;font-size:12px;color:var(--brand);font-weight:500;padding:11px;border-top:1px solid var(--line)}
+.more-collapse summary::-webkit-details-marker{display:none}
+/* 房源资料 Tab 化 */
+.dtabs{display:flex;gap:4px;margin:10px 14px 0;background:#F2F5F9;border-radius:11px;padding:3px}
+.dtab{flex:1;text-align:center;font-size:12.5px;color:var(--ink-2);padding:8px 0;border-radius:9px;cursor:pointer;font-weight:500;transition:.15s}
+.dtab.on{background:#fff;color:var(--ink);font-weight:700;box-shadow:0 1px 4px rgba(24,35,56,.1)}
+.ins-chip{display:flex;gap:7px;align-items:flex-start;margin:10px 14px 0;background:var(--brand-soft);border:1px solid #DCE8FC;border-radius:10px;padding:8px 11px;font-size:11.5px;color:var(--brand-ink);line-height:1.55}
+.ins-chip.gold{background:#FCF6E8;border-color:#F0E2C0;color:#8A5A18}
+.ins-chip.green{background:var(--ok-soft);border-color:#CBEBDD;color:#0B7A54}
+.legal-fold{margin:6px 14px 12px}
+.legal-fold summary{list-style:none;cursor:pointer;font-size:11.5px;color:var(--brand);font-weight:500}
+.legal-fold summary::-webkit-details-marker{display:none}
+.legal-fold p{margin-top:6px;font-size:10.5px;color:var(--muted);line-height:1.6;font-family:var(--num)}
+/* ⑧投资视角 */
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
+.inv-tile{background:#F7F9FC;border:1px solid var(--line);border-radius:11px;padding:10px 11px}
+.inv-tile .k{font-size:10.5px;color:var(--muted)}
+.inv-tile .v{font-family:var(--num);font-size:16.5px;font-weight:800;margin-top:2px}
+.inv-tile .s{font-size:10px;color:var(--muted);margin-top:2px}
+.tagline{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.fact-tag{font-size:10.5px;color:var(--ink-2);background:#F2F5F9;border-radius:99px;padding:3.5px 9px}
+/* ②社区行情 */
+.trend-row{display:flex;align-items:center;gap:12px}
+.trend-meta .v{font-family:var(--num);font-size:17px;font-weight:800}
+.trend-meta .k{font-size:10.5px;color:var(--muted)}
+.trend-meta .d{font-size:11.5px;font-weight:700;font-family:var(--num)}
+.spark{margin-left:auto}
+/* ⑤画像 */
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.demo-tile{background:#F7F9FC;border:1px solid var(--line);border-radius:11px;padding:10px 11px}
+.demo-tile .v{font-family:var(--num);font-size:15.5px;font-weight:800}
+.demo-tile .v.txt{font-family:var(--cjk);font-size:12.5px;font-weight:700;line-height:1.4}
+.demo-tile .k{font-size:10.5px;color:var(--muted);margin-top:2px}
+/* ⑥学校 */
+.sch-group{padding:0 14px}
+.sch-group-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;border-radius:8px;padding:4px 9px;margin-top:12px}
+.sch-group-tag.catch{background:var(--ok-soft);color:#0B7A54}
+.sch-group-tag.near{background:#F2F5F9;color:var(--ink-2)}
+.school{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #F1F4F8}
+.school:last-child{border-bottom:none}
+.school .badge{flex-shrink:0;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:10px;font-weight:700;line-height:1.1;text-align:center}
+.school .badge.pub{background:var(--brand-soft);color:var(--brand-ink)}
+.school .badge.pri{background:#F6EFFA;color:#8A44B8}
+.school .info{flex:1;min-width:0}
+.school .nm{font-size:13px;font-weight:600}
+.school .meta{font-size:10.5px;color:var(--muted);margin-top:2px}
+.school .rk{text-align:right;flex-shrink:0}
+.school .rk .n{font-family:var(--num);font-size:14px;font-weight:800;color:var(--brand-ink)}
+.school .rk .s{font-size:9.5px;color:var(--muted)}
+/* ⑪风险 */
+.risk-item{display:flex;gap:9px;padding:9px 0;font-size:12.5px;line-height:1.6;color:#2A374E;border-bottom:1px solid #F1F4F8}
+.risk-item:last-child{border-bottom:none}
+.risk-item .ic{flex-shrink:0;width:18px;height:18px;border-radius:6px;background:var(--warn-soft);color:var(--warn);display:grid;place-items:center;font-size:10.5px;margin-top:2px}
+.risk-item .lv{flex-shrink:0;font-size:10px;color:var(--muted);background:#F2F5F9;border-radius:99px;padding:2px 7px;height:fit-content;margin-top:2px}
+/* ⑩相似房源 */
+.sim-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:12px 14px 4px}
+.sim-scroll::-webkit-scrollbar{display:none}
+.sim-card{flex-shrink:0;width:150px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.sim-card .ph{height:88px;position:relative}
+.sim-card .ph .tag{position:absolute;top:7px;left:7px;font-size:9px;color:#fff;background:rgba(10,16,28,.55);border-radius:99px;padding:2px 7px}
+.sim-card .bd{padding:8px 9px 10px}
+.sim-card .p{font-family:var(--num);font-size:13.5px;font-weight:800}
+.sim-card .p small{font-size:9.5px;font-weight:600;margin-left:3px}
+.sim-card .a{font-size:10.5px;color:var(--ink-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sim-card .m{font-size:9.5px;color:var(--muted);margin-top:3px;font-family:var(--num)}
+.alt-line{margin:10px 14px 14px;background:#F7F9FC;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:11.5px;color:var(--ink-2);line-height:1.6}
+.alt-line a{color:var(--brand);font-weight:600;text-decoration:none}
+/* 经纪人 */
+.agent{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid #F1F4F8}
+.agent:last-child{border-bottom:none}
+.agent .av{width:42px;height:42px;border-radius:99px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;font-family:var(--num)}
+.agent .nm{font-size:13.5px;font-weight:700}
+.agent .co{font-size:11px;color:var(--muted);margin-top:1px}
+.agent .tel{margin-left:auto;font-size:10.5px;color:var(--brand);font-family:var(--num);font-weight:600;white-space:nowrap}
+.agent-tag{font-size:9.5px;color:#B8860B;background:#FCF3E4;border-radius:99px;padding:2px 7px;margin-left:6px;font-weight:600}
+/* 免责+推广 */
+.legal{padding:16px 14px 8px}
+.promo{margin:10px 12px 0}
+.promo summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;background:#EEF1F6;border-radius:12px;padding:11px 14px;font-size:12px;color:var(--ink-2)}
+.promo summary::-webkit-details-marker{display:none}
+.promo .ad-mark{font-size:9.5px;color:var(--muted);border:1px solid #CBD4E2;border-radius:4px;padding:1px 5px}
+.promo .ads{display:grid;gap:8px;padding:10px 2px 0}
+.ad-card{border-radius:11px;padding:12px 14px;font-size:12px;color:#fff;position:relative;overflow:hidden}
+.ad-card .am{position:absolute;top:8px;right:10px;font-size:9px;border:1px solid rgba(255,255,255,.5);border-radius:4px;padding:1px 5px;color:rgba(255,255,255,.8)}
+.ad-card b{font-size:13px}
+.ad-card p{font-size:10.5px;opacity:.85;margin-top:3px}
+/* 底部操作条 ⑫ */
+.actionbar{
+  position:sticky;bottom:0;z-index:70;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);padding:10px 14px calc(10px + 14px);display:flex;gap:9px;align-items:center;
+}
+.ab-ic{flex-shrink:0;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:18px;border:1px solid var(--line);background:#fff}
+.ab-ic .lbl{display:none}
+.ab-ask{
+  flex:1;height:44px;border:none;border-radius:13px;cursor:pointer;
+  background:linear-gradient(135deg,var(--ai1),var(--ai2));color:#fff;font-family:var(--cjk);
+  font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;
+  box-shadow:0 8px 20px -6px rgba(93,61,245,.5);position:relative;overflow:hidden;
+}
+.ab-ask::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.25) 50%,transparent 60%);transform:translateX(-100%);animation:shine 3.2s ease-in-out infinite}
+@keyframes shine{0%,60%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.ab-call{flex-shrink:0;height:44px;padding:0 18px;border-radius:13px;background:var(--ink);color:#fff;font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:6px}
+/* 载入动画 */
+.wrap>.card,.head-card{animation:rise .5s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (max-width:430px){
+  .phone{box-shadow:none}
+}
+/* iOS 安全区 */
+.actionbar{padding-bottom:calc(10px + env(safe-area-inset-bottom,14px))}
+.statusbar .sim{padding-top:calc(10px + env(safe-area-inset-top,0px))}
+</style>
+</head>
+<body>
+
+<div class="stage-head">
+  <div class="stage-title">Johome · GTA Listing Detail Prototype (design toolbar, not product UI)
+    <small>Samples ×3: C13534294 Townhouse / X13573856 Co-Op Apt / X13608372 Condo Apt (Ottawa) · TRREB · Mirrors the Metro Van build, Ontario field conventions</small>
+  </div>
+  <div class="stage-actions">
+    <button class="stage-btn on" data-ft="gta" onclick="setFacts('gta',this)">Freehold Townhouse</button>
+    <button class="stage-btn" data-ft="coop" onclick="setFacts('coop',this)">Co-Op Apt</button>
+    <button class="stage-btn" data-ft="condo" onclick="setFacts('condo',this)">Condo Apt</button>
+    <button class="stage-btn on" id="btnAnno" onclick="toggleAnno()">Show PRD module tags</button>
+  </div>
+</div>
+
+<div class="phone">
+<div class="screen" id="screen">
+
+  <!-- 状态栏 + 导航 -->
+  <div class="statusbar">
+    <div class="sim"><span>3:24</span><span style="display:inline-flex;align-items:center;gap:5px">5G
+      <svg width="16" height="10" viewBox="0 0 16 10"><g fill="#182338"><rect x="0" y="6" width="2.6" height="4" rx="1"/><rect x="4.2" y="4" width="2.6" height="6" rx="1"/><rect x="8.4" y="2" width="2.6" height="8" rx="1"/><rect x="12.6" y="0" width="2.6" height="10" rx="1"/></g></svg>
+      <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0" y="0" width="19" height="11" rx="3" fill="none" stroke="#182338" stroke-width="1.2"/><rect x="2" y="2" width="13" height="7" rx="1.5" fill="#182338"/><rect x="20" y="3.5" width="2" height="4" rx="1" fill="#182338"/></svg>
+    </span></div>
+    <div class="navrow">
+      <div class="back">‹</div>
+      <div class="nav-title num" id="navTitle">C13534294 - Detail</div>
+      <div class="nav-ic">♡</div>
+      <div class="nav-ic">⧉</div>
+    </div>
+  </div>
+
+  <!-- 头图轮播 -->
+  <div class="hero">
+    <div class="hero-img">
+      <svg width="100%" height="100%" viewBox="0 0 390 250" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#B8D4E8"/><stop offset="1" stop-color="#E8EFF4"/>
+          </linearGradient>
+          <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#4A5A6B"/><stop offset="1" stop-color="#37465A"/>
+          </linearGradient>
+          <linearGradient id="wall2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#5B6C7E"/><stop offset="1" stop-color="#46586C"/>
+          </linearGradient>
+        </defs>
+        <rect width="390" height="250" fill="url(#sky)"/>
+        <ellipse cx="60" cy="245" rx="180" ry="40" fill="#C5D6C0"/>
+        <ellipse cx="340" cy="250" rx="200" ry="42" fill="#B7CBB2"/>
+        <rect x="70" y="70" width="180" height="150" fill="url(#wall)"/>
+        <rect x="250" y="95" width="90" height="125" fill="url(#wall2)"/>
+        <polygon points="70,70 160,38 250,70" fill="#2C3947"/>
+        <polygon points="250,95 295,72 340,95" fill="#3A4A5C"/>
+        <g fill="#DCE8F2">
+          <rect x="88" y="88" width="34" height="44" rx="2"/><rect x="132" y="88" width="34" height="44" rx="2"/>
+          <rect x="182" y="88" width="50" height="44" rx="2"/>
+          <rect x="88" y="150" width="34" height="52" rx="2"/><rect x="182" y="150" width="50" height="30" rx="2"/>
+          <rect x="264" y="110" width="26" height="30" rx="2"/><rect x="298" y="110" width="26" height="30" rx="2"/>
+          <rect x="264" y="155" width="60" height="26" rx="2"/>
+        </g>
+        <rect x="134" y="158" width="30" height="62" rx="2" fill="#C89A5B"/>
+        <rect x="60" y="205" width="290" height="8" fill="#8FA893"/>
+        <g fill="#5F7D63"><ellipse cx="38" cy="185" rx="26" ry="42"/><ellipse cx="368" cy="178" rx="24" ry="48"/><ellipse cx="345" cy="200" rx="16" ry="26"/></g>
+        <rect width="390" height="250" fill="url(#grain)" opacity=".5"/>
+      </svg>
+    </div>
+    <span id="heroBadge" style="position:absolute;top:12px;right:12px;z-index:3;background:#1FA75A;color:#fff;font-size:11px;font-weight:600;padding:5px 13px;border-radius:99px">FOR SALE</span>
+    <div class="hero-tabs"><span>VR</span><span class="on">Photos</span></div>
+    <div class="num" id="heroCnt" style="position:absolute;right:14px;bottom:14px;z-index:3;background:rgba(10,16,28,.55);color:#fff;font-size:10.5px;padding:3px 10px;border-radius:99px">3 / 25</div>
+  </div>
+
+  <!-- 标题 / 价格 / ①价格体检 / ⑨归属chips / 图标行 -->
+  <div class="card head-card card-pad mod">
+    <span class="mod-tag opt">O2 field-basis fixes</span>
+    <div class="price-row">
+      <span class="price" id="hdPrice">$1,219,000</span>
+      <span class="price-label" id="hdPLabel"><b>List Date</b> 07/07/2026 · <span class="num">20 DOM</span></span>
+    </div>
+    <div class="addr" id="hdAddr">18 DEEP ROOTS TERR, Toronto ON</div>
+    <div style="font-size:12.5px;color:var(--ink-2);margin-top:3px" id="hdAddr2">Englemount-Lawrence, Toronto C04, M6A 0G1</div>
+    <div class="addr-sub" id="hdAddrSub">Townhouse · Freehold &nbsp;|&nbsp; <span class="mls num">MLS® C13534294</span></div>
+
+    <!-- ① 价格体检 -->
+    <div class="pcheck mod" id="pcheckBox">
+      <span class="mod-tag">N1 Price Check</span>
+      <div class="pcheck-top">
+        <span style="font-size:14px">🩺</span><span class="t" id="pcTitle">Price Check · This home vs Englemount-Lawrence</span>
+        <span class="pill" id="pcPill">Same community · same type</span>
+      </div>
+      <div class="pcheck-grid" id="pcGrid">
+        <div class="pc-item">
+          <div class="k">Vs community townhouse sold median $1.15M</div>
+          <div class="v delta-up">▲ 6% above median</div>
+        </div>
+        <div class="pc-item">
+          <div class="k">Englemount-Lawrence townhouse · past year</div>
+          <div class="v delta-up">▲ +1.8%</div>
+        </div>
+        <div class="pc-item">
+          <div class="k">Active same-type in community</div>
+          <div class="v">9</div>
+        </div>
+        <div class="pc-item">
+          <div class="k">DOM vs community average</div>
+          <div class="v">20 d <span style="color:var(--muted);font-weight:500">/ 15 d</span></div>
+        </div>
+        <div class="pc-item" style="grid-column:1/-1">
+          <div class="k" style="font-size:12.5px;font-weight:700;color:#8A5A18;margin-bottom:3px">vs MPAC assessed (2016 base) $712K</div>
+          <div class="v delta-up">▲ 71% above assessment <span style="font-size:10px;color:var(--muted);font-weight:500">Ontario assessments frozen at 2016 base; large gaps are normal</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图标行(O2 field-basis fixes · 按 MLS 房源类型自适应) -->
+    <div class="mod" style="margin-top:14px">
+      <span class="mod-tag opt" style="top:-6px">O2+ icon row adapts to MLS type</span>
+      <div class="facts" id="factsGrid" style="margin-top:0"></div>
+    </div>
+
+    <!-- ⑨ 归属上下文 chips -->
+    <div class="mod" style="margin-top:14px">
+      <span class="mod-tag">N9 Geo context</span>
+      <div class="chips-row" style="margin-top:0" id="geoChips">
+        <a class="geo-chip" href="#"><small>Community</small> Englemount-Lawrence ›</a>
+        <a class="geo-chip" href="#"><small>Zone</small> Yorkdale–Lawrence ›</a>
+        <a class="geo-chip" href="#"><small>Retail</small> Yorkdale (nearest) ›</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+  <!-- 平台经纪速联卡 -->
+  <div class="card card-pad" style="display:flex;align-items:center;gap:12px">
+    <div style="position:relative;flex:none">
+      <div style="width:52px;height:52px;border-radius:50%;background:#EEF1F6;display:grid;place-items:center;font-size:24px">👤</div>
+      <span style="position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;background:#F29900;color:#fff;font-size:8.5px;font-weight:700;border-radius:99px;padding:2px 7px;white-space:nowrap">☘ Realtor</span>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14.5px;font-weight:800">Mike Zhang</div>
+      <div style="font-size:11.5px;color:var(--ink-2);margin-top:2px">Nu Stream Realty Inc</div>
+      <div class="num" style="font-size:11.5px;color:var(--ink-2);margin-top:1px">+1 (778) 926-9213</div>
+      <div style="font-size:11.5px;color:var(--ink-2)">mike.zhang@Johome.com</div>
+    </div>
+  </div>
+
+  <!-- 历史记录(同一物业历次挂牌) -->
+  <div class="sec-head" style="padding:8px 4px 9px"><span class="sec-title">Listing History</span></div>
+  <div class="card">
+    <div class="card-pad" style="padding-top:12px;padding-bottom:4px">
+      <div style="display:flex;align-items:center"><div class="num" style="font-size:15px;font-weight:800">$ 1,219,000</div><span style="margin-left:auto;font-size:10px;font-weight:700;color:#0B7A54;background:var(--ok-soft);border-radius:99px;padding:3px 10px">Active</span></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px" class="num">Listed: 07/18/2026 · MLS: C13534294</div>
+    </div>
+  </div>
+
+  <!-- 地图 + ④POI + ③交通通勤 -->
+  <div class="card card-pad mod">
+    <span class="mod-tag">N3+4 Transit + POI</span>
+    <div class="sec-title" style="padding:0">Location & Nearby</div>
+
+    <div class="mapbox">
+      <svg width="100%" height="100%" viewBox="0 0 366 190" preserveAspectRatio="xMidYMid slice">
+        <rect width="366" height="190" fill="#EEF3EE"/>
+        <g stroke="#FFFFFF" stroke-width="7">
+          <line x1="0" y1="48" x2="366" y2="44"/><line x1="0" y1="106" x2="366" y2="102"/><line x1="0" y1="160" x2="366" y2="158"/>
+          <line x1="62" y1="0" x2="66" y2="190"/><line x1="188" y1="0" x2="184" y2="190"/><line x1="300" y1="0" x2="304" y2="190"/>
+        </g>
+        <g stroke="#FFD966" stroke-width="9"><line x1="188" y1="0" x2="184" y2="190"/></g>
+        <g stroke="#FFFFFF" stroke-width="3" opacity=".9">
+          <line x1="0" y1="76" x2="366" y2="73"/><line x1="0" y1="132" x2="366" y2="130"/>
+          <line x1="124" y1="0" x2="126" y2="190"/><line x1="244" y1="0" x2="246" y2="190"/>
+        </g>
+        <rect x="18" y="116" width="38" height="36" rx="4" fill="#BFDCB4"/>
+        <rect x="310" y="54" width="44" height="42" rx="4" fill="#BFDCB4"/>
+        <text x="326" y="79" font-size="8" fill="#5E7D57" font-family="sans-serif">Park</text>
+        <!-- Canada Line -->
+        <line x1="186" y1="0" x2="183" y2="190" stroke="#0098C9" stroke-width="3" stroke-dasharray="8 5" opacity=".85"/>
+        <circle cx="184.5" cy="96" r="6.5" fill="#0098C9" stroke="#fff" stroke-width="2.5"/>
+        <!-- POI 点位 -->
+        <g>
+          <circle cx="96" cy="60" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="150" cy="140" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="262" cy="66" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="216" cy="150" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="322" cy="132" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="42" cy="82" r="5" fill="#E8743A" stroke="#fff" stroke-width="1.5"/>
+        </g>
+        <!-- 本房 pin -->
+        <g transform="translate(120,88)">
+          <path d="M0,-26 C-11,-26 -17,-18 -17,-10 C-17,0 0,14 0,14 C0,14 17,0 17,-10 C17,-18 11,-26 0,-26Z" fill="#2E6BE6" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="0" cy="-11" r="5" fill="#fff"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- ④ POI 类型 pills -->
+    <div class="poi-pills">
+      <span class="poi-pill on">🍜 Dining <b>46</b></span>
+      <span class="poi-pill">🛒 Grocery <b>8</b></span>
+      <span class="poi-pill">☕ Cafés <b>21</b></span>
+      <span class="poi-pill">🌳 Parks <b>12</b></span>
+      <span class="poi-pill">💪 Fitness <b>9</b></span>
+      <span class="poi-pill">🏥 Medical <b>15</b></span>
+    </div>
+
+    <!-- ③ 交通与通勤 -->
+    <div class="transit">
+      <div class="transit-row">
+        <span class="stn-chip"><span class="dot"></span>Line 1 · Yorkdale <b class="num">12 min walk</b></span>
+        <span class="stn-chip"><span class="dot"></span>Line 1 · Lawrence West <b class="num">14 min walk</b></span>
+      </div>
+      </div>
+  </div>
+
+  <!-- 房源描述(O3 中文优先) -->
+  <div class="card mod">
+    <span class="mod-tag opt">O3 MLS original shown</span>
+    <div class="sec-head"><span class="sec-title">Description <span style="font-size:10px;font-weight:600;color:var(--brand-ink);background:var(--brand-soft);border:1px solid #DCE8FC;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:2px">MLS original</span></span></div>
+    <div class="card-pad" style="padding-top:10px">
+      <p class="desc">Modern new and spacious freehold townhome in Lawrence Heights offering an exceptional combination of natural light, privacy, and functional family living. Rarely found open views both front and back with no direct rear neighbours. Thoughtfully designed approx. 2,006 sq.ft. layout + spacious basement + private backyard + private garage; featuring 4 bedrooms and flexible den space, 4 bathrooms, and an open-concept main living area with 9 ft ceilings. Contemporary kitchen with quartz countertops, integrated pantry, glass tile backsplash, undercabinet lighting, stainless steel appliances. Spacious primary retreat features double walk-in closets and private ensuite. Detached garage through a private alley. Steps to subway station, parks, Yorkdale Mall, schools, shopping, and major highways.</p>
+    </div>
+  </div>
+
+  <!-- ⑦ 为你而选 -->
+  <div class="card fit-card card-pad mod">
+    <span class="mod-tag">N7 Picked for You</span>
+    <div class="fit-head">
+      <div class="ai-ic">✦</div>
+      <div><div class="t">Picked for You</div><div class="sub">Checked against your buyer profile · visible only to you</div></div>
+      <div class="fit-score"><div class="n">82</div><div class="k">Match</div></div>
+    </div>
+    <div class="fit-list">
+      <div class="fit-item no"><span class="mark">✕</span><span><b>Budget:</b> about <b class="num">$188,000</b> over your $2.5M band; workable if you can stretch ≤8%</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>Home type:</b> 3 bed + separate office, matches your “3+ beds · semi/townhouse” intent</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>Commute:</b> 18 min to Broadway Tech Centre, inside your 30-min isochrone</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>Schools:</b> you track schools — nearby John Polanyi Collegiate (Fraser ON 2025 · <span class="num">6.4</span>)</span></div>
+      <div class="fit-item yes"><span class="mark">✓</span><span><b>View:</b> description mentions mountain views, matching your view preference</span></div>
+      <div class="fit-item mid"><span class="mark">!</span><span><b>Parking:</b> only 1 space vs your “2 preferred”; street parking available nearby</span></div>
+    </div>
+    <div class="footnote" style="margin-top:11px">Based on your Buying AI profile; mismatches shown honestly. Update it under My → Buying preferences.</div>
+  </div>
+
+  <!-- 房源资料(Tab 化重组:去重 + 信号提炼,内容随 MLS 类型切换) -->
+  <div class="card mod">
+    <span class="mod-tag opt">O2+ tabbed facts · dedup + signals</span>
+    <div class="sec-head"><span class="sec-title">Listing Facts</span><span style="font-size:10px;color:var(--muted)" id="dtSrc"></span></div>
+    <div class="dtabs" id="dtabs"></div>
+    <div id="dtBody"></div>
+  </div>
+
+  <!-- 政府评估价(BC Assessment) -->
+  <div class="sec-head" style="padding:8px 4px 9px"><span class="sec-title">MPAC Assessed Value <span style="font-size:10px;color:var(--muted);font-weight:400">Municipal Property Assessment Corp.</span></span></div>
+  <div class="card">
+    <div class="card-pad" style="padding-top:12px;padding-bottom:4px">
+      <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px"><div class="num" style="font-size:18px;font-weight:800;letter-spacing:.5px">$712,000</div><span style="font-size:10.5px;color:var(--muted)">2016 base year · current tax year</span><span style="margin-left:auto;font-size:11px;font-weight:700" class="delta-up">List 71% above assessment</span></div>
+      <div style="font-size:11px;color:var(--ink-2);line-height:1.7;margin-top:9px;background:#F7F9FC;border-radius:9px;padding:8px 11px">Ontario MPAC assessments are frozen at the 2016 base, so large gaps to market are common; assessed value drives property tax, not market value.</div>
+      <div class="footnote" style="padding:10px 0 8px">Source: MPAC public data.</div>
+    </div>
+  </div>
+
+  <!-- ⑧ 投资视角(条件展开 · 6护栏:绑定当前房源/样本量/白盒明细/未计项/挂牌口径/客观热度) -->
+  <div class="card mod">
+    <span class="mod-tag">N8 Investor View</span>
+    <div class="sec-head">
+      <span class="sec-title">Investor View</span>
+    </div>
+    <div class="card-pad" style="padding-top:10px">
+      <div class="inv-grid" id="invGrid">
+        <div class="inv-tile"><div class="k">Est. monthly rent (list-based)</div><div class="v">$4,300</div><div class="s">Englemount-Lawrence townhouse · 1-yr rental list median</div></div>
+        <div class="inv-tile"><div class="k">Gross yield (yr)</div><div class="v">4.2%</div><div class="s">Annual rent ÷ list price</div></div>
+        <div class="inv-tile"><div class="k">Cap Rate (est.)</div><div class="v">3.0%</div><div class="s">(Annual rent − carrying costs) ÷ list price · details below</div></div>
+        <div class="inv-tile"><div class="k">Market pace (objective)</div><div class="v">SNLR 55%</div><div class="s">Monthly sold ÷ new listings (TRREB) · community DOM 15 d</div></div>
+      </div>
+      <details style="margin-top:9px;border:1px solid var(--line);border-radius:10px;overflow:hidden">
+        <summary style="list-style:none;cursor:pointer;padding:8px 11px;font-size:11.5px;font-weight:700;color:var(--brand);background:#F7F9FC">Cap Rate breakdown (white box) ▾</summary>
+        <div id="invDet" style="padding:8px 11px 10px;font-size:11px;line-height:1.9;color:var(--ink-2);font-family:var(--num)">
+          <div><b>NOI ≈ $37,200 ÷ list $1,219,000 = 3.0%</b></div>
+          <div>Annual rent (list median) $51,600 <span style="color:var(--muted)">MLS rental listings · community × type · 1-yr median</span></div>
+          <div>− Taxes $4,865 <span style="color:var(--ok);font-weight:600">feed value</span><br>
+          − POTL fee ×12 ≈$2,921 <span style="color:var(--ok);font-weight:600">feed value</span></div>
+          <div>− Insurance ≈$1,900 <span style="color:var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">Rebuild-cost method: interior area × rebuild cost ($200–300/ft²) × premium rate (0.5–0.7%) × rental uplift (+15–25%); raised when Flood Plain = Y. Strata types count the condo-policy band only. Params 2026Q3, calibrated quarterly。</div></div>
+          <div>− Maintenance reserve ≈$3,200 <span style="color:var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">Component amortization: Σ(replacement cost ÷ design life) — roof/heating/hot-water tank/exterior (from feed Roof/Heat/Exterior) + routine upkeep $1.2/ft²/yr, scaled by an age factor (10–30 yrs = 1.0). Strata types count in-suite components only, avoiding overlap with the maintenance fee.</div></div>
+          <div>− Vacancy allowance ≈$1,548 <span style="color:var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">CMHC basis: max(CMHC zone vacancy (updated each Oct), turnover friction = vacant months ÷ avg tenancy). This case: Toronto townhouse = 3%.</div></div>
+          <div style="color:var(--muted)">Excluded: property management (self-managed basis) · financing (cap rate excludes debt); capex covered in component amortization</div>
+        </div>
+      </details>
+    </div>
+  </div>
+  <!-- ② 社区行情入口 + ⑤ 人口画像速览 -->
+  <div class="card mod">
+    <span class="mod-tag">N2 Market entry</span>
+    <div class="sec-head"><span class="sec-title">Englemount-Lawrence Market</span><a class="sec-link" href="#" id="mktToggleLink" onclick="mktToggle(event)">Full market data ›</a></div>
+    <div class="card-pad" style="padding-top:10px">
+      <div class="trend-row">
+        <div class="trend-meta">
+          <div class="v">$1.15M</div>
+          <div class="k">Townhouse sold median · past month</div>
+          <div class="d delta-up" style="margin-top:3px">▲ 1-yr +1.8%</div>
+        </div>
+        <svg class="spark" width="150" height="54" viewBox="0 0 150 54" role="img" aria-label="Englemount-Lawrence townhouse median, past 12 months">
+          <defs><linearGradient id="sp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E6BE6" stop-opacity=".18"/><stop offset="1" stop-color="#2E6BE6" stop-opacity="0"/></linearGradient></defs>
+          <path d="M4,34 L17,36 L30,31 L43,33 L56,28 L69,30 L82,25 L95,27 L108,22 L121,24 L134,19 L146,16 L146,52 L4,52 Z" fill="url(#sp)"/>
+          <path d="M4,34 L17,36 L30,31 L43,33 L56,28 L69,30 L82,25 L95,27 L108,22 L121,24 L134,19 L146,16" fill="none" stroke="#2E6BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="146" cy="16" r="3" fill="#2E6BE6" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div id="mktFull" style="display:none">
+        <div class="mkt-pills" id="mktPills">
+          <span class="mkt-pill on" onclick="mktTab(0,this)">Sold median</span>
+          <span class="mkt-pill" onclick="mktTab(1,this)">Price change</span>
+          <span class="mkt-pill" onclick="mktTab(2,this)">Active listings</span>
+          <span class="mkt-pill" onclick="mktTab(3,this)">Avg DOM</span>
+          <span class="mkt-pill" onclick="mktTab(4,this)">SNLR</span>
+        </div>
+        <div class="mkt-pane" id="mp0">
+          <div class="mkt-title">Median sold price in this community (GTA · sample)</div>
+          <div class="stat4"><div class="st"><div class="v">$1.05M</div><div class="k">All · median</div></div><div class="st"><div class="v">$620K</div><div class="k">Condo Apt</div></div><div class="st"><div class="v">$1.15M</div><div class="k">Townhouse</div></div><div class="st"><div class="v">$1.68M</div><div class="k">Detached</div></div></div>
+          <div class="mkt-chart" id="mc0"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>Condo Apt</i><i><span class="dotc" style="background:#2E6BE6"></span>Townhouse</i><i><span class="dotc" style="background:#F29900"></span>Detached</i></div>
+          <div class="mkt-foot">X = price band (×$10K) · Y = active units</div>
+        </div>
+        <div class="mkt-pane" id="mp1" style="display:none">
+          <div class="mkt-period"><span class="on">1Y</span><span>3Y</span><span>5Y</span></div>
+          <div class="mkt-title">Median price change · past 1Y</div>
+          <div class="stat4"><div class="st"><div class="v">+2.1%</div><div class="k">All</div></div><div class="st"><div class="v">+3.6%</div><div class="k">Condo Apt</div></div><div class="st"><div class="v">+4.2%</div><div class="k">Townhouse</div></div><div class="st"><div class="v">+4.7%</div><div class="k">Detached</div></div></div>
+          <div class="mkt-chart" id="mc1"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>Condo Apt</i><i><span class="dotc" style="background:#2E6BE6"></span>Townhouse</i><i><span class="dotc" style="background:#F29900"></span>Detached</i></div>
+          <div class="mkt-foot">Y = sold median ($M) · X = month</div>
+        </div>
+        <div class="mkt-pane" id="mp2" style="display:none">
+          <div class="mkt-period"><span class="on">1Y</span><span>3Y</span><span>5Y</span></div>
+          <div class="mkt-title">Active listings by type · past 1Y</div>
+          <div class="stat4"><div class="st"><div class="v">132</div><div class="k">All</div></div><div class="st"><div class="v">48</div><div class="k">Condo Apt</div></div><div class="st"><div class="v">39</div><div class="k">Townhouse</div></div><div class="st"><div class="v">45</div><div class="k">Detached</div></div></div>
+          <select class="mkt-sel"><option>All</option><option>Condo Apt</option><option>Townhouse</option><option>Detached</option></select>
+          <div class="mkt-chart" id="mc2"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>Active</i><i><span class="dotc" style="background:#2E6BE6"></span>New</i><i><span class="dotc" style="background:#F29900"></span>Sold</i></div>
+          <div class="mkt-foot">Y = units · bars = Active, lines = New / Sold</div>
+        </div>
+        <div class="mkt-pane" id="mp3" style="display:none">
+          <div class="mkt-period"><span class="on">1Y</span><span>3Y</span><span>5Y</span></div>
+          <div class="mkt-title">Average DOM by type · past 1Y</div>
+          <div class="stat4"><div class="st"><div class="v">24 d</div><div class="k">All</div></div><div class="st"><div class="v">21 d</div><div class="k">Condo Apt</div></div><div class="st"><div class="v">24 d</div><div class="k">Townhouse</div></div><div class="st"><div class="v">32 d</div><div class="k">Detached</div></div></div>
+          <select class="mkt-sel"><option>All</option><option>Condo Apt</option><option>Townhouse</option><option>Detached</option></select>
+          <div class="mkt-chart" id="mc3"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#2E6BE6"></span>DOM</i><i><span class="dotc" style="background:#0E9F6E"></span>PDOM</i></div>
+          <div class="mkt-foot">Y = days · DOM = days on market, PDOM = cumulative DOM</div>
+        </div>
+        <div class="mkt-pane" id="mp4" style="display:none">
+          <div class="mkt-period"><span class="on">1Y</span><span>3Y</span><span>5Y</span></div>
+          <div class="mkt-title">SNLR by type (sold ÷ new listings) · past 1Y</div>
+          <div class="stat4"><div class="st"><div class="v">55%</div><div class="k">All</div></div><div class="st"><div class="v">58%</div><div class="k">Condo Apt</div></div><div class="st"><div class="v">54%</div><div class="k">Townhouse</div></div><div class="st"><div class="v">50%</div><div class="k">Detached</div></div></div>
+          <select class="mkt-sel"><option>All</option><option>Condo Apt</option><option>Townhouse</option><option>Detached</option></select>
+          <div class="mkt-chart" id="mc4"></div>
+          <div class="mkt-legend"><i><span class="dotc" style="background:#34A853"></span>SNLR</i></div>
+          <div class="mkt-foot">Y = SNLR: >60% sellers · 40–60% balanced · <40% buyers (TRREB basis)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mod">
+    <span class="mod-tag">N5 Demographics</span>
+    <div class="sec-head"><span class="sec-title">Demographics Snapshot</span><a class="sec-link" href="#">Full demographics ›</a></div>
+    <div class="card-pad" style="padding-top:10px">
+      <div class="demo-grid">
+        <div class="demo-tile"><div class="v">$86,200</div><div class="k">Median household income</div></div>
+        <div class="demo-tile"><div class="v">62%</div><div class="k">Post-secondary educated</div></div>
+        <div class="demo-tile"><div class="v">48%</div><div class="k">Owner-occupied</div></div>
+        <div class="demo-tile"><div class="v txt">English · Tagalog · Russian</div><div class="k">Top languages</div></div>
+      </div>
+      <div class="footnote" style="margin-top:9px">Source: Statistics Canada Census 2021 (aggregated tracts for Englemount-Lawrence).</div>
+    </div>
+  </div>
+
+  <!-- ⑥ 学校区块改造 -->
+  <div class="card mod">
+    <span class="mod-tag">N6 Schools</span>
+    <div class="sec-head"><span class="sec-title">Schools</span></div>
+    <div class="card-pad" style="padding-top:6px;padding-bottom:4px">
+      <div class="mkt-pills" style="margin-top:0" id="schTabs">
+        <span class="mkt-pill on" onclick="schTab('pub',this)">Public 3</span>
+        <span class="mkt-pill" onclick="schTab('cat',this)">Catholic 2</span>
+        <span class="mkt-pill" onclick="schTab('pri',this)">Private 2</span>
+      </div>
+      <div class="mkt-period" id="schLvls" style="margin-top:10px">
+        <span onclick="schLvl('k',this)">JK–SK</span><span class="on" onclick="schLvl('e',this)">Elementary</span><span onclick="schLvl('s',this)">Secondary</span>
+      </div>
+      <div id="schList"></div>
+    </div>
+    <div class="legal" style="padding-top:4px">
+      <div class="footnote">Rankings: Fraser Institute Ontario School Rankings 2025, reference only; most private schools are unranked.</div>
+    </div>
+  </div>
+
+  <!-- ⑪ 风险与权衡 -->
+  <div class="card mod">
+    <span class="mod-tag">N11 Risks & Trade-offs</span>
+    <div class="sec-head"><span class="sec-title">Risks & Trade-offs <span style="font-size:10px;font-weight:600;color:var(--brand-ink);background:var(--brand-soft);border:1px solid #DCE8FC;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:2px">AI-generated</span></span><span style="font-size:10px;color:var(--muted)">Rule-triggered · each cites source fields</span></div>
+    <div class="card-pad" style="padding-top:8px;padding-bottom:10px">
+      <div id="riskGate" style="text-align:center;padding:14px 0 10px"></div>
+      <div id="riskList"></div>
+      <div class="footnote" id="riskDisc" style="padding:9px 0 0;display:none">Rule-based flags from listing and public data — not an inspection or legal opinion; rely on your inspection and title documents.</div>
+    </div>
+  </div>
+
+  <!-- ⑩ 相似房源与替代建议 -->
+  <div class="card mod">
+    <span class="mod-tag">N10 Similar</span>
+    <div class="sec-head"><span class="sec-title">Similar Listings</span><span style="font-size:10px;color:var(--muted)">Same community · same type · ±15% band</span></div>
+    <div class="sim-scroll">
+      <div class="sim-card">
+        <div class="ph" style="background:linear-gradient(135deg,#8FA5B8,#5E7488)"><span class="tag">Active</span></div>
+        <div class="bd"><div class="p">$1.18M <small class="delta-down">−3.2%</small></div><div class="a">12 Deep Roots Terr</div><div class="m">4 bd · 2,100 ft² · DOM 9</div></div>
+      </div>
+      <div class="sim-card">
+        <div class="ph" style="background:linear-gradient(135deg,#A89A8C,#7A6C5E)"><span class="tag">Active</span></div>
+        <div class="bd"><div class="p">$1.25M <small class="delta-up">+2.5%</small></div><div class="a">351 Ranee Ave</div><div class="m">4 bd · 2,200 ft² · DOM 15</div></div>
+      </div>
+      <div class="sim-card">
+        <div class="ph" style="background:linear-gradient(135deg,#96A88F,#69805F)"><span class="tag">Sold</span></div>
+        <div class="bd"><div class="p">$1.16M <small class="delta-down">−8.5%</small></div><div class="a">8 Deep Roots Tve</div><div class="m">3 bd · 1,705 ft² · Sold 06/2026</div></div>
+      </div>
+      <div class="sim-card">
+        <div class="ph" style="background:linear-gradient(135deg,#9BA8B8,#66788C)"><span class="tag">Active</span></div>
+        <div class="bd"><div class="p">$1.31M <small class="delta-up">+7.4%</small></div><div class="a">29 Deep Roots Terr</div><div class="m">4 bd · 2,300 ft² · DOM 32</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 挂牌经纪人 -->
+  <div class="card">
+    <div class="sec-head"><span class="sec-title">Listing Agents</span></div>
+    <div style="padding-top:4px">
+      <div class="agent">
+        <span class="av" style="background:linear-gradient(135deg,#5E7488,#38495C)">ST</span>
+        <div><div class="nm">Sarah Thompson PREC*</div><div class="co">RE/MAX Select Properties</div></div>
+        <span class="tel">604-785-8000</span>
+      </div>
+      <div class="agent">
+        <span class="av" style="background:linear-gradient(135deg,#8C7A5E,#5E5138)">ML</span>
+        <div><div class="nm">MARK LEE<span class="agent-tag">Broker</span></div><div class="co">REMAX YC REALTY, Brokerage</div></div>
+        <span class="tel">905-475-4750</span>
+      </div>
+      <div class="agent" style="background:#F7F9FC;border-radius:0 0 var(--r) var(--r)">
+        <span class="av" style="background:linear-gradient(135deg,#2E6BE6,#1E4FB8)">MZ</span>
+        <div><div class="nm">Mike Zhang<span class="agent-tag">Licensed agent · at your service</span></div><div class="co">Nu Stream Realty Inc. · mike.zhang@johome.com</div></div>
+        <span class="tel">(778) 926-9213</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 免责 + O1 推广位治理 -->
+  <div class="legal">
+    <p class="footnote">© 2026 Toronto Regional Real Estate Board (TRREB). All rights reserved. Portions of this display are generated from TRREB data; the board assumes no responsibility for its accuracy. For consumers’ personal, non-commercial use only.</p>
+  </div>
+  <details class="promo mod">
+    <span class="mod-tag opt" style="top:-8px">O1 ads out of content flow</span>
+    <summary><span class="ad-mark">Ad</span>Sponsored (2) · tap to expand<span style="margin-left:auto" class="chev">▾</span></summary>
+    <div class="ads">
+      <div class="ad-card" style="background:linear-gradient(135deg,#1F3C88,#12244D)">
+        <span class="am">Ad</span><b>Cross-border funds · compliant transfer channel</b><p>Large amounts · same-day arrival · strong rates</p>
+      </div>
+      <div class="ad-card" style="background:linear-gradient(135deg,#8A2E2E,#4D1212)">
+        <span class="am">Ad</span><b>Private lending, no income qualification · up to 75% LTV</b><p>Residential | Commercial | Farmland | Development | Construction</p>
+      </div>
+    </div>
+  </details>
+
+  <div style="height:16px"></div>
+  </div><!-- /wrap -->
+
+  <!-- 底部操作条 + ⑫问AI -->
+  <div class="actionbar">
+    <div style="width:44px;height:44px;border-radius:50%;border:2px solid #D7DDE7;background:#F4F6F9;display:grid;place-items:center;font-size:20px;color:#B9C2D0;flex:none">👤</div>
+    <div style="font-size:15.5px;font-weight:800;color:var(--ink);flex:1">Mike Zhang</div>
+    <button style="border:none;width:58px;height:38px;border-radius:12px;background:#3B82F6;color:#fff;font-size:17px;cursor:pointer">💬</button>
+    <button style="border:none;width:58px;height:38px;border-radius:12px;background:#2BB24C;color:#fff;font-size:16px;cursor:pointer">📞</button>
+  </div>
+
+</div><!-- /screen -->
+</div><!-- /phone -->
+
+<script>
+/* ===== 图标行:按 GVR MLS 房源类型自适应 =====
+   共享核心 4 格(卧/卫/面积/车位)+ 类型专属 4 格;
+   厨房、壁炉等低决策权重字段下沉到「关键信息」表 */
+const FACTS = {
+  gta: {
+    note: '',
+    items: [
+      ['🏗','0–5<small> yrs</small>','Approx Age (range)'],
+      ['📐','2000–2500<small> ft²</small>','Sqft (range)'],
+      ['🛏','4+1','Bedrooms'],
+      ['🛁','4','Washrooms'],
+      ['🍳','1','Kitchens'],
+      ['🅿','1','Parking'],
+    ]
+  },
+  coop: {
+    note: '',
+    items: [
+      ['🏗','31–50<small> yrs</small>','Approx Age (range)'],
+      ['📐','900–999<small> ft²</small>','Sqft (range)'],
+      ['🏛','$441<small>/mo</small>','Maintenance'],
+      ['🛏','2','Bedrooms'],
+      ['🛁','1','Washrooms'],
+      ['🏢','1','Level'],
+      ['🅿','1','Parking'],
+      ['📦','None','Locker'],
+    ]
+  },
+  condo: {
+    note: '',
+    items: [
+      ['🏗','1977','Year Built'],
+      ['📐','800–899<small> ft²</small>','Sqft (range)'],
+      ['🏛','$666<small>/mo</small>','Maintenance'],
+      ['🛏','2','Bedrooms'],
+      ['🛁','1','Washrooms'],
+      ['🏢','14','Level'],
+      ['🅿','1','Parking'],
+      ['📦','None','Locker'],
+    ]
+  }
+};
+/* ===== 页头按样例类型联动(导航标题/徽章/照片数/价格/地址/MLS;价格体检仅 gta 有数据) ===== */
+const HEAD = {
+  gta:{nav:'C13534294 - Detail',badge:['FOR SALE','#1FA75A'],cnt:'3 / 25',price:'$1,219,000',plabel:'<b>List Date</b> 07/07/2026 · <span class="num">20 DOM</span>',addr:'18 DEEP ROOTS TERR, Toronto ON',sub:'Englemount-Lawrence, Toronto C04, M6A 0G1',typ:'Townhouse · Freehold &nbsp;|&nbsp; <span class="mls num">MLS® C13534294</span>',chips:[['Community','Englemount-Lawrence'],['Zone','Yorkdale–Lawrence'],['Retail','Yorkdale (nearest)']],pc:{title:'Price Check · This home vs Englemount-Lawrence',pill:'Same community · same type',items:[['Vs community townhouse sold median $1.15M','▲ 6% above median','up',''],['Englemount-Lawrence townhouse · past year','▲ +1.8%','up',''],['Active same-type in community','9','',''],['DOM vs community average','20 d','','/ 15 d']],mpac:['vs MPAC assessed (2016 base) $712K','▲ 71% above assessment','Ontario assessments frozen at 2016 base; large gaps are normal']}},
+  coop:{nav:'X13573856 - Detail',badge:['FOR SALE','#1FA75A'],cnt:'1 / 25',price:'$425,000',plabel:'<b>List Date</b> 07/16/2026 · <span class="num">11 DOM</span>',addr:'2418 MOUNTLAND DR #104, Peterborough ON',sub:'Peterborough, K9K 2E2',typ:'Apartment · Co-operative &nbsp;|&nbsp; <span class="mls num">MLS® X13573856</span>',chips:[['City','Peterborough']],pc:{title:'Price Check · This home vs Peterborough condos',pill:'Same city · same type · sample data',items:[['Vs city apartment sold median $410K','▲ 4% above median','up',''],['Peterborough apartments · past year','▲ +2.1%','up',''],['Active same-type in city','6','',''],['DOM vs city average','11 d','','/ 22 d']],mpac:['vs MPAC assessed (2016 base) $230K','▲ 85% above assessment','Ontario assessments frozen at 2016 base; large gaps are normal']}},
+  condo:{nav:'X13608372 - Detail',badge:['FOR SALE','#1FA75A'],cnt:'1 / 37',price:'$229,000',plabel:'<b>List Date</b> 07/27/2026 · <span class="num">Listed today</span>',addr:'1380 PRINCE OF WALES DR #1401, Ottawa ON',sub:'Carleton Square, Mooneys Bay-Carleton Heights, K2C 3N5',typ:'Apartment · Condominium &nbsp;|&nbsp; <span class="mls num">MLS® X13608372</span>',chips:[['Community','Carleton Square'],['City','Ottawa']],pc:{title:'Price Check · This home vs Carleton Square',pill:'Same community · same type · sample data',items:[['Vs community apartment sold median $245K','▼ 7% below median','',''],['Carleton Square apartments · past year','▲ +1.2%','up',''],['Active same-type in community','4','',''],['DOM vs community average','0 d','','/ 26 d']],mpac:['vs MPAC assessed (2016 base) $195K','▲ 17% above assessment','Ontario assessments frozen at 2016 base; large gaps are normal']}}
+};
+const INV = {
+  gta:{},
+  coop:{grid:'<div class="inv-tile"><div class="k">Est. monthly rent (list-based · sample)</div><div class="v">$1,900</div><div class="s">Peterborough apartments · 1-yr rental list median (sample)</div></div><div class="inv-tile"><div class="k">Gross yield (yr)</div><div class="v">5.4%</div><div class="s">Annual rent ÷ list price</div></div><div class="inv-tile"><div class="k">Cap Rate (est.)</div><div class="v">2.7%</div><div class="s">(Annual rent − carrying costs) ÷ list price · details below</div></div><div class="inv-tile"><div class="k">Market pace (objective)</div><div class="v">SNLR 52%</div><div class="s">Monthly sold ÷ new listings (sample) · city DOM 22 d</div></div>',
+    det:'<div><b>NOI ≈ $11,300 ÷ list $425,000 = 2.7%</b></div><div>Annual rent (list median · sample) $22,800 <span style="color:var(--muted)">MLS rental listings · city × type · 1-yr median</span></div><div>− Taxes $3,363 <span style="color:var(--ok);font-weight:600">feed value</span><br>− Maintenance ×12 ≈$5,288 <span style="color:var(--ok);font-weight:600">feed value</span></div><div>− Insurance ≈$650 <span style="color:var(--warn)">est.</span></div><div>− Maintenance reserve ≈$1,500 <span style="color:var(--warn)">est.</span></div><div>− Vacancy allowance ≈$684 <span style="color:var(--warn)">est.</span> <span style="color:var(--muted)">(3%)</span></div><div style="color:var(--warn);font-weight:600">⚠ Co-ops commonly restrict rentals (approval/quotas); verify the occupancy agreement and rules — investor view is indicative only</div><div style="color:var(--muted)">Excluded: property management (self-managed basis) · financing (cap rate excludes debt)</div>'},
+  condo:{grid:'<div class="inv-tile"><div class="k">Est. monthly rent (list-based · sample)</div><div class="v">$1,950</div><div class="s">Carleton Square apartments · 1-yr rental list median (sample)</div></div><div class="inv-tile"><div class="k">Gross yield (yr)</div><div class="v">10.2%</div><div class="s">Annual rent ÷ list price</div></div><div class="inv-tile"><div class="k">Cap Rate (est.)</div><div class="v">4.4%</div><div class="s">(Annual rent − carrying costs) ÷ list price · details below</div></div><div class="inv-tile"><div class="k">Market pace (objective)</div><div class="v">SNLR 48%</div><div class="s">Monthly sold ÷ new listings (sample) · community DOM 26 d</div></div>',
+    det:'<div><b>NOI ≈ $10,100 ÷ list $229,000 = 4.4%</b></div><div>Annual rent (list median · sample) $23,400 <span style="color:var(--muted)">MLS rental listings · community × type · 1-yr median</span></div><div>− Taxes $2,341 <span style="color:var(--ok);font-weight:600">feed value</span><br>− Maintenance ×12 ≈$7,993 <span style="color:var(--ok);font-weight:600">feed value</span></div><div>− Insurance ≈$500 <span style="color:var(--warn)">est.</span></div><div>− Maintenance reserve ≈$1,800 <span style="color:var(--warn)">est.</span> <span style="color:var(--muted)">(1977 age factor, upper band)</span></div><div>− Vacancy allowance ≈$702 <span style="color:var(--warn)">est.</span> <span style="color:var(--muted)">(3%)</span></div><div style="color:var(--muted)">Excluded: property management (self-managed basis) · financing (cap rate excludes debt); hydro/heat split depends on lease terms</div>'}
+};
+function applyHead(t){var h=HEAD[t];if(!h)return;
+  var ig=document.getElementById('invGrid'),idt=document.getElementById('invDet');
+  if(ig&&idt){if(!INV.gta.grid){INV.gta.grid=ig.innerHTML;INV.gta.det=idt.innerHTML;}var iv=INV[t]&&INV[t].grid?INV[t]:INV.gta;ig.innerHTML=iv.grid;idt.innerHTML=iv.det;}
+  document.getElementById('navTitle').textContent=h.nav;
+  var b=document.getElementById('heroBadge');b.textContent=h.badge[0];b.style.background=h.badge[1];
+  document.getElementById('heroCnt').textContent=h.cnt;
+  document.getElementById('hdPrice').textContent=h.price;
+  document.getElementById('hdPLabel').innerHTML=h.plabel;
+  document.getElementById('hdAddr').textContent=h.addr;
+  document.getElementById('hdAddr2').textContent=h.sub;
+  document.getElementById('hdAddrSub').innerHTML=h.typ;
+  var gc=document.getElementById('geoChips');
+  if(gc&&h.chips)gc.innerHTML=h.chips.map(function(c){return '<a class="geo-chip" href="#"><small>'+c[0]+'</small> '+c[1]+' ›</a>';}).join('');
+  var box=document.getElementById('pcheckBox'),pc=h.pc;
+  if(pc){box.style.display='';
+    document.getElementById('pcTitle').textContent=pc.title;
+    document.getElementById('pcPill').textContent=pc.pill;
+    var g='';pc.items.forEach(function(it){g+='<div class="pc-item"><div class="k">'+it[0]+'</div><div class="v'+(it[2]==='up'?' delta-up':'')+'">'+it[1]+(it[3]?' <span style="color:var(--muted);font-weight:500">'+it[3]+'</span>':'')+'</div></div>';});
+    g+='<div class="pc-item" style="grid-column:1/-1"><div class="k" style="font-size:12.5px;font-weight:700;color:#8A5A18;margin-bottom:3px">'+pc.mpac[0]+'</div><div class="v delta-up">'+pc.mpac[1]+' <span style="font-size:10px;color:var(--muted);font-weight:500">'+pc.mpac[2]+'</span></div></div>';
+    document.getElementById('pcGrid').innerHTML=g;}
+  else box.style.display='none';}
+/* ===== 房源资料 Tab:第一 tab 为关键信息(整合全部关键字段),细节下沉后续 tab、不重复 =====
+   关键信息=身份+价格+核心数字 · 房屋·空间=建筑本体与室内布局 · 土地/物业=产权地块或 strata · 卖方披露=披露与固定装置(PDS/Fixtures;Seller Interest 接口无 · 不展示)
+   chips = 从字段组合提炼的决策信号 */
+const DETAILS = {
+  gta: {
+    src: 'Sample C13534294 (REALM · Toronto C04 · Englemount-Lawrence)',
+    tabs: [
+      {t:'Key Facts', kv:[['@','Listing'],['MLS® #','C13534294'],['Area / Community','TRREB · Toronto C04 · Englemount-Lawrence'],['Address','18 Deep Roots Terr'],['Dir/Cross St','Bathurst St. & Ranee Ave.'],['Postal Code','M6A 0G1'],['List Date · DOM','07/07/2026 · 20 DOM'],['Property DOM','20 days'],['Possession','60–89 days'],['@','Property'],['Property Type','Att/Row/Twnhouse · 3-Storey'],['Ownership','Freehold'],['Year Built (Exact)','2025'],['Square Feet','2,000–2,500 ft²'],['Above Grade Finished SqFt','2,006 ft²'],['Bedrooms','4+1 (1 below grade)'],['Washrooms','4 (3 full + 1 half)'],['Kitchens','1'],['Parking','1 space (detached garage)'],['@','Carrying Costs'],['Taxes','$4,864.80 (2026)'],['POTL Monthly Fee','$243.46/mo'],['HST','Not Subject (included in price)']],
+        note:'REALM discloses area as a range; commission, seller details, showing requirements, Expiry/Occupancy and other agent-only fields are not shown publicly.'},
+      {t:'Home & Interior', kv:[['@','Building'],['Approx Age','Built 2025 · 0–5 yrs'],['Style','3-Storey'],['Exterior','Brick, Concrete'],['Roof','Asphalt Shingle'],['Foundation','Concrete Block'],['Water','Municipal'],['Sewers','Sewers'],['@','Interior'],['Heating','Forced Air · Gas'],['A/C','Central Air'],['Basement','Full'],['Laundry Level','Upper'],['Interior Features','Carpet Free'],['Rooms','7+1'],['Inclusions','S/S kitchen appliances (fridge · glass-top range · built-in microwave/hood · dishwasher) · front-load washer & dryer · all window coverings & light fixtures'],['@','Exterior'],['Fronting On','South'],['Parking','1 total · detached garage ×1'],['View','Clear · Park/Greenbelt']],
+        rooms:[['Family','Main','5.49×4.27 m(18.01×14.01 ft)','Laminate · Large Window · Open Concept'],['Dining','Main','5.49×4.27 m(18.01×14.01 ft)','Laminate · Combined w/Living · Open Concept'],['Kitchen','Main','3.81×3.30 m(12.5×10.83 ft)','Laminate · Breakfast Bar · S/S Appliances'],['Living','Main','3.53×3.05 m(11.58×10.01 ft)','Laminate · Large Window · Open Concept'],['2nd Br','2nd','3.53×3.23 m(11.58×10.6 ft)','Laminate · Large Window · Large Closet'],['3rd Br','2nd','4.27×3.51 m(14.01×11.52 ft)','Laminate · Large Window · 4-Pc Ensuite'],['Prim Bdrm','3rd','4.57×4.27 m(14.99×14.01 ft)','Laminate · W/I Closet · 4-Pc Ensuite'],['4th Br','3rd','4.27×2.74 m(14.01×8.99 ft)','Laminate · Large Window · Large Closet']],
+        baths:[['3rd','4-Pc ×1'],['2nd','4-Pc ×2'],['Ground','2-Pc ×1 (half)']]},
+      {t:'Land · Property', kv:[['PIN#','102230171'],['ARN#','190804321000323'],['Features','Clear View · Park · Place of Worship · Public Transit · Rec Centre'],['Frontage','<span class="uv" data-a="14.78 ft" data-b="4.50 m">14.78 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'],['Depth','<span class="uv" data-a="102.44 ft" data-b="31.22 m">102.44 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'],['Lot Size','<span class="uv" data-a="14.78 × 102.44 ft" data-b="4.50 × 31.22 m">14.78 × 102.44 ft</span><button class="ubtn" data-u1="ft" data-u2="m" onclick="uSwap(this)">⇄ m</button>'],['Special Designations','Unknown']],
+        legal:'PLAN 66M2586 PT BLK 1 RP 66R34377 PART 20'},
+    ]
+  },
+  coop: {
+    src: 'Sample X13573856 (REALM · Peterborough)',
+    tabs: [
+      {t:'Key Facts', kv:[['@','Listing'],['MLS® #','X13573856'],['Area / Community','TRREB · Peterborough'],['Address','2418 Mountland Dr #104'],['Dir/Cross St','Sherbrooke to Woodglade to Lynnhaven to Mountland'],['Postal Code','K9K 2E2'],['List Date · DOM','07/16/2026 · 11 DOM'],['Property DOM','11 days'],['Possession','Flexible'],['@','Property'],['Property Type','Co-Op Apt · 2-Storey'],['Ownership','Co-operative (share ownership)'],['Level','1'],['Square Feet','900–999 ft²'],['Above Grade Finished SqFt','979 ft²'],['Bedrooms','2'],['Washrooms','1 (3-Pc)'],['Kitchens','1'],['Parking','1 space (reserved/assigned)'],['@','Carrying Costs'],['Maintenance','$440.66/mo'],['Fees Include','Building Insurance · Common Elements'],['Taxes','$3,362.87 (2026)'],['HST','Included In']],
+        note:'REALM discloses area as a range; commission, seller details, showing requirements, Expiry/Occupancy and other agent-only fields are not shown publicly.'},
+      {t:'Home & Interior', kv:[['@','Building'],['Approx Age','31–50 yrs'],['Style','2-Storey low-rise'],['Exterior','Brick'],['@','Interior'],['Heating','Baseboard · Electric'],['A/C','Wall Unit'],['Basement','None'],['Laundry','In-Suite Laundry'],['Interior Features','Intercom'],['Rooms','7'],['Inclusions','Fridge · Stove · Dishwasher · Washer · Dryer · Electric Fireplace · Floor A/C · Window Coverings'],['@','Exterior'],['Exposure','East'],['Parking','1 total · reserved/assigned ×1'],['Exterior Features','Controlled Entry · Patio']],
+        rooms:[['—','Main','1.84×3.25 m(6.04×10.66 ft)'],['Living','Main','4.04×7.01 m(13.25×23 ft)'],['Kitchen','Main','3.01×3.30 m(9.88×10.83 ft)'],['2nd Br','Main','3.05×2.63 m(10.01×8.63 ft)'],['Prim Bdrm','Main','3.42×4.26 m(11.22×13.98 ft)'],['Laundry','Main','1.28×3.30 m(4.2×10.83 ft)']],
+        baths:[['Main','3-Pc ×1']]},
+      {t:'Land · Property', kv:[['PIN#','287420004'],['ARN#','151402001076742'],['Features','Ensuite Laundry · Pets Allowed with Restrictions'],['Property Mgmt Co','Granite'],['Status Certificate','Not on file (N)'],['Special Designations','Unknown']]},
+    ]
+  },
+  condo: {
+    src: 'Sample X13608372 (REALM · Ottawa · Carleton Square)',
+    tabs: [
+      {t:'Key Facts', kv:[['@','Listing'],['MLS® #','X13608372'],['Area / Community','TRREB · Ottawa · Carleton Square'],['Address','1380 Prince Of Wales Dr #1401'],['Dir/Cross St','Meadowlands and Prince of Wales'],['Postal Code','K2C 3N5'],['List Date · DOM','07/27/2026 · Listed today'],['Property DOM','0 days'],['Possession','Immediate'],['@','Property'],['Property Type','Condo Apt · Apartment'],['Ownership','Condominium'],['Year Built (Exact)','1977'],['Level','14'],['Square Feet','800–899 ft²'],['Above Grade Finished SqFt','871 ft²'],['Bedrooms','2'],['Washrooms','1 (4-Pc)'],['Kitchens','1'],['Parking','1 space (underground)'],['@','Carrying Costs'],['Maintenance','$666.10/mo'],['Fees Include','Building Insurance · Water'],['Taxes','$2,340.74 (2026)'],['HST','Included In']],
+        note:'REALM discloses area as a range; commission, seller details, showing requirements, Expiry/Occupancy and other agent-only fields are not shown publicly.'},
+      {t:'Home & Interior', kv:[['@','Building'],['Style','Apartment · high-rise unit'],['Exterior','Brick, Concrete Block'],['@','Interior'],['Heating','Baseboard · Electric'],['A/C','None'],['Laundry','In Building · Laundry Room'],['Interior Features','Carpet Free · Storage'],['Rooms','5'],['Inclusions','Stove · Hood Fan · Fridge'],['@','Exterior'],['Exposure','South West'],['Balcony','Open'],['Parking','1 total · underground garage ×1']],
+        rooms:[['Living','Main','4.5×4.0 m(14.76×13.12 ft)'],['Kitchen','Main','3.2×2.43 m(10.5×7.97 ft)'],['Prim Bdrm','Main','4.31×3.04 m(14.14×9.97 ft)'],['2nd Br','Main','3.2×2.9 m(10.5×9.51 ft)']],
+        baths:[['—','4-Pc ×1']]},
+      {t:'Land · Property', kv:[['PIN#','151110115'],['ARN#','061407420109814'],['Features','Pets Allowed with Restrictions'],['Property Mgmt Co','Sentinel Management'],['Status Certificate','Not on file (N)'],['Special Designations','Unknown']]},
+    ]
+  }
+};
+function uSwap(b){var v=b.previousElementSibling;var isA=v.textContent===v.dataset.a;v.textContent=isA?v.dataset.b:v.dataset.a;b.textContent='\u21c4 '+(isA?b.dataset.u1:b.dataset.u2);}
+function rmSwap(b){var toF=b.dataset.u==='m';b.closest('table').querySelectorAll('.rmv').forEach(function(c){c.textContent=toF?c.dataset.f:c.dataset.m;});b.dataset.u=toF?'f':'m';b.textContent='\u21c4 '+(toF?'m':'ft');}
+function mktToggle(e){e.preventDefault();var p=document.getElementById('mktFull');var l=document.getElementById('mktToggleLink');var open=p.style.display==='none';p.style.display=open?'block':'none';l.textContent=open?'Collapse ▴':'Full market data ›';if(open&&!p.dataset.drawn){mktDraw();p.dataset.drawn=1;}}
+function mktTab(i,el){document.querySelectorAll('#mktPills .mkt-pill').forEach(function(b){b.classList.remove('on')});el.classList.add('on');for(var k=0;k<5;k++)document.getElementById('mp'+k).style.display=k===i?'block':'none';}
+function mktDraw(){
+  var W=320,H=150,L=30,B=20,T=8;
+  function lineTo(pts,max,min){var w=(W-L-8)/(pts.length-1);return pts.map(function(v,i){return (L+i*w).toFixed(1)+','+(H-B-((v-min)/(max-min))*(H-B-T)).toFixed(1)}).join(' ');}
+  function axis(yl,xl){var t='';yl.forEach(function(o){t+='<text x="2" y="'+o[1]+'" font-size="8" fill="#8C99AF">'+o[0]+'</text><line x1="'+L+'" y1="'+o[1]+'" x2="'+(W-4)+'" y2="'+o[1]+'" stroke="#EEF1F6"/>';});xl.forEach(function(o){t+='<text x="'+o[1]+'" y="'+(H-6)+'" font-size="8" fill="#8C99AF">'+o[0]+'</text>';});return t;}
+  /* T0 分组柱 */
+  var g={lab:['<100','100-150','150-200','200-250','250-300','>300'],apt:[26,27,10,6,3,2],twn:[10,19,22,17,8,4],det:[1,4,12,18,22,16]},max0=30;
+  var svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['30',T+4],['15',(H-B+T)/2],['0',H-B]],g.lab.map(function(l,i){return [l,L+4+i*((W-L-8)/6)]}));
+  ['apt','twn','det'].forEach(function(k,si){var c=['#34A853','#2E6BE6','#F29900'][si];g[k].forEach(function(v,i){var gw=(W-L-8)/6,x=L+i*gw+5+si*8,h=(v/max0)*(H-B-T);svg+='<rect x="'+x+'" y="'+(H-B-h)+'" width="6.5" height="'+h+'" rx="1.5" fill="'+c+'"/>';});});
+  document.getElementById('mc0').innerHTML=svg+'</svg>';
+  /* T1 三线 */
+  var apt=[0.77,0.76,0.78,0.77,0.78,0.79,0.78,0.79,0.80,0.79,0.80,0.80],twn=[1.30,1.31,1.30,1.32,1.33,1.32,1.34,1.33,1.35,1.34,1.35,1.36],det=[2.55,2.53,2.56,2.58,2.57,2.60,2.59,2.62,2.61,2.63,2.62,2.66];
+  var mons=[['Jan',L],['3',L+2*(W-L-8)/11],['5',L+4*(W-L-8)/11],['7',L+6*(W-L-8)/11],['9',L+8*(W-L-8)/11],['11',L+10*(W-L-8)/11]];
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['3.0M',T+4],['1.5M',(H-B+T)/2],['0',H-B]],mons);
+  [[apt,'#34A853'],[twn,'#2E6BE6'],[det,'#F29900']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0],3,0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>';});
+  document.getElementById('mc1').innerHTML=svg+'</svg>';
+  /* T2 柱+双线 */
+  var act=[118,112,120,131,126,129,135,128,122,117,124,132],nw=[42,38,45,50,44,47,52,46,40,38,43,48],sd=[35,33,38,41,39,42,45,40,36,34,39,44];
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['140',T+4],['70',(H-B+T)/2],['0',H-B]],mons);
+  act.forEach(function(v,i){var w=(W-L-8)/12,x=L+i*w+3,h=(v/140)*(H-B-T);svg+='<rect x="'+x+'" y="'+(H-B-h)+'" width="'+(w-6)+'" height="'+h+'" rx="2" fill="#34A853" opacity="0.85"/>';});
+  [[nw,'#2E6BE6'],[sd,'#F29900']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0],140,0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>';});
+  document.getElementById('mc2').innerHTML=svg+'</svg>';
+  /* T3 DOM/PDOM */
+  var dom=[24,30,26,19,32,27,22,18,25,28,30,33],pd=[38,45,40,31,48,42,35,30,39,44,46,50];
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['50',T+4],['25',(H-B+T)/2],['0d',H-B]],mons);
+  [[dom,'#2E6BE6'],[pd,'#0E9F6E']].forEach(function(p){svg+='<polyline points="'+lineTo(p[0],50,0)+'" fill="none" stroke="'+p[1]+'" stroke-width="1.8"/>';});
+  document.getElementById('mc3').innerHTML=svg+'</svg>';
+  /* T4 SALR+阈值线 */
+  var sa=[58,62,55,60,52,54,55,56,50,48,55,55];
+  var y20=H-B-(60/80)*(H-B-T),y12=H-B-(40/80)*(H-B-T);
+  svg='<svg viewBox="0 0 320 150" width="100%">'+axis([['80',T+4],['40',(H-B+T)/2],['0%',H-B]],mons);
+  svg+='<line x1="'+L+'" y1="'+y20+'" x2="'+(W-4)+'" y2="'+y20+'" stroke="#E8604C" stroke-dasharray="4 3"/><text x="'+(W-52)+'" y="'+(y20-3)+'" font-size="8" fill="#E8604C">Sellers 60%</text>';
+  svg+='<line x1="'+L+'" y1="'+y12+'" x2="'+(W-4)+'" y2="'+y12+'" stroke="#5B8DEF" stroke-dasharray="4 3"/><text x="'+(W-52)+'" y="'+(y12+9)+'" font-size="8" fill="#5B8DEF">Buyers 40%</text>';
+  svg+='<polyline points="'+lineTo(sa,80,0)+'" fill="none" stroke="#34A853" stroke-width="1.8"/>';
+  document.getElementById('mc4').innerHTML=svg+'</svg>';
+  /* 周期 pills 视觉切换 */
+  document.querySelectorAll('.mkt-period span').forEach(function(sp){sp.onclick=function(){sp.parentElement.querySelectorAll('span').forEach(function(x){x.classList.remove('on')});sp.classList.add('on');};});
+}
+var RISKS={
+  gta:[
+    {s:'risk',t:'Special Designations unknown',x:'The Special Designations field is Unknown — easements or development agreements may exist undisclosed; have your lawyer run a title search before firming up.',e:'Special Designations=Unknown',a:'Title search'},
+    {s:'tradeoff',t:'Freehold with a POTL fee',x:'Freehold title with shared costs — private lane and common elements billed at $243.46/mo (Parcel of Tied Land), a light strata-like arrangement; confirm what the POTL agreement covers and how fees escalate.',e:'POTL Monthly Fee=$243.46 · Legal=PT BLK 1',a:'Review POTL agreement'},
+    {s:'tradeoff',t:'Area disclosed as a range',x:'TRREB discloses 2,000–2,500 ft², so price-per-sqft math swings ±10%; anchor on the ~2,006 ft² figure and verify by measurement.',e:'Square Feet=2000-2500',a:'Request floor plan'},
+    {s:'tradeoff',t:'1 space · lane-access garage',x:'Only one parking space, entered from the rear lane — two-car households should assess street parking; the trade is a full-width front yard with no driveway.',e:'Garage=Detached · Drive=Lane · Parking=1',a:'Check street parking'}
+  ],
+  coop:[
+    {s:'risk',t:'Co-op ownership — financing limits',x:'You buy shares in the corporation plus an occupancy right, not fee-simple title; most banks will not write a standard mortgage — expect a larger down payment or a dedicated share loan. Confirm financing before offering.',e:'Type=Co-Op Apt',a:'Confirm financing'},
+    {s:'risk',t:'Status certificate not on file (N)',x:'Co-op financials, reserve fund, special assessments and litigation all live in the status certificate; none is on file — keep a review condition in any offer.',e:'Status Certificate=N · Property Mgmt=Granite',a:'Order status certificate'},
+    {s:'tradeoff',t:'What the $440.66/mo covers',x:'Includes building insurance and common-element upkeep — not in-suite insurance or utilities; electric baseboard heat means winter hydro is on you. Align inclusions before comparing fees.',e:'Maintenance=$440.66 · Included=Building Insurance, Common Elements · Heating=Baseboard Electric',a:'Total carrying cost'},
+    {s:'tradeoff',t:'Pet restrictions · no balcony/locker',x:'Pets must meet the co-op rules; no balcony or locker, though the exclusive ground-floor patio helps — check your lifestyle must-haves.',e:'Pets=Restrictions · Balcony=None · Locker=None · Patio=Yes',a:'Read co-op rules'}
+  ],
+  condo:[
+    {s:'risk',t:'No A/C · electric baseboard heat',x:'No cooling in the unit — summer comfort means your own equipment; baseboard electric heat sits outside the fee, so winter hydro is on you. Check corporation rules before installing a wall unit or heat pump.',e:'A/C=None · Heating=Baseboard Electric',a:'Check install rules'},
+    {s:'risk',t:'Built 1977 · status certificate not on file',x:'A near-50-year building — elevators, cladding and risers drive the reserve-fund story; keep a status-certificate review condition in any offer.',e:'Year Built=1977 · Status Certificate=N · Mgmt=Sentinel Management',a:'Order status certificate'},
+    {s:'tradeoff',t:'$666.10/mo with thin inclusions',x:'About $0.77/ft²/mo covering only building insurance and water; with electric heat self-paid, model fee plus hydro together before comparing against buildings whose fees include heat or A/C.',e:'Maintenance=$666.10 · Included=Building Insurance, Water',a:'Model full cost'},
+    {s:'tradeoff',t:'Parking is exclusive-use · no locker',x:'Parking Type=Exclusive means exclusive use of a common element, not a separately transferable titled space; no locker, partly offset by the in-unit storage room.',e:'Parking Type=Exclusive · Locker=None · Interior=Storage',a:'Verify parking status'}
+  ]};
+var riskDone={};
+var RISK_GATE='<button onclick="riskGen()" style="border:none;cursor:pointer;font-family:var(--cjk);font-size:12.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--ai1),var(--ai2));border-radius:99px;padding:9px 20px">✦ Generate analysis</button>';
+function riskGen(){var t=dtType,g=document.getElementById('riskGate');g.innerHTML='<div style="font-size:12px;color:var(--ink-2);padding:8px 0">✦ AI is generating from the fields…</div>';setTimeout(function(){riskDone[t]=1;riskState(t);},900);}
+function riskState(t){var g=document.getElementById('riskGate'),l=document.getElementById('riskList'),d=document.getElementById('riskDisc');if(!g)return;if(riskDone[t]){g.style.display='none';riskRender(t);d.style.display='block';}else{g.style.display='block';g.innerHTML=RISK_GATE;l.innerHTML='';d.style.display='none';}}
+function riskRender(type){
+  var el=document.getElementById('riskList');if(!el)return;
+  var rows=RISKS[type]||[];
+  el.innerHTML=rows.map(function(r){
+    return '<div class="rk-item"><div class="rk-head"><span class="rk-sev '+r.s+'">'+(r.s==='risk'?'Risk':'Trade-off')+'</span><span class="rk-title">'+r.t+'</span><span class="rk-act">'+r.a+'</span></div><div class="rk-text">'+r.x+'</div><div class="rk-ev">Fields: '+r.e+'</div></div>';
+  }).join('');
+}
+var SCHOOLS={
+  pub:{k:[['Baycrest PS (JK/SK on site)','145 Baycrest Ave · 8 min walk',null,null,true]],
+       e:[['Baycrest Public School','145 Baycrest Ave · 8 min walk · Fraser ON 2025',6.9,'1,203 / 3,021',true]],
+       s:[['John Polanyi Collegiate Institute','640 Lawrence Ave W · 15 min walk · Fraser ON 2025',6.4,'412 / 739',true]]},
+  cat:{k:[],
+       e:[['St. Charles Catholic School','50 Claver Ave · 1.1 km direct · Fraser ON 2025',7.2,'861 / 3,021',false]],
+       s:[['Dante Alighieri Academy','60 Playfair Ave · 1.8 km direct · Fraser ON 2025',6.8,'302 / 739',false]]},
+  pri:{k:[],
+       e:[['Associated Hebrew Schools','252 Finch Ave W · 4.6 km direct',null,null,false]],
+       s:[['TanenbaumCHAT','9600 Bathurst St · 9.8 km direct',null,null,false]]}};
+var schState={t:'pub',l:'e'};
+function schRender(){
+  var rows=SCHOOLS[schState.t][schState.l],el=document.getElementById('schList');
+  if(!rows.length){el.innerHTML='<div class="sch-empty">No schools on file for this level</div>';return;}
+  el.innerHTML=rows.map(function(r){
+    return '<div class="sch-row"><span class="sch-ic">🎓</span><div style="flex:1;min-width:0"><div class="sch-nm">'+r[0]+'</div><div class="sch-ad">'+r[1]+'</div></div><div class="sch-score">'+(r[2]!==null?'<div class="v">'+r[2]+'</div><div class="r">'+r[3]+'</div>':'<div class="v" style="color:var(--muted)">—</div><div class="r">Unranked</div>')+'</div><span class="sch-chev">›</span></div>';
+  }).join('');
+}
+function schTab(t,el){schState.t=t;document.querySelectorAll('#schTabs .mkt-pill').forEach(function(b){b.classList.remove('on')});el.classList.add('on');schRender();}
+function schLvl(l,el){schState.l=l;document.querySelectorAll('#schLvls span').forEach(function(b){b.classList.remove('on')});el.classList.add('on');schRender();}
+document.addEventListener('DOMContentLoaded',schRender);
+function iTip(b){var p=b.parentElement.querySelector('.ipop');p.style.display=(p.style.display==='none'||!p.style.display)?'block':'none';}
+let dtType='gta', dtIdx=0;
+function renderDetails(){
+  const d=DETAILS[dtType];
+  document.getElementById('dtSrc').textContent=d.src;
+  document.getElementById('dtabs').innerHTML=d.tabs.map((tb,i)=>
+    `<div class="dtab${i===dtIdx?' on':''}" onclick="dtIdx=${i};renderDetails()">${tb.t}</div>`).join('');
+  const tb=d.tabs[dtIdx];
+  let h='';
+  (tb.chips||[]).forEach(([tone,txt])=>{
+    const cls=tone==='gold'?' gold':tone==='green'?' green':'';
+    h+=`<div class="ins-chip${cls}">${txt}</div>`;
+  });
+  h+=`<div class="kv" style="padding-top:8px;grid-template-columns:1fr">`+tb.kv.map(([k,v])=>
+    k==='@'?`<div class="subh">${v}</div>`:`<div class="row"><span class="k">${k}</span><span class="v" style="font-family:var(--cjk)">${v}</span></div>`).join('')+`</div>`;
+  if(tb.areas){
+    h+=`<details class="fold-blk"><summary>Area breakdown<em>Total ${tb.areas[tb.areas.length-1][1]}</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>Level</th><th>Area</th></tr>`+
+      tb.areas.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</table></div></details>`;
+  }
+  if(tb.rooms){
+    h+=`<details class="fold-blk"><summary>Rooms & Sizes<em>${tb.rooms.length} rooms</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>Room</th><th>Level</th><th style="white-space:nowrap">Size <button class="ubtn" data-u="m" onclick="rmSwap(this)">⇄ ft</button></th></tr>`+
+      tb.rooms.map(r=>{const p=r[2].split(' m(');const mv=p[0]+' m';const fv=(p[1]||'').replace(/\)$/,'');return `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="rmv" style="white-space:nowrap" data-m="${mv}" data-f="${fv}">${mv}</td></tr>`}).join('')+`</table></div></details>`;
+  }
+  if(tb.baths){
+    h+=`<details class="fold-blk"><summary>Washrooms<em>${tb.baths.length}</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>Level</th><th>Pieces (#Pcs)</th></tr>`+
+      tb.baths.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+`</table></div></details>`;
+  }
+  if(tb.note){ h+=`<div class="footnote" style="padding:0 14px 12px">${tb.note}</div>`; }
+  if(tb.legal){
+    h+=`<details class="legal-fold"><summary>Legal Description ▾</summary><p>${tb.legal}</p></details>`;
+  }
+  document.getElementById('dtBody').innerHTML=h;
+}
+function setFacts(type, btn){
+  dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails(); riskState(type); applyHead(type);
+  const grid=document.getElementById('factsGrid');
+  grid.innerHTML=FACTS[type].items.map(([ic,v,k])=>
+    `<div class="fact"><div class="ic">${ic}</div><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
+  if(btn){document.querySelectorAll('[data-ft]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+}
+setFacts('gta');
+function toggleAnno(){
+  document.body.classList.toggle('annotate');
+  document.getElementById('btnAnno').classList.toggle('on');
+}
+document.body.classList.add('annotate');
+// POI pill 交互示意
+document.querySelectorAll('.poi-pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.poi-pill').forEach(x=>x.classList.remove('on'));
+    p.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>
