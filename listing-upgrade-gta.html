@@ -319,6 +319,23 @@ body.annotate .mod-tag{display:inline-block}
 .agent .co{font-size:11px;color:var(--muted);margin-top:1px}
 .agent .tel{margin-left:auto;font-size:10.5px;color:var(--brand);font-family:var(--num);font-weight:600;white-space:nowrap}
 .agent-tag{font-size:9.5px;color:#B8860B;background:#FCF3E4;border-radius:99px;padding:2px 7px;margin-left:6px;font-weight:600}
+/* 经纪端专属区(TRREB 经纪端视图字段 · 仅已验证经纪可见) */
+.agonly{border:1px solid #C4CEE0;border-radius:var(--r);overflow:hidden;background:#fff;box-shadow:var(--shadow);margin-bottom:12px}
+.ag-head{display:flex;align-items:center;gap:7px;padding:11px 14px;background:linear-gradient(135deg,#2A3550,#18202F);color:#fff}
+.ag-head .t{font-size:13.5px;font-weight:700}
+.ag-head .bd{margin-left:auto;font-size:9px;font-weight:700;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);letter-spacing:.2px}
+.ag-lock{padding:16px 14px 18px;text-align:center}
+.ag-lock p{font-size:11.5px;color:var(--ink-2);line-height:1.65;margin:0 0 12px}
+.ag-btn{border:none;cursor:pointer;font-family:var(--cjk);font-size:12.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,#2A3550,#44557E);border-radius:99px;padding:9px 22px}
+.ag-body{padding:0 14px 12px}
+.ag-grp{margin-top:4px}
+.ag-row{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed #EFF2F7;font-size:12px;align-items:flex-start}
+.ag-row:last-child{border-bottom:none}
+.ag-row .k{color:var(--ink-2);flex:0 0 44%;line-height:1.55}
+.ag-row .k i{font-style:normal;color:#B7C0CE;font-size:9.5px;margin-left:3px}
+.ag-row .v{flex:1;text-align:right;font-weight:600;color:var(--ink);line-height:1.55;word-break:break-word}
+.ag-row .v.hot{color:#B4261C}
+.ag-free{font-size:11.5px;color:var(--ink-2);line-height:1.7;background:#F7F9FC;border:1px solid var(--line);border-radius:9px;padding:9px 10px;margin-top:7px}
 /* 免责+推广 */
 .legal{padding:16px 14px 8px}
 .promo{margin:10px 12px 0}
@@ -815,6 +832,19 @@ body.annotate .mod-tag{display:inline-block}
     </div>
   </div>
 
+  <!-- 经纪端专属区(TRREB 经纪端视图 · 仅已验证经纪账号可见) -->
+  <div class="agonly">
+    <div class="ag-head">
+      <span>🔒</span><span class="t">经纪端信息</span>
+      <span class="bd">仅经纪可见 · 不对买家展示</span>
+    </div>
+    <div id="agGate" class="ag-lock">
+      <p>本区字段取自 TRREB 经纪端完整视图,含佣金条款、看房要求与经纪备注。<br>需已验证的持牌经纪账号才能查看。</p>
+      <button class="ag-btn" onclick="agUnlock()">以经纪身份查看(演示)</button>
+    </div>
+    <div id="agBody" class="ag-body" style="display:none"></div>
+  </div>
+
   <!-- 免责 + O1 推广位治理 -->
   <div class="legal">
     <p class="footnote">© 2026 Toronto Regional Real Estate Board (TRREB). All rights reserved. 本页展示部分基于 TRREB 数据生成,该机构不对其准确性承担责任。信息仅供消费者个人非商业用途参考。</p>
@@ -1087,8 +1117,35 @@ function renderDetails(){
   }
   document.getElementById('dtBody').innerHTML=h;
 }
+/* ===== 经纪端专属区(TRREB 经纪端视图字段,按样例联动) ===== */
+const AGENT_GTA={
+  gta:{rows:[
+    ['看房要求','Showing Requirements','联系挂牌经纪行(List Brokerage)',''],
+    ['居住状态','Occupancy','业主自住(Owner)',''],
+    ['合作经纪佣金','Commission Co-Op Brokerage','2.5% + HST','hot'],
+    ['挂牌到期日','Expiry Date','09/30/2026','hot'],
+    ['佣金保护期','Holdover','90 天',''],
+    ['过期后可联系卖方','Contact After Expired','否(No)',''],
+  ],remarksLabel:['经纪备注','Brokerage Remarks'],
+   remarks:'Green open area at the front is a park. One of the very few units that have bright sunlight absorbing South facing living room + master bedroom + backyard as well as the other side with unobstructed view of the park. Status certificate available.'},
+  coop:{na:'该样例未取得经纪端视图数据(当前仅联排样例 C13534294 已接入)'},
+  condo:{na:'该样例未取得经纪端视图数据(当前仅联排样例 C13534294 已接入)'}
+};
+var agOpen=false;
+function agUnlock(){agOpen=true;document.getElementById('agGate').style.display='none';document.getElementById('agBody').style.display='block';agRender();}
+function agRender(){
+  if(!agOpen)return;var el=document.getElementById('agBody');if(!el)return;
+  var d=AGENT_GTA[dtType]||{};
+  if(d.na){el.innerHTML='<div class="ag-free" style="text-align:center">'+d.na+'</div>';return;}
+  var rows=d.rows.map(function(r){
+    return '<div class="ag-row"><div class="k">'+r[0]+'<i>'+r[1]+'</i></div><div class="v '+r[3]+'">'+r[2]+'</div></div>';
+  }).join('');
+  el.innerHTML='<div class="ag-grp">'+rows+
+    '<div class="ag-row" style="border-bottom:none;padding-bottom:2px"><div class="k">'+d.remarksLabel[0]+'<i>'+d.remarksLabel[1]+'</i></div></div>'+
+    '<div class="ag-free">'+d.remarks+'</div></div>';
+}
 function setFacts(type, btn){
-  dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails(); riskState(type); applyHead(type);
+  dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails(); riskState(type); applyHead(type); agRender();
   const grid=document.getElementById('factsGrid');
   grid.innerHTML=FACTS[type].items.map(([ic,v,k])=>
     `<div class="fact"><div class="ic">${ic}</div><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
