@@ -866,7 +866,17 @@ body.annotate .mod-tag{display:inline-block}
       <p>本区字段取自 MLS<sup>®</sup> Data Input Form,含卖方个人信息、佣金条款与看房安排。<br>需已验证的持牌经纪账号才能查看。</p>
       <button class="ag-btn" onclick="agUnlock()">以经纪身份查看(演示)</button>
     </div>
-    <div id="agBody" class="ag-body" style="display:none"></div>
+    <div id="agBody" class="ag-body" style="display:none">
+      <div class="ag-grp" style="margin-top:4px">
+        <div class="ag-row"><div class="k">预约看房<i>#116</i></div><div class="v">钥匙箱 · 免预约 · 空置</div></div>
+        <div class="ag-row"><div class="k">预约电话<i>#118</i></div><div class="v">604-785-8000</div></div>
+        <div class="ag-row"><div class="k">合作经纪佣金</div><div class="v hot">3.255% 首 $100K + 1.1625% 余额</div></div>
+        <div class="ag-row"><div class="k">挂牌到期日</div><div class="v hot">10/15/2026</div></div>
+        <div class="ag-row" style="border-bottom:none;padding-bottom:2px"><div class="k">REALTOR® 备注<i>#412</i></div></div>
+        <div class="ag-free">钥匙箱位于侧门燃气表旁,密码见 Touchbase。屋主要求提前 24 小时预约。Offer 请附 Schedule A 并 email 至挂牌经纪,卖方需 3 个工作日审阅。(示意文本)</div>
+      </div>
+      <div class="ag-note">佣金、到期日与看房安排<b>仅对已验证经纪账号返回</b>——C 端整块不下发,不能只做前端隐藏。</div>
+    </div>
   </div>
 
   <!-- 免责 + O1 推广位治理 -->
@@ -1185,77 +1195,8 @@ function schTab(t,el){schState.t=t;document.querySelectorAll('#schTabs .mkt-pill
 function schLvl(l,el){schState.l=l;document.querySelectorAll('#schLvls span').forEach(function(b){b.classList.remove('on')});el.classList.add('on');schRender();}
 document.addEventListener('DOMContentLoaded',schRender);
 function iTip(b){var p=b.parentElement.querySelector('.ipop');p.style.display=(p.style.display==='none'||!p.style.display)?'block':'none';}
-/* ===== 经纪端专属区(字段来源:MLS Data Input Form,编号为表单字段号) ===== */
-const AGENT_BASE=[
-  {t:'挂牌合约', s:'Data Input Form 第 7 页 · 取自 Multiple Listing Contract', kv:[
-    ['挂牌日期(Listing Date)','07/15/2026'],
-    ['挂牌到期日(Expiry Date)','10/15/2026','hot'],
-    ['卖方姓名(Owner Names)','王●● · 王●●(脱敏示意)'],
-    ['卖方权益(Seller’s Interest)|100','注册业主(REGOW)'],
-    ['合约权益(Contractual Interest)','—(无)','na'],
-    ['价内是否含 GST|146','否(No)'],
-    ['合作经纪佣金(Co-op Brokerage Commission)','3.255% 首 $100K + 1.1625% 余额','hot'],
-    ['挂牌经纪 / 指定代理|120·122','Sarah Thompson PREC* · RE/MAX Select Properties'],
-  ]},
-  {t:'看房与预约', s:'表单字段 116–118 · Showings / Appointments', kv:[
-    ['预约方式(Showings)|116','钥匙箱 · 免预约(Keybox, Appt. Not Req’d)'],
-    ['预约联系人(For Appointment Call)|116','Sarah Thompson'],
-    ['预约电话(Appointment Phone#)|118','604-785-8000'],
-    ['居住状态(Occupancy)','空置(Vacant)','hot'],
-    ['钥匙箱位置与密码','见下方 REALTOR® 备注','na'],
-  ]},
-  {t:'经纪备注与网络推广', s:'表单字段 400 / 402–406 / 412 / 414', kv:[
-    ['公开描述(Public Remarks)|400','已用于 C 端「房源描述」·上限 800 字符','na'],
-    ['发布到互联网(Publish on Internet)|402','是(Yes)'],
-    ['互联网显示地址(Display Address)|402','是(Yes)'],
-    ['虚拟看房 URL|404','tour.example.com/7240stride(示意)'],
-    ['房源手册 URL|406','—','na'],
-    ['经纪开放日 TOUR(Agents Open)|414','07/18/2026 10:00–12:00 · 供餐 是'],
-  ], free:['REALTOR® 备注(上限 500 字符)|412','钥匙箱位于侧门燃气表旁,密码见 Touchbase。屋主要求提前 24 小时预约,看房请勿开启地下室电闸。Offer 请附 Schedule A 并 email 至挂牌经纪,卖方需 3 个工作日审阅。(示意文本)']},
-];
-const AGENT_EXTRA={
-  duplex:{t:'交易与合规补充', s:'表单字段 516 / 552', kv:[
-    ['购买是否需法团审批|552','否(No)'],
-    ['卖方披露的消防令 / 违规|516','否(No)'],
-  ]},
-  town:{t:'交易与合规补充', s:'表单字段 516 / 552', kv:[
-    ['购买是否需法团审批|552','否(No)'],
-    ['卖方披露的消防令 / 违规|516','否(No)'],
-  ]},
-  apt:{t:'交易与合规补充', s:'表单字段 516 / 552', kv:[
-    ['购买是否需法团审批|552','是(Yes)·合作社需通过董事会面谈','hot'],
-    ['卖方披露的消防令 / 违规|516','否(No)'],
-  ]},
-  house:{t:'移动屋专属', s:'表单字段 552 / 562–566', kv:[
-    ['已在 MHR 注册|562','是 · MHR #62817'],
-    ['CSA / BC 电气编号|564','C-●●●●●(脱敏示意)'],
-    ['PAD 场地租金|566','$1,400 / 月'],
-    ['购买是否需园区审批|552','是(Yes)','hot'],
-  ]},
-  multi:{t:'多单元收益(仅 4 户以内)', s:'表单字段 538–542 · 卖方填报', kv:[
-    ['收入截止日(Income as at)|538','未填报','na'],
-    ['年收入(Annual Income)|538','未填报','na'],
-    ['运营支出(Operating Expenses)|540','未填报','na'],
-    ['净营运收入 NOI|542','未填报','na'],
-    ['单元构成(No. of Units)','2 房 ×1 + 3 房 ×1'],
-  ]},
-};
-var agOpen=false;
-function agUnlock(){agOpen=true;document.getElementById('agGate').style.display='none';document.getElementById('agBody').style.display='block';agRender();}
-function agRender(){
-  if(!agOpen)return;
-  var el=document.getElementById('agBody');if(!el)return;
-  var gs=AGENT_BASE.slice();var ex=AGENT_EXTRA[dtType];if(ex)gs=gs.concat([ex]);
-  el.innerHTML=gs.map(function(g){
-    var rows=g.kv.map(function(r){
-      var p=r[0].split('|'),num=p[1]?'<i>#'+p[1]+'</i>':'';
-      return '<div class="ag-row"><div class="k">'+p[0]+num+'</div><div class="v '+(r[2]||'')+'">'+r[1]+'</div></div>';
-    }).join('');
-    var fr='';
-    if(g.free){var fp=g.free[0].split('|');fr='<div class="ag-row" style="border-bottom:none;padding-bottom:0"><div class="k">'+fp[0]+(fp[1]?'<i>#'+fp[1]+'</i>':'')+'</div></div><div class="ag-free">'+g.free[1]+'</div>';}
-    return '<div class="ag-grp"><div class="gt">'+g.t+'<small>'+g.s+'</small></div>'+rows+fr+'</div>';
-  }).join('')+'<div class="ag-note">合规:本区含卖方个人信息、佣金条款与看房安排,<b>仅对已验证经纪账号返回</b>——C 端渲染时整块不下发,不能只做前端隐藏。挂牌到期日、居住状态、佣金三项即使对经纪展示也不得转述给买家。</div>';
-}
+/* ===== 经纪端专属区(仅保留高频必要项,内容见 HTML) ===== */
+function agUnlock(){document.getElementById('agGate').style.display='none';document.getElementById('agBody').style.display='block';}
 let dtType='duplex', dtIdx=0;
 function renderDetails(){
   const d=DETAILS[dtType];
@@ -1289,7 +1230,7 @@ function renderDetails(){
   document.getElementById('dtBody').innerHTML=h;
 }
 function setFacts(type, btn){
-  dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails(); riskState(type); agRender();
+  dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails(); riskState(type);
   const grid=document.getElementById('factsGrid');
   grid.innerHTML=FACTS[type].items.map(([ic,v,k])=>
     `<div class="fact"><div class="ic">${ic}</div><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
