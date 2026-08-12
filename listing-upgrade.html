@@ -1222,7 +1222,7 @@ function renderDetails(){
   }
   if(tb.baths){
     h+=`<details class="fold-blk"><summary>卫生间<em>${tb.baths.length} 个</em></summary><div class="rooms" style="margin-top:0"><table><tr><th>楼层</th><th>件数 (#Pcs)</th><th>套内 (Ensuite)</th></tr>`+
-      tb.baths.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')+`</table><div class="footnote" style="padding:7px 0 0;line-height:1.6">件数 = 洁具件数:2 件 = 马桶 + 洗手盆(半卫)· 3 件 = 再加淋浴或浴缸 · 4 件 = 马桶 + 洗手盆 + 浴缸 + 淋浴。「套内」指该卫生间从卧室内部进入(board 字段 Ensuite 仅 Y/N,不指明属哪间卧室)。</div></div></details>`;
+      tb.baths.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')+`</table><div class="footnote" style="padding:7px 0 0;line-height:1.6">件数 = 洁具件数:2 件 = 马桶 + 洗手盆(半卫)· 3 件 = 再加淋浴或浴缸 · 4 件 = 马桶 + 洗手盆 + 浴缸 + 淋浴。<br>「套内」指该卫生间从卧室内部进入(board 字段 Ensuite 仅 Y/N,不指明属哪间卧室)。</div></div></details>`;
   }
   if(tb.note){ h+=`<div class="footnote" style="padding:0 14px 12px">${tb.note}</div>`; }
   if(tb.legal){
