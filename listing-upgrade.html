@@ -673,7 +673,7 @@ body.annotate .mod-tag{display:inline-block}
         <div class="inv-tile"><div class="k">预估月租(成交口径)</div><div class="v">$3,250–3,700</div><div class="s">成交 $/ft² × 本房 1,213 ft² · 中位 $3,460</div></div>
         <div class="inv-tile"><div class="k">毛租售比(年)</div><div class="v">4.2%</div><div class="s">年租金 ÷ 挂牌价</div></div>
         <div class="inv-tile"><div class="k">Cap Rate(估)</div><div class="v">3.1%</div><div class="s">(年租金 − 持有成本) ÷ 挂牌价 · 明细见下</div></div>
-        <div class="inv-tile"><div class="k">市场节奏(客观)</div><div class="v">SALR 21%</div><div class="s">当月售出 ÷ 在售 · 社区 DOM 18 天</div></div>
+        <div class="inv-tile"><div class="k">月净现金流(含融资)</div><div class="v" style="color:var(--up)">−$2,040</div><div class="s">每月 · 首付 20% · 4.9% · 25 年摊还</div></div>
       </div>
       <details style="margin-top:9px;border:1px solid var(--line);border-radius:10px;overflow:hidden">
         <summary style="list-style:none;cursor:pointer;padding:8px 11px;font-size:11.5px;font-weight:700;color:var(--brand);background:#F7F9FC">Cap Rate 计算明细(白盒) ▾</summary>
@@ -688,7 +688,9 @@ body.annotate .mod-tag{display:inline-block}
             <div class="ipop">构件摊销法:Σ(构件更换成本 ÷ 设计寿命)——屋顶/供暖/热水罐/外墙(取 feed 的 Roof/Heat/Exterior 字段)+ 日常维护 $1.2/ft²/年,整体乘楼龄系数(10–30 年 = 1.0)。Strata 类仅计套内构件,避免与月费重复。</div></div>
           <div>− 空置准备 ≈$1,250 <span style="color:var(--warn)">估算</span><button class="ibtn" onclick="iTip(this)">i</button>
             <div class="ipop">CMHC 口径:max(CMHC 分区空置率(每年 10 月更新), 换手摩擦率 = 空窗月数 ÷ 平均租期)。本例 Burnaby 双拼 = 3%。</div></div>
-          <div style="color:var(--muted)">未计入:代管费(本房自管 $0)· 贷款成本(Cap Rate 口径不含融资);资本性支出已含于构件摊销</div>
+          <div style="border-top:1px dashed var(--line);margin-top:6px;padding-top:6px"><b>月净现金流 = NOI/12 $2,567 − 月供 $4,607 = −$2,040</b> <span style="color:var(--warn)">含融资口径</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">含融资口径,与 Cap Rate 的不含融资口径并列,勿混读。假设:首付 20% · 5 年固定 4.9% · 25 年摊还。加拿大固定利率按揭为半年复利,有效月利率 =(1+年利率÷2)^(1/6)−1,不可直接套用美国的月复利公式。首付 <20% 时须另计 CMHC 按揭保险(按 LTV 约 2.8–4.0%,通常并入本金摊还)。压力测试利率 = max(合约利率+2%, 5.25%) 只影响能否获批,不改变月供。以上为默认参数,实际以贷款计算器输入为准。</div></div>
+          <div style="color:var(--muted)">未计入:代管费(本房自管 $0);资本性支出已含于构件摊销。贷款成本仅在上方现金流行计入,Cap Rate 口径不含融资</div>
         </div>
       </details>
     </div>
