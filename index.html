@@ -838,6 +838,8 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   root.querySelector('#profStrip').onclick=openProfile;
   root.querySelector('#idxBtn').onclick=function(e){e.stopPropagation();openIndexPage();};
   if(/[?&](view|open)=index/.test(location.search))openIndexPage();
+  var om=location.search.match(/[?&]open=([^&]+)/);
+  if(om){var od=decodeURIComponent(om[1]).split(':');if(od[0]==='city'&&CITYCARD[od[1]])openCityPage(od[1]);else if(od[0]==='zone'&&ZONES[od[1]])openZonePage(od[1]);else if(od[0]==='nb')openCommunity(od[1],od[2]||'');}
 
   function wireInit(){answer=purposeResolver;var c=list.querySelectorAll('.qr.live .q');for(var i=0;i<c.length;i++){(function(b){b.onclick=function(){pick(b.getAttribute('data-v'));};})(c[i]);}}
   root.querySelector('.rst').onclick=function(){list.innerHTML=initHTML;list=root.querySelector('.chat');for(var k in profile)profile[k]='';lastResult=null;profileEdit=false;pref();showChat();wireInit();};
