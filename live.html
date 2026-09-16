@@ -81,7 +81,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
       </div>
     </div>
     <div class="view" id="vChat" style="display:none">
-      <div class="hd"><div class="hav"><i class="ti ti-sparkles"></i></div><div style="flex:1"><div style="font-size:13.5px;font-weight:500">Johome AI Buying Agent</div><div style="font-size:10.5px;color:#1D9E75" id="modelTag">在线</div></div><i class="ti ti-settings muted" id="gear" style="font-size:19px;cursor:pointer"></i></div>
+      <div class="hd"><div class="hav"><i class="ti ti-sparkles"></i></div><div style="flex:1"><div style="font-size:13.5px;font-weight:500">Johome AI</div><div style="font-size:10.5px;color:#1D9E75" id="modelTag">在线</div></div><i class="ti ti-settings muted" id="gear" style="font-size:19px;cursor:pointer"></i></div>
       <div class="pref" id="profStrip"><i class="ti ti-adjustments" style="color:#0F6E56;font-size:15px"></i><span class="pc">AI 会边聊边记录你的偏好</span><span style="font-size:11.5px;color:#0F6E56;white-space:nowrap">我的档案 ›</span></div>
       <div class="chat" id="chat"></div>
       <div class="inbar"><input class="inp" id="inp" placeholder="用自然语言告诉 AI 你的购房需求…"/><button class="send" id="sendBtn"><i class="ti ti-arrow-up"></i></button></div>
@@ -227,7 +227,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
     vChat.style.display='none';vDetail.style.display='none';vProfile.style.display='flex';$('pbk').onclick=function(){vProfile.style.display='none';vChat.style.display='flex';scroll();};
   }
   function showSetup(){$('keyIn').value=API_KEY;$('modelIn').value=MODEL;vChat.style.display='none';vProfile.style.display='none';vDetail.style.display='none';vSetup.style.display='flex';}
-  function startChat(){vSetup.style.display='none';vProfile.style.display='none';vDetail.style.display='none';vChat.style.display='flex';$('modelTag').textContent='在线 · '+MODEL.replace('claude-','').replace('-',' ');if(!messages.length){chat.innerHTML='';addAI('你好，我是 Johome AI Buying Agent。说说你的购房想法，或先选一个 —— 你买这套房主要是？');quick(['自住','投资','度假']);}}
+  function startChat(){vSetup.style.display='none';vProfile.style.display='none';vDetail.style.display='none';vChat.style.display='flex';$('modelTag').textContent='在线 · '+MODEL.replace('claude-','').replace('-',' ');if(!messages.length){chat.innerHTML='';addAI('你好，我是 Johome AI。说说你的购房想法，或先选一个 —— 你买这套房主要是？');quick(['自住','投资','度假']);}}
 
   $('startBtn').onclick=function(){var k=$('keyIn').value.trim();if(!k){$('keyIn').focus();return;}API_KEY=k;MODEL=$('modelIn').value;localStorage.setItem('jh_key',API_KEY);localStorage.setItem('jh_model',MODEL);startChat();};
   $('gear').onclick=showSetup;$('profStrip').onclick=openProfile;$('sendBtn').onclick=doSend;
