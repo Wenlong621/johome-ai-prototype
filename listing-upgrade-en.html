@@ -263,6 +263,8 @@ body.annotate .mod-tag{display:inline-block}
 .inv-tile .k{font-size:10.5px;color:var(--muted)}
 .inv-tile .v{font-family:var(--num);font-size:16.5px;font-weight:800;margin-top:2px}
 .inv-tile .s{font-size:10px;color:var(--muted);margin-top:2px}
+.inv-btn{display:flex;align-items:center;justify-content:center;gap:4px;width:100%;margin-top:7px;border:none;cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:700;color:#fff;background:var(--brand);border-radius:9px;padding:7px 10px;letter-spacing:.2px}
+.inv-btn:active{background:var(--brand-ink)}
 .tagline{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .fact-tag{font-size:10.5px;color:var(--ink-2);background:#F2F5F9;border-radius:99px;padding:3.5px 9px}
 /* ②Community行情 */
@@ -649,7 +651,7 @@ body.annotate .mod-tag{display:inline-block}
         <div class="inv-tile"><div class="k">Est. Monthly Rent (sold-based)</div><div class="v">$3,250–3,700</div><div class="s">Sold $/ft² × 1,213 ft² · median $3,460</div></div>
         <div class="inv-tile"><div class="k">Gross Yield (annual)</div><div class="v">4.2%</div><div class="s">Annual rent ÷ list price</div></div>
         <div class="inv-tile"><div class="k">Cap Rate (est.)</div><div class="v">3.1%</div><div class="s">(Annual rent − carrying costs) ÷ list price · see breakdown</div></div>
-        <div class="inv-tile"><div class="k">Monthly Net Cash Flow (financed)</div><div class="v" style="color:var(--up)">−$2,040</div><div class="s">per month · 20% down · 4.9% · 25-yr amortization</div></div>
+        <div class="inv-tile"><div class="k">Monthly Net Cash Flow (financed)</div><div class="v" style="color:var(--up)">−$2,040</div><button class="inv-btn" onclick="mortCalc(this)">Mortgage Calculator ›</button></div>
       </div>
       <details style="margin-top:9px;border:1px solid var(--line);border-radius:10px;overflow:hidden">
         <summary style="list-style:none;cursor:pointer;padding:8px 11px;font-size:11.5px;font-weight:700;color:var(--brand);background:#F7F9FC">Cap Rate Breakdown (white-box) ▾</summary>
@@ -1149,6 +1151,7 @@ function schRender(){
 function schTab(t,el){schState.t=t;document.querySelectorAll('#schTabs .mkt-pill').forEach(function(b){b.classList.remove('on')});el.classList.add('on');schRender();}
 function schLvl(l,el){schState.l=l;document.querySelectorAll('#schLvls span').forEach(function(b){b.classList.remove('on')});el.classList.add('on');schRender();}
 document.addEventListener('DOMContentLoaded',schRender);
+function mortCalc(el){var d=el.closest('.card').querySelector('details');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'center'});}}
 function iTip(b){var p=b.parentElement.querySelector('.ipop');p.style.display=(p.style.display==='none'||!p.style.display)?'block':'none';}
 let dtType='duplex', dtIdx=0;
 function renderDetails(){
