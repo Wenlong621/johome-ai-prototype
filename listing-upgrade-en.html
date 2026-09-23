@@ -646,24 +646,27 @@ body.annotate .mod-tag{display:inline-block}
     </div>
     <div class="card-pad" style="padding-top:10px">
       <div class="inv-grid">
-        <div class="inv-tile"><div class="k">Est. Monthly Rent (asking)</div><div class="v">$3,700</div><div class="s">Edmonds duplex/town rentals · 1-yr asking median</div></div>
-        <div class="inv-tile"><div class="k">Gross Yield (annual)</div><div class="v">4.4%</div><div class="s">Annual rent ÷ list price</div></div>
-        <div class="inv-tile"><div class="k">Cap Rate (est.)</div><div class="v">3.4%</div><div class="s">(Annual rent − carrying costs) ÷ list price · see breakdown</div></div>
-        <div class="inv-tile"><div class="k">Market Pace (objective)</div><div class="v">SALR 21%</div><div class="s">Monthly sold ÷ active · community DOM 18 d</div></div>
+        <div class="inv-tile"><div class="k">Est. Monthly Rent (sold-based)</div><div class="v">$3,250–3,700</div><div class="s">Sold $/ft² × 1,213 ft² · median $3,460</div></div>
+        <div class="inv-tile"><div class="k">Gross Yield (annual)</div><div class="v">4.2%</div><div class="s">Annual rent ÷ list price</div></div>
+        <div class="inv-tile"><div class="k">Cap Rate (est.)</div><div class="v">3.1%</div><div class="s">(Annual rent − carrying costs) ÷ list price · see breakdown</div></div>
+        <div class="inv-tile"><div class="k">Monthly Net Cash Flow (financed)</div><div class="v" style="color:var(--up)">−$2,040</div><div class="s">per month · 20% down · 4.9% · 25-yr amortization</div></div>
       </div>
       <details style="margin-top:9px;border:1px solid var(--line);border-radius:10px;overflow:hidden">
         <summary style="list-style:none;cursor:pointer;padding:8px 11px;font-size:11.5px;font-weight:700;color:var(--brand);background:#F7F9FC">Cap Rate Breakdown (white-box) ▾</summary>
         <div style="padding:8px 11px 10px;font-size:11px;line-height:1.9;color:var(--ink-2);font-family:var(--num)">
-          <div><b>NOI ≈ $33,600 ÷ list price $999,900 = 3.4%</b></div>
-          <div>Annual rent (asking median) $44,400 <span style="color:var(--muted)">MLS rental listings · community × type · 1-yr median</span></div>
+          <div><b>NOI ≈ $30,800 ÷ list price $999,900 = 3.1%</b></div>
+          <div>Annual rent (sold-based) $41,520 <span style="color:var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button> <span style="color:var(--muted)">community × 3-bed sold $/ft² median × area · 14 comps</span>
+            <div class="ipop">L1+L2 basis. (1) Sold-based: use the MLS Leased median where available; Metro Vancouver MLS rental sold samples are thin, so where missing apply a city-level asking-to-sold discount factor calibrated by property type (0.96-0.99), correcting the 2-5% by which ask rent typically exceeds achieved rent. (2) Unit-price method: compute $/ft2 per comparable first, take the median ($2.85/ft2) and multiply by the floor area of this unit (1,213 ft2), so larger units in the bucket do not skew the result. Bucket = community x type x bedrooms; if the sample is thin, step down community x bedrooms to community x type to city x type, and label the basis on the pill. The range is the P25-P75 of comparables - the thinner the sample, the wider it gets. Known gap: sales outside MLS (Craigslist / WeChat) are not captured, a structural sampling bias.</div></div>
           <div>− Property tax $3,984 <span style="color:var(--ok);font-weight:600">feed actual</span></div>
           <div>− Insurance ≈$2,180 <span style="color:var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button>
             <div class="ipop">Replacement-cost method: floor area × rebuild rate ($200–300/ft²) × premium rate (0.5–0.7%) × rental uplift (+15–25%); loaded when Flood Plain = Y. Strata types use a flat condo-policy band. Params 2026Q3, calibrated quarterly.</div></div>
           <div>− Maintenance reserve ≈$3,300 <span style="color:var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button>
             <div class="ipop">Component amortization: Σ(replacement cost ÷ design life) — roof/heat/HW tank/exterior (from feed Roof/Heat/Exterior fields) + routine $1.2/ft²/yr, × age factor (10–30 yrs = 1.0). Strata types count in-suite components only to avoid double-counting the fee.</div></div>
-          <div>− Vacancy allowance ≈$1,330 <span style="color:var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button>
+          <div>− Vacancy allowance ≈$1,250 <span style="color:var(--warn)">est.</span><button class="ibtn" onclick="iTip(this)">i</button>
             <div class="ipop">CMHC basis: max(CMHC zone vacancy rate (updated each Oct), turnover friction = vacant months ÷ avg tenancy). Burnaby duplex here = 3%.</div></div>
-          <div style="color:var(--muted)">Excluded: management fee (self-managed, $0) · financing (cap rate excludes debt); capex covered by amortization</div>
+          <div style="border-top:1px dashed var(--line);margin-top:6px;padding-top:6px"><b>Monthly net cash flow = NOI/12 $2,567 − mortgage $4,607 = −$2,040</b> <span style="color:var(--warn)">financed basis</span><button class="ibtn" onclick="iTip(this)">i</button>
+            <div class="ipop">Financed basis - shown alongside the unlevered cap rate; do not read the two as one figure. Assumptions: 20% down &middot; 5-yr fixed 4.9% &middot; 25-yr amortization. Canadian fixed-rate mortgages compound semi-annually, so the effective monthly rate is (1 + annual rate / 2)^(1/6) - 1; the US monthly-compounding formula does not apply. Below 20% down, CMHC mortgage insurance applies (roughly 2.8-4.0% of the loan by LTV, normally added to principal). The stress-test rate, max(contract rate + 2%, 5.25%), affects approval only - not the payment. These are defaults; the mortgage calculator inputs govern.</div></div>
+          <div style="color:var(--muted)">Excluded: management fee (self-managed, $0); capex covered by amortization. Financing is counted only in the cash-flow line above — the cap rate is unlevered.</div>
         </div>
       </details>
     </div>
