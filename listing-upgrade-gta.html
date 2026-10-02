@@ -491,7 +491,7 @@ body.annotate .mod-tag{display:inline-block}
     </div>
 
     <!-- 图标行(O2 口径修正 · 按 MLS 房源类型自适应) -->
-    <div class="mod" style="margin-top:14px">
+    <div class="mod" style="margin-top:14px" id="factsWrap">
       <span class="mod-tag opt" style="top:-6px">O2+ 图标行按 MLS 类型自适应</span>
       <div class="facts" id="factsGrid" style="margin-top:0"></div>
     </div>
@@ -925,17 +925,8 @@ const FACTS = {
     ]
   },
   land: {
-    note: '土地(Vacant Land):无建筑,突出占地/临水/分区与市政接入;不设「房屋·空间」tab',
-    items: [
-      ['📐','34,724<small> ft²</small>','占地(约 0.80 英亩)'],
-      ['📏','55.79<small> ft</small>','面宽(Frontage)'],
-      ['🛣','全年市政道路','通达(Access)'],
-      ['🏛','R1 & EP','分区(Zoning)'],
-      ['🧭','北','朝向(Fronting On)'],
-      ['🚰','市政可接','下水(Sewage)'],
-      ['⚡','道路可接','电力 · 天然气'],
-      ['💰','$2,192<small>/年</small>','地税(2026)'],
-    ]
+    note: '土地(Vacant Land):无建筑,不设摘要图标行;不设「房屋·空间」tab',
+    items: []
   }
 };
 /* ===== 页头按样例类型联动(导航标题/徽章/照片数/价格/地址/MLS;价格体检仅 gta 有数据) ===== */
@@ -1197,6 +1188,7 @@ function agRender(){
 function setFacts(type, btn){
   dtType=type; dtIdx=Math.min(dtIdx, DETAILS[type].tabs.length-1); renderDetails(); riskState(type); applyHead(type); agRender();
   const grid=document.getElementById('factsGrid');
+  var fw=document.getElementById('factsWrap');if(fw)fw.style.display=FACTS[type].items.length?'':'none';
   grid.innerHTML=FACTS[type].items.map(([ic,v,k])=>
     `<div class="fact"><div class="ic">${ic}</div><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
   if(btn){document.querySelectorAll('[data-ft]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
