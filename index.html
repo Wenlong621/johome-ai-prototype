@@ -171,7 +171,7 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   <div class="sb"><span>9:41</span><span class="ri"><i class="ti ti-signal-4g"></i><i class="ti ti-wifi"></i><i class="ti ti-battery-3"></i></span></div>
   <div class="stage">
     <div class="view-chat">
-      <div class="hd"><i class="ti ti-arrow-left bk"></i><div class="hav"><i class="ti ti-sparkles"></i></div><div style="flex:1"><div style="font-size:13.5px;font-weight:500">Johome AI</div><div style="font-size:10.5px;color:#1D9E75">您的智能找房/选区/地产投资AI助手</div></div><i class="ti ti-map-search" id="idxBtn" title="区域索引" style="font-size:19px;color:#0F6E56;cursor:pointer;margin-right:4px"></i><i class="ti ti-dots muted" style="font-size:20px"></i></div>
+      <div class="hd"><i class="ti ti-arrow-left bk"></i><div class="hav"><i class="ti ti-sparkles"></i></div><div style="flex:1"><div style="font-size:13.5px;font-weight:500">Johome AI</div><div style="font-size:10.5px;color:#1D9E75">您的智能找房/选区/地产投资AI助手</div></div><i class="ti ti-dots muted" style="font-size:20px"></i></div>
       <div class="pref" id="profStrip"><i class="ti ti-adjustments" style="color:#0F6E56;font-size:15px"></i><span class="pc">AI 会边聊边记录你的偏好</span><span class="editbtn">我的档案<i class="ti ti-chevron-right" style="font-size:14px"></i></span></div>
       <div class="chat">
         <div class="row"><div class="av"><i class="ti ti-sparkles"></i></div><div class="bub">你好，我是 Johome AI。直接说说你的情况，或先选一项 —— 你买这套房主要是？</div></div>
@@ -891,7 +891,6 @@ body{background:#eceae3;font-family:var(--font-sans);color:var(--color-text-prim
   function doSend(){var t=inp.value.trim();if(!t)return;inp.value='';var n0=cntProfile();extract(t);var n1=cntProfile();var mm=parseMulti(t);if(mm){addUser(t);disablePickables();answer=null;groupedRec(mm.noun,mm.items);return;}var qa=matchQA(t);if(qa){addUser(t);runQA(qa,answer!==null);return;}var an=detectAnchor(t);if(an){addUser(t);disablePickables();answer=null;an();return;}if(answer!==null&&isRec(t)){addUser(t);freeRecommend(t,true);return;}if(answer!==null){addUser(t);clearLive();var f=answer;answer=null;f(t,true);return;}addUser(t);if(isRec(t)){freeRecommend(t);}else if(isQuestionLike(t)){typing(function(){if(!isRealEstateish(t)){addAI('这个问题和买房选区关系不大，我先不展开 —— 我是找房 / 选区助手，预算、区域、学区、通勤、投资这些都可以问我。');return;}addAI('这个问题演示版答不精 —— 正式版会由 LLM 用地产领域知识结合实时数据回答。你可以直接问我：哪个城市干净 / 治安口碑 / 学区 / 交通 / 价格洼地 / 涨幅 / 华语生活服务 / 天气；或说「推荐几个海景社区」，也可以点上面的选项继续问诊。');});}else{typing(function(){var n=cntProfile();if(n1===n0&&!isRealEstateish(t)){addAI('这好像和找房无关，我就不接了 —— 想继续的话，跟我说预算、想住的区域或你在意的点都行。');return;}addAI('已记到你的档案'+(n?('（共 '+n+' 项）'):'')+'。想让我直接给建议，可以说「推荐几个海景社区」「给我几套预算内的房源」；也可以点选项继续。');});}}
   sendBtn.onclick=doSend;inp.addEventListener('keydown',function(e){if(e.key==='Enter')doSend();});
   root.querySelector('#profStrip').onclick=openProfile;
-  root.querySelector('#idxBtn').onclick=function(e){e.stopPropagation();openIndexPage();};
   if(/[?&](view|open)=index/.test(location.search))openIndexPage();
   var om=location.search.match(/[?&]open=([^&]+)/);
   if(om){var od=decodeURIComponent(om[1]).split(':');if(od[0]==='city'&&CITYCARD[od[1]])openCityPage(od[1]);else if(od[0]==='zone'&&ZONES[od[1]])openZonePage(od[1]);else if(od[0]==='nb')openCommunity(od[1],od[2]||'');}
