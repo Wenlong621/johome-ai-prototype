@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Johome 登录注册</title>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f2a4d;--navy2:#1e4a86;--blue:#1a8ce0;--line:#e3e6ec;--txt:#222;--sub:#8a8f99;--bg:#eef0f4;--err:#e5484d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#dfe3ea;color:var(--txt);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width:0}
+
+/* demo toolbar */
+.bar{width:100%;max-width:760px;background:#fff;border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.bar b{font-weight:600;color:#555;margin-right:6px}
+.seg{display:inline-flex;background:#f0f2f5;border-radius:8px;padding:2px}
+.seg button{padding:4px 10px;border-radius:6px;font-size:12px;color:#666}
+.seg button.on{background:#fff;color:var(--navy);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.bar .hint{flex-basis:100%;color:var(--sub);font-size:12px}
+
+/* phone */
+.phone{width:375px;max-width:100%;height:780px;background:#fff;border-radius:36px;overflow:hidden;position:relative;box-shadow:0 10px 40px rgba(15,42,77,.25);border:8px solid #111}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;background:#fff}
+.screen.on{display:flex}
+.status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:14px;font-weight:600;flex-shrink:0}
+
+/* login */
+.hero{height:250px;position:relative;flex-shrink:0;background:
+  linear-gradient(180deg,rgba(14,30,58,.55),rgba(14,30,58,.75)),
+  radial-gradient(ellipse at 70% 30%,#5d7ca8 0,transparent 55%),
+  radial-gradient(ellipse at 20% 80%,#2e4a72 0,transparent 60%),
+  linear-gradient(135deg,#3a5579,#1c2f4d);color:#fff}
+.hero .status{color:#fff;position:relative;z-index:2}
+.hero .back{position:absolute;left:14px;top:58px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;z-index:2}
+.slogan{position:absolute;left:0;right:0;top:78px;text-align:center;font-family:"Ma Shan Zheng",cursive;line-height:1.15;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.slogan .l1{font-size:30px;letter-spacing:2px}.slogan .l1 em{font-style:normal;font-size:52px}
+.slogan .l2{font-size:30px;letter-spacing:2px}.slogan .l2 em{font-style:normal;font-family:Georgia,serif;font-weight:700;font-size:44px;letter-spacing:0}
+.card{margin-top:-28px;background:#fff;border-radius:24px 24px 0 0;position:relative;z-index:3;padding:18px 28px 0;flex:1;display:flex;flex-direction:column}
+.card h2{text-align:center;color:var(--blue);font-size:16px;font-weight:500;margin-bottom:6px}
+
+.row{display:flex;align-items:center;min-height:56px;border-bottom:1px solid var(--line);font-size:15px;position:relative}
+.row .lab{width:86px;color:#555;flex-shrink:0}
+.row.err{border-bottom-color:var(--err)}
+.region{flex:1;display:flex;align-items:center;gap:8px;height:56px;text-align:left}
+.region .caret{margin-left:auto;border:5px solid transparent;border-top:6px solid #555;margin-top:5px}
+.flag{width:22px;height:15px;border-radius:2px;object-fit:cover;box-shadow:0 0 0 .5px rgba(0,0,0,.15)}
+.dial{width:70px;color:#555;flex-shrink:0;padding-right:10px;margin-right:12px;border-right:1px solid var(--line);line-height:22px}
+.dial input{width:52px;color:#555}
+.row input.f{flex:1;height:56px;font-size:15px}
+.row input.f::placeholder{color:#b7bcc5}
+.getcode{color:var(--blue);font-size:14px;white-space:nowrap;padding-left:8px}
+.getcode:disabled{color:#b7bcc5;cursor:default}
+.msg{color:var(--err);font-size:12px;min-height:18px;padding-top:3px}
+
+.primary{display:block;width:78%;margin:22px auto 0;height:46px;border-radius:23px;color:#fff;font-size:17px;letter-spacing:4px;
+  background:linear-gradient(90deg,var(--navy),var(--navy2));box-shadow:0 4px 12px rgba(15,42,77,.25);transition:opacity .2s}
+.primary:disabled{opacity:.45;box-shadow:none;cursor:default}
+.note{text-align:center;color:var(--sub);font-size:13px;margin-top:12px}
+
+.third{margin-top:auto;padding-top:24px}
+.divider{display:flex;align-items:center;gap:10px;color:var(--sub);font-size:13px;margin:0 -10px}
+.divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--line)}
+.icons{display:flex;justify-content:center;gap:36px;margin:16px 0 14px}
+.icons button{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.icons button:active{transform:scale(.92)}
+.icons .wx{background:#2dc100}.icons .gg{background:#fff;box-shadow:0 0 0 1px var(--line)}.icons .ap{background:#000}
+.agree{display:flex;gap:8px;font-size:12.5px;line-height:1.55;color:#333;padding-bottom:22px;text-align:left}
+.agree .ck{width:18px;height:18px;border-radius:50%;border:1.5px solid #b7bcc5;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.agree .ck.on{background:#4a8cf0;border-color:#4a8cf0}
+.agree a{color:var(--blue);text-decoration:none}
+.agree.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.tip{position:absolute;left:24px;bottom:58px;background:rgba(0,0,0,.78);color:#fff;font-size:12px;padding:6px 10px;border-radius:6px;display:none}
+.tip:after{content:"";position:absolute;left:12px;bottom:-5px;border:5px solid transparent;border-bottom:0;border-top-color:rgba(0,0,0,.78)}
+.tip.on{display:block}
+
+/* bind */
+.bhead{background:linear-gradient(120deg,#5d9bf5,#6aa6f7);color:#fff;flex-shrink:0;position:relative;overflow:hidden}
+.bhead:before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);right:-90px;top:-110px}
+.bhead .status{color:#fff}
+.bnav{height:56px;display:flex;align-items:center;justify-content:center;position:relative;font-size:17px;font-weight:500}
+.bnav .back{position:absolute;left:14px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center}
+.bscr{background:var(--bg)}
+.btip{color:var(--sub);font-size:13px;padding:12px 16px;line-height:1.5}
+.btip b{color:#333;font-weight:500}
+.bform{background:#fff;padding:0 16px}
+.bform .row{min-height:50px}.bform .region,.bform input.f{height:50px}
+.bform .msg{padding-left:0}
+.bbtn{display:block;margin:24px 16px 0;height:44px;border-radius:6px;background:#4f9df7;color:#fff;font-size:16px}
+.bbtn:disabled{background:#a9cdf8;cursor:default}
+
+/* mine */
+.mscr{background:#fff}
+.mtop{position:relative;height:250px;flex-shrink:0}
+.mbg{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,100% 58%,0 95%);background:
+  linear-gradient(180deg,rgba(40,60,95,.45),rgba(40,60,95,.65)),
+  radial-gradient(ellipse at 75% 35%,#8aa2c4 0,transparent 55%),
+  radial-gradient(ellipse at 15% 70%,#4d6890 0,transparent 60%),
+  linear-gradient(135deg,#5b7398,#2c4468)}
+.mtop .status{color:#fff;position:relative}
+.mtools{position:absolute;right:16px;top:64px;display:flex;gap:18px}
+.mtools button{width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.mfab{position:absolute;right:30px;top:96px;width:44px;height:44px;border-radius:50%;background:var(--navy);box-shadow:0 3px 10px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center}
+.mwho{position:absolute;left:22px;top:84px;color:#fff;text-align:left;max-width:220px}
+.mname{font-size:23px;font-weight:500;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtag{display:inline-flex;gap:6px;align-items:center;margin-top:8px;background:rgba(255,255,255,.22);font-size:12px;padding:5px 7px;line-height:1}
+.mtag .badge{background:rgba(255,255,255,.3);border-radius:8px;padding:2px 6px;font-size:11px}
+.mav{position:absolute;left:22px;top:146px;width:84px;height:84px;border-radius:50%;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.18);overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0}
+.mav .ini{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:34px;font-weight:600}
+.mstats{position:absolute;right:16px;top:186px;display:flex;gap:40px;text-align:center}
+.mstats .k{font-size:14px;color:#555}.mstats .v{font-size:17px;color:#e5484d;font-weight:600;margin-top:4px}
+.msec{font-size:16px;font-weight:600;padding:2px 14px;margin:6px 0 14px;border-left:3px solid var(--blue);margin-left:12px;padding-left:6px}
+.mcards{display:flex;gap:12px;padding:0 18px}
+.mcards div{flex:1;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);row-gap:22px;padding:24px 0 22px;font-size:13px;color:#555;text-align:center}
+.mgrid div{display:flex;flex-direction:column;align-items:center;gap:10px}
+.mban{margin:0 14px;height:84px;border-radius:4px;background:linear-gradient(100deg,#bfe7f6,#56a8ee);display:flex;align-items:center;padding:0 12px;gap:10px;color:#fff;position:relative}
+.mban b{font-size:18px;text-shadow:0 1px 3px rgba(0,60,140,.4)}.mban small{display:block;font-size:10px;opacity:.9}
+.mban i{position:absolute;right:10px;bottom:8px;font-style:normal;background:linear-gradient(90deg,#fff7df,#f2d58e);color:#8a5a12;font-size:12px;padding:5px 12px;border-radius:14px}
+.mtab{margin-top:auto;display:flex;border-top:1px solid #f0f1f4;padding:6px 8px 18px;background:#fff;flex-shrink:0}
+.mtab div{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:#333;padding:5px 0}
+.mtab div.on{color:#2f6fe4;background:#eef0f3;border-radius:16px}
+
+/* 编辑个人信息 */
+.escr{background:var(--bg)}
+.ehead{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;flex-shrink:0}
+.ehead .status{color:#fff}
+.enav{height:48px;display:flex;align-items:center;justify-content:center;position:relative;font-size:17px}
+.enav .back{position:absolute;left:12px;width:36px;height:36px;display:flex;align-items:center;justify-content:center}
+.eav{display:flex;flex-direction:column;align-items:center;padding:22px 0 16px;background:#fff;gap:8px;font-size:12.5px;color:var(--sub)}
+.eav button{width:80px;height:80px;border-radius:50%;position:relative;overflow:visible;padding:0}
+.eav .pic{width:80px;height:80px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#eef0f4;border:1.5px dashed #b7bcc5}
+.eav .pic.set{border:0}
+.eav .pic img,.mav img{width:100%;height:100%;object-fit:cover}
+.eav .cam{position:absolute;right:-2px;bottom:0;width:26px;height:26px;border-radius:50%;background:var(--navy2);border:2px solid #fff;display:flex;align-items:center;justify-content:center}
+.elist{background:#fff;margin-top:10px;padding:0 16px}
+.elist .row{min-height:52px}.elist .row .lab{width:72px}
+.elist .row .val{flex:1;text-align:right;color:#333;font-size:14.5px;display:flex;justify-content:flex-end;align-items:center;gap:6px}
+.elist .row .val.go{color:var(--sub)}
+.elist .row input.f{text-align:right;height:52px}
+.req{color:var(--err);margin-left:2px}
+.opt-tag{font-size:11px;color:var(--sub);background:#f1f2f5;border-radius:4px;padding:1px 5px;margin-left:4px;font-weight:400}
+.ok-tag{font-size:11px;color:#2a9d4b;background:#e8f6ec;border-radius:4px;padding:1px 6px}
+.ecount{font-size:12px;color:#b7bcc5;margin-left:8px}
+.esave{display:block;margin:28px 16px 20px;height:46px;border-radius:23px;color:#fff;font-size:16px;background:linear-gradient(90deg,var(--navy),var(--navy2))}
+.esave:disabled{opacity:.4;cursor:default}
+.avgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:6px 22px 14px}
+.avgrid button{aspect-ratio:1;border-radius:50%;overflow:hidden;padding:0}
+.efield{padding:4px 22px 6px}
+.efield .row{min-height:50px}.efield input.f{height:50px}
+
+/* overlay: sheet / dialog / toast / loading */
+.mask{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:20;display:none;align-items:flex-end}
+.mask.on{display:flex}.mask.center{align-items:center;justify-content:center}
+.sheet{background:#fff;width:100%;border-radius:16px 16px 0 0;padding-bottom:20px;animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(100%)}}
+.sheet h3{font-size:16px;font-weight:600;text-align:center;padding:16px 0 10px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;padding:13px 22px;font-size:15px;text-align:left}
+.opt .code{margin-left:auto;color:var(--sub)}
+.opt.on{color:var(--blue)}.opt.on .code{color:var(--blue)}
+.cancel{display:block;width:100%;border-top:8px solid #f3f4f6;padding:14px 0;font-size:15px;color:#555}
+.dialog{background:#fff;width:290px;border-radius:14px;overflow:hidden;text-align:center;animation:pop .18s}
+@keyframes pop{from{transform:scale(.9);opacity:0}}
+.dialog h4{font-size:16px;padding:20px 18px 6px}
+.dialog p{font-size:13.5px;color:#666;line-height:1.55;padding:0 18px 18px}
+.dialog .btns{display:flex;border-top:1px solid var(--line)}
+.dialog .btns button{flex:1;height:46px;font-size:15px}
+.dialog .btns button+button{border-left:1px solid var(--line);color:var(--blue);font-weight:600}
+.auth{padding:6px 22px 4px}
+.auth .who{display:flex;align-items:center;gap:10px;font-size:14px;color:#555;margin-bottom:14px}
+.auth .who i{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.auth h5{font-size:17px;font-weight:600;margin-bottom:6px}
+.auth p{font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:16px}
+.auth .acct{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:10px;margin-bottom:18px;font-size:14px}
+.auth .acct .av{width:36px;height:36px;border-radius:50%;background:#e8eef8;display:flex;align-items:center;justify-content:center}
+.auth .acts{display:flex;gap:12px}
+.auth .acts button{flex:1;height:42px;border-radius:8px;font-size:15px;background:#f2f3f5}
+.auth .acts .ok{color:#fff}
+.toast{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);color:#fff;font-size:14px;padding:10px 18px;border-radius:8px;z-index:40;display:none;max-width:260px;text-align:center;line-height:1.5}
+.toast.on{display:block;animation:pop .18s}
+.toast .ok{display:block;font-size:26px;margin-bottom:2px}
+.loading{position:absolute;inset:0;z-index:30;display:none;align-items:center;justify-content:center}
+.loading.on{display:flex}
+.loading div{background:rgba(0,0,0,.75);color:#fff;font-size:13px;padding:16px 20px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.spin{width:24px;height:24px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <span><b>设备</b><span class="seg" data-k="os"><button data-v="ios" class="on">iPhone</button><button data-v="android">Android</button></span></span>
+  <span><b>手机号</b><span class="seg" data-k="phoneReg"><button data-v="0" class="on">未注册</button><button data-v="1">已注册</button></span></span>
+  <span><b>第三方账号</b><span class="seg" data-k="tpBound"><button data-v="0" class="on">首次登录</button><button data-v="1">已绑定过</button></span></span>
+  <span class="hint">演示：验证码输入任意 6 位数字（000000 模拟验证码错误）。「手机号=已注册」时，第三方首登绑定会触发「该号码已有账号」分支。</span>
+</div>
+
+<div class="phone" id="phone">
+
+  <!-- 我的 -->
+  <section class="screen mscr on" id="s-mine">
+    <div class="mtop">
+      <div class="mbg"></div>
+      <div class="status"><span>3:02</span><span>●●● ▮</span></div>
+      <div class="mtools">
+        <button aria-label="扫一扫"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3M3 12h18"/></svg></button>
+        <button id="mSet" aria-label="设置"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></button>
+      </div>
+      <div class="mfab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5M8 8h8M8 12h5M18.5 13.5l2 2-5 5H13.5v-2z"/></svg></div>
+      <button class="mwho" id="mWho"><div class="mname" id="mName">登录/注册</div><div class="mtag" id="mTag">有家的地方就有Johome</div></button>
+      <button class="mav" id="mAvatar" aria-label="头像"></button>
+      <div class="mstats"><div><div class="k">收藏</div><div class="v" id="mFav">0</div></div><div><div class="k">浏览记录</div><div class="v">21</div></div></div>
+    </div>
+    <div class="msec">我的购房工具–温哥华</div>
+    <div class="mcards"><div style="background:linear-gradient(90deg,#eef5ff,#e8eaff)">我的偏好 📝</div><div style="background:linear-gradient(90deg,#ecfbef,#dcf7e4)">购房流程 📊</div></div>
+    <div class="mgrid">
+      <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#557" stroke-width="1.6"><path d="M4 20V13M9 20V9M14 20V11M19 20V4"/></svg>房产行情</div>
+      <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#557" stroke-width="1.6"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v4c0 1.7 3 3 7 3s7-1.3 7-3V6M5 10v4c0 1.7 3 3 7 3s7-1.3 7-3v-4"/></svg>贷款计算器</div>
+      <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#557" stroke-width="1.6"><path d="M3 17 17 3l4 4L7 21zM7 13l2 2M10 10l2 2M13 7l2 2"/></svg>AR设置</div>
+      <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#557" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M8.5 14.5c2 2 5 2 7 0"/></svg>关于我们</div>
+      <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#557" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6z"/></svg>经纪认证</div>
+    </div>
+    <div class="mban"><span style="font-size:34px">📣</span><div><b>邀请好友下载JoHome</b><small>Invite your Friend download App</small></div><i>立即邀请</i></div>
+    <div class="mtab"><div>⌂<span>首页</span></div><div>▦<span>地图</span></div><div>▤<span>资讯</span></div><div class="on">●<span>我的</span></div></div>
+  </section>
+
+  <!-- 登录 -->
+  <section class="screen" id="s-login">
+    <div class="hero">
+      <div class="status"><span>11:34</span><span>●●● ▮</span></div>
+      <button class="back" data-go="mine" aria-label="返回"><svg width="12" height="20" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="slogan"><div class="l1">有<em>家</em>的地方</div><div class="l2">就有 <em>Johome</em></div></div>
+    </div>
+    <div class="card">
+      <h2>手机短信登录</h2>
+      <div class="row"><span class="lab">国家/地区</span><button class="region" data-pick="login"></button></div>
+      <div class="row" id="lPhoneRow"><span class="dial"></span><input class="f" id="lPhone" inputmode="numeric" placeholder="请输入手机号" maxlength="15"></div>
+      <div class="msg" id="lPhoneMsg"></div>
+      <div class="row" id="lCodeRow" style="margin-top:-18px"><span class="lab">验证码</span><input class="f" id="lCode" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="getcode" id="lGet" disabled>获取验证码</button></div>
+      <div class="msg" id="lCodeMsg"></div>
+      <button class="primary" id="lSubmit" disabled>登录</button>
+      <div class="note">未注册过的手机号将自动创建账号</div>
+      <div class="third">
+        <div class="divider">第三方账号登录</div>
+        <div class="icons">
+          <button class="wx" data-tp="wechat" aria-label="微信登录"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M9.1 3.5C5 3.5 1.7 6.3 1.7 9.7c0 1.9 1 3.6 2.7 4.8l-.7 2.1 2.5-1.3c.9.3 1.9.4 2.9.4h.5a5.6 5.6 0 0 1-.2-1.5c0-3.4 3.2-6.1 7.2-6.1h.6C16.4 5.6 13.1 3.5 9.1 3.5Zm-2.6 4.4a.9.9 0 1 1 0-1.9.9.9 0 0 1 0 1.9Zm5.1 0a.9.9 0 1 1 0-1.9.9.9 0 0 1 0 1.9Z"/><path d="M22.3 14.1c0-2.9-2.8-5.2-6.2-5.2s-6.2 2.3-6.2 5.2 2.8 5.2 6.2 5.2c.7 0 1.4-.1 2.1-.3l2 1.1-.5-1.8c1.6-1 2.6-2.5 2.6-4.2Zm-8.2-.9a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm4 0a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"/></svg></button>
+          <button class="gg" data-tp="google" aria-label="谷歌登录"><svg width="22" height="22" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3a12 12 0 0 1-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.2-.1-2.3-.4-3.5z"/></svg></button>
+          <button class="ap" data-tp="apple" aria-label="苹果登录"><svg width="20" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M16.4 12.6c0-2.5 2-3.7 2.1-3.7-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.6 1.3-.1 1.7-.8 3.3-.8 1.5 0 1.9.8 3.3.8s2.2-1.3 3-2.5c1-1.4 1.4-2.8 1.4-2.8s-2.6-1-2.6-4.3ZM14 5.2c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4Z"/></svg></button>
+        </div>
+        <div class="agree" id="lAgree"><button class="ck" id="lCk" aria-label="同意协议"></button><span>注册/登录即代表同意<a href="javascript:;">《新趋势隐私政策》</a>及<a href="javascript:;">《新趋势用户服务协议》</a></span></div>
+      </div>
+      <div class="tip" id="lTip">请先阅读并勾选同意协议</div>
+    </div>
+  </section>
+
+  <!-- 手机号绑定 -->
+  <section class="screen bscr" id="s-bind">
+    <div class="bhead">
+      <div class="status"><span>2:31</span><span>●●● ▮</span></div>
+      <div class="bnav"><button class="back" id="bBack" aria-label="返回"><svg width="10" height="17" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>手机号绑定</div>
+    </div>
+    <div class="btip" id="bTip">为了更好保障您的账号安全，请绑定您的手机号！</div>
+    <div class="bform">
+      <div class="row"><span class="lab">国家/地区</span><button class="region" data-pick="bind"></button></div>
+      <div class="row" id="bPhoneRow"><span class="dial"></span><input class="f" id="bPhone" inputmode="numeric" placeholder="请输入您的手机号码" maxlength="15"></div>
+      <div class="msg" id="bPhoneMsg"></div>
+      <div class="row" id="bCodeRow" style="margin-top:-18px"><span class="lab">验证码</span><input class="f" id="bCode" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="getcode" id="bGet" disabled>获取验证码</button></div>
+      <div class="msg" id="bCodeMsg" style="padding-bottom:4px"></div>
+    </div>
+    <button class="bbtn" id="bSubmit" disabled>确定</button>
+  </section>
+
+  <!-- 编辑个人信息 -->
+  <section class="screen escr" id="s-edit">
+    <div class="ehead">
+      <div class="status"><span>3:02</span><span>●●● ▮</span></div>
+      <div class="enav"><button class="back" id="eBack" aria-label="返回"><svg width="11" height="18" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>编辑个人信息</div>
+    </div>
+    <div class="eav">
+      <button id="eAvBtn" aria-label="设置头像"><span class="pic" id="ePic"></span><span class="cam"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span></button>
+      <span id="eAvTxt">点击设置头像<span class="req">*</span></span>
+    </div>
+    <div class="elist">
+      <div class="row" id="eNameRow"><span class="lab">昵称<span class="req">*</span></span><input class="f" id="eName" maxlength="16" placeholder="请设置昵称"><span class="ecount" id="eCount">0/16</span></div>
+      <div class="row"><span class="lab">手机号</span><span class="val" id="ePhone"></span></div>
+    </div>
+    <div class="elist">
+      <button class="row" id="eWx" style="width:100%"><span class="lab">微信<span class="opt-tag">选填</span></span><span class="val go" id="eWxVal"></span></button>
+      <button class="row" id="eMail" style="width:100%;border-bottom:0"><span class="lab">邮箱<span class="opt-tag">选填</span></span><span class="val go" id="eMailVal"></span></button>
+    </div>
+    <button class="esave" id="eSave" disabled>完成</button>
+    <input type="file" id="eFile" accept="image/*" hidden>
+  </section>
+
+  <div class="mask" id="mask"></div>
+  <div class="loading" id="loading"><div><span class="spin"></span><span id="loadTxt">请稍候</span></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const FLAG=c=>`<img class="flag" src="https://flagcdn.com/w40/${c}.png" alt="">`;
+const GLOBE=`<svg class="flag" viewBox="0 0 24 16" style="box-shadow:none"><circle cx="12" cy="8" r="7" fill="none" stroke="#888" stroke-width="1.3"/><path d="M5 8h14M12 1c-3 3.5-3 10.5 0 14M12 1c3 3.5 3 10.5 0 14" fill="none" stroke="#888" stroke-width="1.1"/></svg>`;
+/* 号码规则：去掉空格/横线后校验 */
+const REGIONS=[
+  {id:'cn',name:'中国',dial:'86',icon:FLAG('cn'),re:/^1[3-9]\d{9}$/,len:11,err:'请输入 11 位中国大陆手机号'},
+  {id:'hk',name:'中国香港',dial:'852',icon:FLAG('hk'),re:/^[4-9]\d{7}$/,len:8,err:'请输入 8 位香港手机号'},
+  {id:'tw',name:'中国台湾',dial:'886',icon:FLAG('tw'),re:/^0?9\d{8}$/,len:10,err:'请输入 09 开头的台湾手机号'},
+  {id:'ca',name:'加拿大',dial:'1',icon:FLAG('ca'),re:/^[2-9]\d{2}[2-9]\d{6}$/,len:10,err:'请输入 10 位加拿大手机号'},
+  {id:'us',name:'美国',dial:'1',icon:FLAG('us'),re:/^[2-9]\d{2}[2-9]\d{6}$/,len:10,err:'请输入 10 位美国手机号'},
+  {id:'other',name:'其他',dial:'',icon:GLOBE,re:/^\d{5,15}$/,len:15,err:'请输入正确的手机号'}
+];
+const TP={wechat:{name:'微信',color:'#2dc100',acct:'微信用户 · 小林'},google:{name:'谷歌',color:'#4285f4',acct:'lin.j****@gmail.com'},apple:{name:'Apple',color:'#000',acct:'Apple ID · 已隐藏邮箱'}};
+const demo={os:'ios',phoneReg:'0',tpBound:'0'};
+let user=null, pendingTp=null;
+
+/* ---------- 演示工具条 ---------- */
+$$('.seg').forEach(seg=>seg.onclick=e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  demo[seg.dataset.k]=b.dataset.v;
+  if(seg.dataset.k==='os') $('[data-tp=apple]').style.display=demo.os==='ios'?'':'none';
+});
+
+/* ---------- 通用 ---------- */
+function go(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id==='s-'+id));}
+$$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+let tt; function toast(t,ok){const el=$('#toast');el.innerHTML=(ok?'<span class="ok">✓</span>':'')+t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1800);}
+function loading(on,t){$('#loading').classList.toggle('on',on);if(t)$('#loadTxt').textContent=t;}
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+const mask=$('#mask');
+function closeMask(){mask.classList.remove('on','center');mask.innerHTML='';}
+mask.onclick=e=>{if(e.target===mask&&!mask.classList.contains('center'))closeMask();};
+function dialog(title,body,cancelTxt,okTxt){
+  return new Promise(res=>{
+    mask.className='mask on center';
+    mask.innerHTML=`<div class="dialog"><h4>${title}</h4><p>${body}</p><div class="btns"><button data-r="0">${cancelTxt}</button><button data-r="1">${okTxt}</button></div></div>`;
+    mask.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{closeMask();res(b.dataset.r==='1');});
+  });
+}
+
+/* ---------- 表单（登录页与绑定页共用） ---------- */
+function makeForm(p){
+  const f={region:REGIONS.find(r=>r.id==='ca'),timer:0,left:0,sent:false,
+    phone:$('#'+p+'Phone'),code:$('#'+p+'Code'),get:$('#'+p+'Get'),submit:$('#'+p+'Submit'),
+    pRow:$('#'+p+'PhoneRow'),pMsg:$('#'+p+'PhoneMsg'),cRow:$('#'+p+'CodeRow'),cMsg:$('#'+p+'CodeMsg'),
+    regBtn:$(`[data-pick=${p==='l'?'login':'bind'}]`),dial:$('#'+p+'PhoneRow .dial')};
+  f.digits=()=>f.phone.value.replace(/\D/g,'');
+  f.dialCode=()=>f.region.id==='other'?(f.dial.querySelector('input').value.replace(/\D/g,'')):f.region.dial;
+  f.valid=()=>f.region.re.test(f.digits())&&(f.region.id!=='other'||/^\d{1,4}$/.test(f.dialCode()));
+  f.render=()=>{
+    f.regBtn.innerHTML=`${f.region.icon}<span>${f.region.name}</span><i class="caret"></i>`;
+    f.dial.innerHTML=f.region.id==='other'?`+<input placeholder="区号" maxlength="4" inputmode="numeric">`:'+'+f.region.dial;
+    const di=f.dial.querySelector('input'); if(di) di.oninput=f.update;
+    f.phone.maxLength=f.region.len; f.phone.value=f.phone.value.slice(0,f.region.len);
+    f.update();
+  };
+  f.update=()=>{
+    f.phone.value=f.phone.value.replace(/\D/g,''); f.code.value=f.code.value.replace(/\D/g,'');
+    if(!f.left) f.get.disabled=!f.valid();
+    f.submit.disabled=!(f.valid()&&f.code.value.length===6);
+    f.cMsg.textContent=''; f.cRow.classList.remove('err');
+  };
+  f.phone.oninput=()=>{f.pMsg.textContent='';f.pRow.classList.remove('err');f.update();};
+  f.phone.onblur=()=>{if(f.digits()&&!f.valid()){f.pMsg.textContent=f.region.id==='other'&&!f.dialCode()?'请填写国家/地区区号':f.region.err;f.pRow.classList.add('err');}};
+  f.code.oninput=f.update;
+  f.get.onclick=()=>{
+    if(!f.valid()){f.phone.onblur();return;}
+    if(p==='l'&&!agreed){needAgree();return;}
+    f.sent=true; f.left=60; f.get.disabled=true; tick();
+    toast(`验证码已发送至 +${f.dialCode()} ${f.digits()}<br><span style="opacity:.7;font-size:12px">（演示：任意 6 位数字）</span>`);
+    f.code.focus();
+  };
+  function tick(){f.get.textContent=f.left?`重新获取(${f.left}s)`:'获取验证码';if(!f.left){f.get.disabled=!f.valid();return;}f.left--;f.timer=setTimeout(tick,1000);}
+  f.reset=()=>{clearTimeout(f.timer);f.left=0;f.sent=false;f.phone.value='';f.code.value='';f.get.textContent='获取验证码';f.pMsg.textContent='';f.cMsg.textContent='';f.pRow.classList.remove('err');f.cRow.classList.remove('err');f.region=REGIONS.find(r=>r.id==='ca');f.render();};
+  f.codeErr=t=>{f.cMsg.textContent=t;f.cRow.classList.add('err');};
+  f.regBtn.onclick=()=>pickRegion(f);
+  f.render();
+  return f;
+}
+function pickRegion(f){
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><h3>选择国家/地区</h3>${REGIONS.map(r=>`<button class="opt ${r.id===f.region.id?'on':''}" data-id="${r.id}">${r.icon}<span>${r.name}</span><span class="code">${r.dial?'+'+r.dial:'手动填写区号'}</span></button>`).join('')}<button class="cancel">取消</button></div>`;
+  mask.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const r=REGIONS.find(x=>x.id===b.dataset.id);
+    if(r.id!==f.region.id){f.region=r;f.pMsg.textContent='';f.pRow.classList.remove('err');clearTimeout(f.timer);f.left=0;f.get.textContent='获取验证码';f.render();}
+    closeMask(); if(r.id==='other') f.dial.querySelector('input').focus();
+  });
+  mask.querySelector('.cancel').onclick=closeMask;
+}
+const L=makeForm('l'), B=makeForm('b');
+
+/* ---------- 协议勾选 ---------- */
+let agreed=false;
+$('#lCk').onclick=()=>{agreed=!agreed;$('#lCk').classList.toggle('on',agreed);$('#lCk').innerHTML=agreed?'<svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" fill="none" stroke="#fff" stroke-width="1.8"/></svg>':'';$('#lTip').classList.remove('on');};
+function needAgree(){const a=$('#lAgree');a.classList.remove('shake');void a.offsetWidth;a.classList.add('shake');$('#lTip').classList.add('on');setTimeout(()=>$('#lTip').classList.remove('on'),2200);}
+
+/* ---------- 手机号登录 ---------- */
+L.submit.onclick=async()=>{
+  if(!agreed){needAgree();return;}
+  if(!L.sent){L.codeErr('请先获取验证码');return;}
+  loading(true,'登录中');await wait(800);loading(false);
+  if(L.code.value==='000000'){L.codeErr('验证码错误，请重新输入');return;}
+  const isNew=demo.phoneReg==='0';
+  signIn({phone:`+${L.dialCode()} ${mask4(L.digits())}`,via:'手机号',name:'Johome 用户'+L.digits().slice(-4)});
+  if(isNew){openEdit(true);toast('注册成功<br><span style="opacity:.75;font-size:12px">设置一下头像和昵称吧</span>',true);}
+  else toast('登录成功',true);
+};
+function mask4(d){return d.length>7?d.slice(0,3)+'****'+d.slice(-4):d.slice(0,2)+'****'+d.slice(-2);}
+
+/* ---------- 第三方登录 ---------- */
+$$('[data-tp]').forEach(b=>b.onclick=()=>{if(!agreed){needAgree();return;}authSheet(b.dataset.tp);});
+function authSheet(k){
+  const t=TP[k], ico=document.querySelector(`[data-tp=${k}]`).innerHTML;
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><div class="auth">
+    <div class="who"><i style="background:${k==='google'?'#fff;box-shadow:0 0 0 1px #e3e6ec':t.color}">${ico.replace(/width="\d+" height="\d+"/,'width="16" height="16"')}</i>${t.name}授权登录</div>
+    <h5>Johome 申请使用你的${t.name}账号登录</h5>
+    <p>获取你的公开信息（昵称、头像）${k==='google'?'和邮箱地址':''}，用于创建或登录 Johome 账号。</p>
+    <div class="acct"><span class="av">👤</span>${t.acct}</div>
+    <div class="acts"><button data-r="0">拒绝</button><button class="ok" data-r="1" style="background:${k==='google'?'#4285f4':t.color}">${k==='apple'?'通过面容 ID 继续':'允许'}</button></div>
+  </div></div>`;
+  mask.querySelectorAll('[data-r]').forEach(b=>b.onclick=async()=>{
+    closeMask();
+    if(b.dataset.r==='0'){toast('已取消授权');return;}
+    loading(true,'登录中');await wait(900);loading(false);
+    if(demo.tpBound==='1'){
+      signIn({phone:'+1 604****0123',via:t.name,name:t.acct.split(' · ').pop()});
+      toast('登录成功',true);
+    }else{
+      pendingTp=k; B.reset();
+      $('#bTip').innerHTML=`已通过<b>${t.name}</b>授权。为了更好保障您的账号安全，请绑定您的手机号！`;
+      go('bind');
+    }
+  });
+}
+
+/* ---------- 手机号绑定 ---------- */
+B.submit.onclick=async()=>{
+  if(!B.sent){B.codeErr('请先获取验证码');return;}
+  loading(true,'绑定中');await wait(800);loading(false);
+  if(B.code.value==='000000'){B.codeErr('验证码错误，请重新输入');return;}
+  const t=TP[pendingTp], phone=`+${B.dialCode()} ${mask4(B.digits())}`;
+  if(demo.phoneReg==='1'){
+    const merge=await dialog('该手机号已注册',`${phone} 已有 Johome 账号。是否将${t.name}关联到该账号？关联后可用两种方式登录同一账号。`,'换个号码','关联并登录');
+    if(!merge){B.code.value='';B.phone.focus();B.update();return;}
+  }
+  finishBind(t,phone);
+};
+function finishBind(t,phone){
+  signIn({phone,via:t.name,name:t.acct.split(' · ').pop()});
+  pendingTp=null;
+  toast('绑定成功',true);
+}
+$('#bBack').onclick=async()=>{
+  const quit=await dialog('确定放弃绑定？','未绑定手机号将无法完成登录，本次授权将失效。','继续绑定','放弃');
+  if(quit){pendingTp=null;go('login');toast('已取消登录');}
+};
+
+/* ---------- 我的 ---------- */
+function signIn(u){
+  u.avatar=null; u.wechat=u.via==='微信'?u.name:null; u.email=u.via==='谷歌'?TP.google.acct:null;
+  user=u;renderMine();go('mine');L.reset();
+}
+/* 默认头像（未登录） */
+const DEF_AV=`<svg width="84" height="84" viewBox="0 0 84 84"><rect width="84" height="84" fill="#e6e7ea"/><circle cx="20" cy="26" r="11" fill="#cfd1d6"/><circle cx="64" cy="26" r="11" fill="#cfd1d6"/><ellipse cx="42" cy="50" rx="30" ry="26" fill="#fff"/><path d="M26 48q5-6 10 0M48 48q5-6 10 0" fill="none" stroke="#555" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="42" cy="56" rx="4" ry="3" fill="#555"/></svg>`;
+/* 登录后头像：第三方取平台头像，手机号注册用默认生成头像（演示用首字色块代替真实照片） */
+const AV_BG={'微信':'linear-gradient(135deg,#7fd36b,#2dc100)','谷歌':'linear-gradient(135deg,#7aa7ff,#4285f4)','Apple':'linear-gradient(135deg,#666,#111)','手机号':'linear-gradient(135deg,#6f9be0,#1e4a86)'};
+function renderMine(){
+  $('#mName').textContent=user?user.name:'登录/注册';
+  $('#mTag').innerHTML=user?`<span>${user.phone}</span><span class="badge">${user.via}登录</span>`:'有家的地方就有Johome';
+  $('#mAvatar').innerHTML=!user?DEF_AV:user.avatar?avHtml(user.avatar):`<span class="ini" style="background:${AV_BG[user.via]}">${user.name.slice(0,1).toUpperCase()}</span>`;
+}
+$('#mWho').onclick=$('#mAvatar').onclick=()=>{if(!user)go('login');};
+$('.mfab').onclick=()=>user?openEdit(false):go('login');
+
+/* ---------- 编辑个人信息 ---------- */
+/* 预设头像（演示用；生产为运营配置的头像库） */
+const PRESET=[['#ffd8a8','🐻'],['#c3e6cb','🐼'],['#cfe2ff','🐱'],['#f8d7da','🐰'],['#e2d9f3','🦊'],['#fff3bf','🐶'],['#d0ebff','🐧'],['#ffe3e3','🐨']]
+  .map(([bg,e])=>`<svg viewBox="0 0 80 80"><rect width="80" height="80" fill="${bg}"/><text x="40" y="54" font-size="40" text-anchor="middle">${e}</text></svg>`);
+const avHtml=a=>a.startsWith('data:')?`<img src="${a}" alt="">`:a;
+let draft=null, firstEdit=false;
+function openEdit(first){
+  firstEdit=first;
+  draft={avatar:user.avatar,name:first?'':user.name,wechat:user.wechat,email:user.email};
+  $('#eName').value=draft.name; $('#ePhone').innerHTML=`${user.phone} <span class="ok-tag">已绑定</span>`;
+  renderEdit(); go('edit');
+}
+function renderEdit(){
+  const pic=$('#ePic');
+  pic.innerHTML=draft.avatar?avHtml(draft.avatar):'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#b7bcc5" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>';
+  pic.classList.toggle('set',!!draft.avatar);
+  $('#eAvTxt').innerHTML=draft.avatar?'点击更换头像':'点击设置头像<span class="req">*</span>';
+  $('#eWxVal').innerHTML=draft.wechat?`${draft.wechat} <span class="ok-tag">已绑定</span>`:'去绑定 ›';
+  $('#eMailVal').innerHTML=draft.email?`${maskMail(draft.email)} <span class="ok-tag">已绑定</span>`:'去绑定 ›';
+  const n=$('#eName').value.trim(); $('#eCount').textContent=$('#eName').value.length+'/16';
+  $('#eSave').disabled=!(draft.avatar&&n.length>=2);
+}
+function maskMail(m){const [a,d]=m.split('@');return d?a.slice(0,2)+'***@'+d:m;}
+$('#eName').oninput=()=>{draft.name=$('#eName').value;$('#eNameRow').classList.remove('err');renderEdit();};
+$('#eAvBtn').onclick=()=>{
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><h3>设置头像</h3><button class="opt" id="avCam">拍照</button><button class="opt" id="avAlb">从相册选择</button><div style="font-size:13px;color:var(--sub);padding:8px 22px 10px">或选择一个默认头像</div><div class="avgrid">${PRESET.map((p,i)=>`<button data-i="${i}">${p}</button>`).join('')}</div><button class="cancel">取消</button></div>`;
+  mask.querySelector('.cancel').onclick=closeMask;
+  $('#avCam').onclick=$('#avAlb').onclick=()=>{closeMask();$('#eFile').click();};
+  mask.querySelectorAll('.avgrid button').forEach(b=>b.onclick=()=>{draft.avatar=PRESET[b.dataset.i];closeMask();renderEdit();});
+};
+$('#eFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{draft.avatar=r.result;renderEdit();};r.readAsDataURL(f);e.target.value='';};
+$('#eWx').onclick=async()=>{
+  if(draft.wechat){if(await dialog('解绑微信','解绑后将不能用微信登录此账号。','取消','解绑')){draft.wechat=null;renderEdit();}return;}
+  if(!await dialog('绑定微信','即将跳转微信授权，绑定后可用微信一键登录。','取消','去授权'))return;
+  loading(true,'正在跳转微信');await wait(900);loading(false);
+  draft.wechat='小林';renderEdit();toast('微信绑定成功',true);
+};
+$('#eMail').onclick=()=>{
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><h3>${draft.email?'更换邮箱':'绑定邮箱'}</h3><div class="efield">
+    <div class="row"><span class="lab">邮箱</span><input class="f" id="mlIn" type="email" placeholder="请输入邮箱地址"></div><div class="msg" id="mlMsg"></div>
+    <div class="row" style="margin-top:-18px"><span class="lab">验证码</span><input class="f" id="mlCode" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="getcode" id="mlGet">获取验证码</button></div><div class="msg" id="mlCMsg"></div>
+  </div><button class="primary" id="mlOk" style="margin:6px auto 16px" disabled>绑定</button><button class="cancel">取消</button></div>`;
+  const inp=$('#mlIn'),code=$('#mlCode'),ok=$('#mlOk'),valid=()=>/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(inp.value.trim());
+  let sent=false;
+  const upd=()=>{code.value=code.value.replace(/\D/g,'');ok.disabled=!(valid()&&code.value.length===6);$('#mlMsg').textContent='';};
+  inp.oninput=code.oninput=upd;
+  $('#mlGet').onclick=()=>{if(!valid()){$('#mlMsg').textContent='请输入正确的邮箱地址';return;}sent=true;$('#mlGet').disabled=true;$('#mlGet').textContent='已发送';toast('验证码已发送至邮箱<br><span style="opacity:.7;font-size:12px">（演示：任意 6 位数字）</span>');};
+  ok.onclick=()=>{if(!sent){$('#mlCMsg').textContent='请先获取验证码';return;}if(code.value==='000000'){$('#mlCMsg').textContent='验证码错误，请重新输入';return;}draft.email=inp.value.trim();closeMask();renderEdit();toast('邮箱绑定成功',true);};
+  mask.querySelector('.cancel').onclick=closeMask;
+};
+$('#eSave').onclick=()=>{
+  const n=$('#eName').value.trim();
+  if(n.length<2){$('#eNameRow').classList.add('err');toast('昵称至少 2 个字');return;}
+  Object.assign(user,{avatar:draft.avatar,name:n,wechat:draft.wechat,email:draft.email});
+  renderMine();go('mine');toast(firstEdit?'资料设置完成':'已保存',true);firstEdit=false;
+};
+$('#eBack').onclick=async()=>{
+  if(firstEdit){
+    if(!await dialog('暂不设置？','可以稍后点「我的」页右上角按钮继续设置头像和昵称。','继续设置','稍后'))return;
+  }
+  go('mine');
+};
+/* 退出登录放在设置里 */
+$('#mSet').onclick=()=>{
+  if(!user){toast('登录后可进入设置');return;}
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><h3>设置</h3><button class="opt">账号与安全</button><button class="opt">消息通知</button><button class="opt" id="doOut" style="color:var(--err)">退出登录</button><button class="cancel">取消</button></div>`;
+  mask.querySelector('.cancel').onclick=closeMask;
+  $('#doOut').onclick=async()=>{closeMask();if(await dialog('退出登录','退出后将无法同步收藏与找房任务。','取消','退出')){user=null;renderMine();toast('已退出登录');}};
+};
+renderMine();
+})();
+</script>
+</body>
+</html>
