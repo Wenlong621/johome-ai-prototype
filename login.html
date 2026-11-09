@@ -165,6 +165,9 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .kb .acc .py{color:var(--blue);font-size:14px;margin-right:6px}
 .kb .acc .cand{font-size:16px;padding:4px 10px;border-radius:6px}
 .kb .acc .cand:active{background:#dde1e7}
+.kb .acc .sug{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;color:#111;line-height:1.15;border-radius:6px;padding:3px 0;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.kb .acc .sug small{font-size:10.5px;color:#666}
+.kb .acc .sug:active{background:#dde1e7}
 .kb .acc .done{margin-left:auto;color:var(--blue);font-size:15px;font-weight:600;padding:6px 4px}
 .kb .krow{display:flex;justify-content:center;gap:5px;margin-bottom:9px}
 .kb .k{height:40px;flex:1;max-width:32px;background:#fff;border-radius:5px;box-shadow:0 1px 0 #898a8d;font-size:19px;display:flex;align-items:center;justify-content:center;color:#111}
@@ -277,7 +280,7 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
       <div class="note">未注册过的手机号将自动创建账号</div>
       </div>
       <div id="lMailPane" hidden>
-      <div class="row" id="emRow"><span class="lab">邮箱</span><input class="f" id="emIn" type="email" placeholder="请输入邮箱地址" maxlength="64"></div>
+      <div class="row" id="emRow"><span class="lab">邮箱</span><input class="f" id="emIn" type="text" data-kb="email" autocomplete="off" placeholder="请输入邮箱地址" maxlength="64"></div>
       <div class="msg" id="emMsg"></div>
       <div class="row" id="emCodeRow" style="margin-top:-18px"><span class="lab">验证码</span><input class="f" id="emCode" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="getcode" id="emGet" disabled>获取验证码</button></div>
       <div class="msg" id="emCMsg"></div>
@@ -359,6 +362,7 @@ const REGIONS=[
 const TP={wechat:{name:'微信',color:'#2dc100',acct:'微信用户 · 小林'},google:{name:'谷歌',color:'#4285f4',acct:'lin.j****@gmail.com'},apple:{name:'Apple',color:'#000',acct:'Apple ID · 已隐藏邮箱'}};
 const demo={os:'ios',phoneReg:'0',tpBound:'0'};
 let user=null, pendingTp=null;
+const SMS={}; const genCode=()=>String(100000+Math.floor(Math.random()*900000));  /* 每次发送生成一个演示验证码，键盘建议栏可一键填入 */
 
 /* ---------- 演示工具条 ---------- */
 $$('.seg').forEach(seg=>seg.onclick=e=>{
@@ -413,8 +417,8 @@ function makeForm(p){
   f.get.onclick=()=>{
     if(!f.valid()){f.phone.onblur();return;}
     if(p==='l'&&!agreed){needAgree();return;}
-    f.sent=true; f.left=60; f.get.disabled=true; tick();
-    toast(`验证码已发送至 +${f.dialCode()} ${f.digits()}<br><span style="opacity:.7;font-size:12px">（演示：任意 6 位数字）</span>`);
+    f.sent=true; f.left=60; f.get.disabled=true; SMS[p]=genCode(); tick();
+    toast(`验证码已发送至 +${f.dialCode()} ${f.digits()}<br><span style="opacity:.7;font-size:12px">（演示：点键盘上方的建议可一键填入）</span>`);
     f.code.focus();
   };
   function tick(){f.get.textContent=f.left?`重新获取(${f.left}s)`:'获取验证码';if(!f.left){f.get.disabled=!f.valid();return;}f.left--;f.timer=setTimeout(tick,1000);}
@@ -473,8 +477,8 @@ $('#emCode').oninput=emUpd;
 $('#emGet').onclick=()=>{
   if(!emValid()){$('#emIn').onblur();return;}
   if(!agreed){needAgree();return;}
-  EM.sent=true; EM.left=60; $('#emGet').disabled=true; (function tick(){$('#emGet').textContent=EM.left?`重新获取(${EM.left}s)`:'获取验证码';if(!EM.left){$('#emGet').disabled=!emValid();return;}EM.left--;EM.timer=setTimeout(tick,1000);})();
-  toast(`验证码已发送至 ${$('#emIn').value.trim()}<br><span style="opacity:.7;font-size:12px">（演示：任意 6 位数字）</span>`);
+  EM.sent=true; SMS.em=genCode(); EM.left=60; $('#emGet').disabled=true; (function tick(){$('#emGet').textContent=EM.left?`重新获取(${EM.left}s)`:'获取验证码';if(!EM.left){$('#emGet').disabled=!emValid();return;}EM.left--;EM.timer=setTimeout(tick,1000);})();
+  toast(`验证码已发送至 ${$('#emIn').value.trim()}<br><span style="opacity:.7;font-size:12px">（演示：点键盘上方的建议可一键填入）</span>`);
   $('#emCode').focus();
 };
 function emReset(){clearTimeout(EM.timer);EM.left=0;EM.sent=false;$('#emIn').value='';$('#emCode').value='';$('#emGet').textContent='获取验证码';$('#emMsg').textContent='';$('#emCMsg').textContent='';emUpd();}
@@ -616,14 +620,14 @@ $('#eWx').onclick=async()=>{
 $('#eMail').onclick=()=>{
   mask.className='mask on';
   mask.innerHTML=`<div class="sheet"><h3>${draft.email?'更换邮箱':'绑定邮箱'}</h3><div class="efield">
-    <div class="row"><span class="lab">邮箱</span><input class="f" id="mlIn" type="email" placeholder="请输入邮箱地址"></div><div class="msg" id="mlMsg"></div>
+    <div class="row"><span class="lab">邮箱</span><input class="f" id="mlIn" type="text" data-kb="email" autocomplete="off" placeholder="请输入邮箱地址"></div><div class="msg" id="mlMsg"></div>
     <div class="row" style="margin-top:-18px"><span class="lab">验证码</span><input class="f" id="mlCode" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="getcode" id="mlGet">获取验证码</button></div><div class="msg" id="mlCMsg"></div>
   </div><button class="primary" id="mlOk" style="margin:6px auto 16px" disabled>绑定</button><button class="cancel">取消</button></div>`;
   const inp=$('#mlIn'),code=$('#mlCode'),ok=$('#mlOk'),valid=()=>/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(inp.value.trim());
   let sent=false;
   const upd=()=>{code.value=code.value.replace(/\D/g,'');ok.disabled=!(valid()&&code.value.length===6);$('#mlMsg').textContent='';};
   inp.oninput=code.oninput=upd;
-  $('#mlGet').onclick=()=>{if(!valid()){$('#mlMsg').textContent='请输入正确的邮箱地址';return;}sent=true;$('#mlGet').disabled=true;$('#mlGet').textContent='已发送';toast('验证码已发送至邮箱<br><span style="opacity:.7;font-size:12px">（演示：任意 6 位数字）</span>');};
+  $('#mlGet').onclick=()=>{if(!valid()){$('#mlMsg').textContent='请输入正确的邮箱地址';return;}sent=true;SMS.ml=genCode();$('#mlGet').disabled=true;$('#mlGet').textContent='已发送';toast('验证码已发送至邮箱<br><span style="opacity:.7;font-size:12px">（演示：点键盘上方的建议可一键填入）</span>');};
   ok.onclick=()=>{if(!sent){$('#mlCMsg').textContent='请先获取验证码';return;}if(code.value==='000000'){$('#mlCMsg').textContent='验证码错误，请重新输入';return;}draft.email=inp.value.trim();closeMask();renderEdit();toast('邮箱绑定成功',true);};
   mask.querySelector('.cancel').onclick=closeMask;
 };
@@ -656,7 +660,9 @@ const kb=$('#kb'), phone=$('#phone');
 const PY={wang:'王网望往旺',xiao:'小晓笑校',lin:'林琳临',zhang:'张章',li:'李丽力莉',chen:'陈晨辰',liu:'刘柳',yang:'杨阳洋',huang:'黄',zhao:'赵',zhou:'周舟',wu:'吴武',jia:'家佳嘉',fang:'房方芳',wen:'温文',ge:'哥歌',hua:'华花',mai:'买麦',hao:'好浩豪',ai:'爱',an:'安',mei:'美梅',yu:'雨宇玉鱼',xin:'新心欣',tian:'天甜田',ming:'明',le:'乐',da:'大达',ren:'人',feng:'风枫峰',lan:'蓝兰',bai:'白',hai:'海',xue:'雪学',yun:'云',shan:'山',meng:'梦萌',qing:'青晴清',zi:'子紫',jun:'君俊',wo:'我',de:'的',jiu:'就',you:'有'};
 let kbEl=null, kbType='', shift=false, sym=false, zh=true, pyBuf='';
 const kbH=()=>kb.offsetHeight;
+$$('#phone input').forEach(i=>i.setAttribute('autocomplete','off'));
 function kbKind(el){
+  el.setAttribute('autocomplete','off');   // 关掉浏览器自己的自动填充浮层，建议统一放进键盘顶栏
   if(!el.dataset.kb) el.dataset.kb=el.type==='email'?'email':el.id==='eName'?'text':'num';
   el.inputMode='none';
   return el.dataset.kb;
@@ -678,6 +684,21 @@ function cands(){
   Object.keys(PY).filter(k=>k!==pyBuf&&k.startsWith(pyBuf)).forEach(k=>out.push(PY[k][0]));
   return [...new Set(out)].slice(0,8);
 }
+/* 键盘顶部建议栏（iOS QuickType / Android 自动填充）：邮箱=本机账号邮箱，手机号=本机号码，验证码=来自信息/邮件 */
+const DEMO_MAIL='xiaolin.demo@gmail.com';
+const DEMO_TEL={'1':['6045550123','604-555-0123'],'86':['13800138000','138 0013 8000'],'852':['51234567','5123 4567'],'886':['0912345678','0912 345 678']};
+function sugg(){
+  if(!kbEl) return '';
+  const id=kbEl.id, v=kbEl.value;
+  const chip=(val,html)=>`<button class="sug" data-a="s:${val}">${html}</button>`;
+  if(id==='emIn'||id==='mlIn') return DEMO_MAIL.startsWith(v)&&v!==DEMO_MAIL?chip(DEMO_MAIL,DEMO_MAIL):'';
+  if(id==='lPhone'||id==='bPhone'){
+    const t=DEMO_TEL[(id==='lPhone'?L:B).dialCode()]; return t&&t[0].startsWith(v)&&v!==t[0]?chip(t[0],t[1]):'';
+  }
+  const k={lCode:'l',bCode:'b',emCode:'em',mlCode:'ml'}[id], c=k&&SMS[k];
+  if(c&&v!==c) return chip(c,`<small>${k==='em'||k==='ml'?'来自邮件':'来自信息'}</small>${c}`);
+  return '';
+}
 function key(label,cls,act,extra){return `<button class="k ${cls||''}" data-a="${act}">${label}${extra||''}</button>`;}
 function renderKb(){
   kb.classList.toggle('android',demo.os==='android');
@@ -685,6 +706,7 @@ function renderKb(){
   const isZh=kbType==='text'&&zh&&!sym;
   let acc='';
   if(isZh&&pyBuf) acc=`<span class="py">${pyBuf}</span>`+cands().map(c=>`<button class="cand" data-a="c:${c}">${c}</button>`).join('');
+  else acc+=sugg();
   acc+=`<button class="done" data-a="done">完成</button>`;
   let rows='';
   if(kbType==='num'){
@@ -715,7 +737,8 @@ kb.addEventListener('touchstart',e=>{if(e.target.closest('button'))e.preventDefa
 kb.onclick=e=>{
   const b=e.target.closest('[data-a]'); if(!b) return;
   const a=b.dataset.a;
-  if(a.startsWith('i:')) insert(a.slice(2));
+  if(a.startsWith('s:')){kbEl.value=a.slice(2);kbEl.dispatchEvent(new Event('input',{bubbles:true}));}
+  else if(a.startsWith('i:')) insert(a.slice(2));
   else if(a.startsWith('l:')){
     const c=shift?a.slice(2).toUpperCase():a.slice(2);
     if(kbType==='text'&&zh){pyBuf+=c.toLowerCase();}
