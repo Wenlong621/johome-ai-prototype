@@ -142,7 +142,8 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .eav .pic img,.mav img{width:100%;height:100%;object-fit:cover}
 .eav .cam{position:absolute;right:-2px;bottom:0;width:26px;height:26px;border-radius:50%;background:var(--navy2);border:2px solid #fff;display:flex;align-items:center;justify-content:center}
 .elist{background:#fff;margin-top:10px;padding:0 16px}
-.elist .row{min-height:52px}.elist .row .lab{width:72px}
+.screen>*{flex-shrink:0}
+.elist .row{min-height:52px;text-align:left}.elist .row .lab{width:104px;white-space:nowrap}
 .elist .row .val{flex:1;text-align:right;color:#333;font-size:14.5px;display:flex;justify-content:flex-end;align-items:center;gap:6px}
 .elist .row .val.go{color:var(--sub)}
 .elist .row input.f{text-align:right;height:52px}
@@ -156,6 +157,31 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .avgrid button{aspect-ratio:1;border-radius:50%;overflow:hidden;padding:0}
 .efield{padding:4px 22px 6px}
 .efield .row{min-height:50px}.efield input.f{height:50px}
+
+/* 模拟键盘 */
+.kb{position:absolute;left:0;right:0;bottom:0;z-index:35;background:#d1d4db;padding:0 3px 22px;transform:translateY(100%);transition:transform .25s ease-out;user-select:none;-webkit-user-select:none;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.kb.on{transform:none}
+.kb .acc{height:40px;display:flex;align-items:center;background:#f6f7f9;margin:0 -3px 6px;padding:0 12px;border-top:1px solid #c7cad1;gap:4px;overflow-x:auto;white-space:nowrap}
+.kb .acc .py{color:var(--blue);font-size:14px;margin-right:6px}
+.kb .acc .cand{font-size:16px;padding:4px 10px;border-radius:6px}
+.kb .acc .cand:active{background:#dde1e7}
+.kb .acc .done{margin-left:auto;color:var(--blue);font-size:15px;font-weight:600;padding:6px 4px}
+.kb .krow{display:flex;justify-content:center;gap:5px;margin-bottom:9px}
+.kb .k{height:40px;flex:1;max-width:32px;background:#fff;border-radius:5px;box-shadow:0 1px 0 #898a8d;font-size:19px;display:flex;align-items:center;justify-content:center;color:#111}
+.kb .k:active{background:#bcc0c7}
+.kb .k.fn{background:#abb0ba;max-width:44px;font-size:14px;flex:1.4}
+.kb .k.fn:active{background:#fff}
+.kb .k.wide{max-width:none;flex:5;font-size:14px}
+.kb .k.ret{background:var(--blue);color:#fff;max-width:none;flex:2.2;font-size:14px}
+.kb .k.on{background:#fff}
+.kb.num .krow{gap:6px;margin-bottom:7px;padding:0 3px}
+.kb.num .k{max-width:none;height:46px;flex-direction:column;font-size:24px;line-height:1}
+.kb.num .k small{font-size:9px;letter-spacing:2px;margin-top:1px;color:#333}
+.kb.num .k.blank{background:none;box-shadow:none}
+.kb.num .k.del{background:none;box-shadow:none}
+.kb.android{background:#eceff1}
+.kb.android .k{box-shadow:none;border-radius:6px}
+.kb.android .k.fn{background:#d5dade}
 
 /* overlay: sheet / dialog / toast / loading */
 .mask{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:20;display:none;align-items:flex-end}
@@ -311,6 +337,7 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
   </section>
 
   <div class="mask" id="mask"></div>
+  <div class="kb" id="kb"></div>
   <div class="loading" id="loading"><div><span class="spin"></span><span id="loadTxt">请稍候</span></div></div>
   <div class="toast" id="toast"></div>
 </div>
@@ -621,6 +648,120 @@ $('#mSet').onclick=()=>{
   $('#doOut').onclick=async()=>{closeMask();if(await dialog('退出登录','退出后将无法同步收藏与找房任务。','取消','退出')){user=null;renderMine();toast('已退出登录');}};
 };
 renderMine();
+
+/* ================= 模拟系统键盘 =================
+   聚焦输入框时从底部弹起；数字框=九宫格数字键盘，邮箱=带 @ . 的英文键盘，昵称=中英文键盘（简易拼音候选）。
+   inputmode=none 让真机不再弹系统键盘；电脑上的实体键盘仍可直接输入。 */
+const kb=$('#kb'), phone=$('#phone');
+const PY={wang:'王网望往旺',xiao:'小晓笑校',lin:'林琳临',zhang:'张章',li:'李丽力莉',chen:'陈晨辰',liu:'刘柳',yang:'杨阳洋',huang:'黄',zhao:'赵',zhou:'周舟',wu:'吴武',jia:'家佳嘉',fang:'房方芳',wen:'温文',ge:'哥歌',hua:'华花',mai:'买麦',hao:'好浩豪',ai:'爱',an:'安',mei:'美梅',yu:'雨宇玉鱼',xin:'新心欣',tian:'天甜田',ming:'明',le:'乐',da:'大达',ren:'人',feng:'风枫峰',lan:'蓝兰',bai:'白',hai:'海',xue:'雪学',yun:'云',shan:'山',meng:'梦萌',qing:'青晴清',zi:'子紫',jun:'君俊',wo:'我',de:'的',jiu:'就',you:'有'};
+let kbEl=null, kbType='', shift=false, sym=false, zh=true, pyBuf='';
+const kbH=()=>kb.offsetHeight;
+function kbKind(el){
+  if(!el.dataset.kb) el.dataset.kb=el.type==='email'?'email':el.id==='eName'?'text':'num';
+  el.inputMode='none';
+  return el.dataset.kb;
+}
+function insert(s){
+  const el=kbEl; if(!el) return;
+  const max=el.maxLength>0?el.maxLength:999;
+  if(el.value.length>=max) return;
+  el.value=(el.value+s).slice(0,max); el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function backspace(){
+  if(pyBuf){pyBuf=pyBuf.slice(0,-1);renderKb();return;}
+  if(!kbEl||!kbEl.value) return;
+  kbEl.value=[...kbEl.value].slice(0,-1).join(''); kbEl.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function cands(){
+  if(!pyBuf) return [];
+  const out=[]; if(PY[pyBuf]) out.push(...PY[pyBuf]);
+  Object.keys(PY).filter(k=>k!==pyBuf&&k.startsWith(pyBuf)).forEach(k=>out.push(PY[k][0]));
+  return [...new Set(out)].slice(0,8);
+}
+function key(label,cls,act,extra){return `<button class="k ${cls||''}" data-a="${act}">${label}${extra||''}</button>`;}
+function renderKb(){
+  kb.classList.toggle('android',demo.os==='android');
+  kb.classList.toggle('num',kbType==='num');
+  const isZh=kbType==='text'&&zh&&!sym;
+  let acc='';
+  if(isZh&&pyBuf) acc=`<span class="py">${pyBuf}</span>`+cands().map(c=>`<button class="cand" data-a="c:${c}">${c}</button>`).join('');
+  acc+=`<button class="done" data-a="done">完成</button>`;
+  let rows='';
+  if(kbType==='num'){
+    const sub=['','ABC','DEF','GHI','JKL','MNO','PQRS','TUV','WXYZ'];
+    for(let r=0;r<3;r++) rows+=`<div class="krow">${[1,2,3].map(i=>{const n=r*3+i;return key(n,'','i:'+n,`<small>${sub[n-1]}</small>`);}).join('')}</div>`;
+    rows+=`<div class="krow">${key('','blank','none')}${key('0','','i:0')}${key('⌫','del','del')}</div>`;
+  }else if(sym){
+    rows+=`<div class="krow">${'1234567890'.split('').map(c=>key(c,'','i:'+c)).join('')}</div>`;
+    rows+=`<div class="krow">${'-/:;()$&@"'.split('').map(c=>key(c,'','i:'+c)).join('')}</div>`;
+    rows+=`<div class="krow">${key('#+=','fn','none')}${'._,?!\''.split('').map(c=>key(c,'','i:'+c)).join('')}${key('⌫','fn','del')}</div>`;
+  }else{
+    const up=c=>shift?c.toUpperCase():c;
+    rows+=`<div class="krow">${'qwertyuiop'.split('').map(c=>key(up(c),'','l:'+c)).join('')}</div>`;
+    rows+=`<div class="krow" style="padding:0 16px">${'asdfghjkl'.split('').map(c=>key(up(c),'','l:'+c)).join('')}</div>`;
+    rows+=`<div class="krow">${key('⇧','fn'+(shift?' on':''),'shift')}${'zxcvbnm'.split('').map(c=>key(up(c),'','l:'+c)).join('')}${key('⌫','fn','del')}</div>`;
+  }
+  if(kbType!=='num'){
+    let last=key(sym?'ABC':'123','fn','sym');
+    if(kbType==='email') last+=key('@','','i:@')+key('.','','i:.')+key('space','wide','i: ');
+    else last+=key(zh?'中':'英','fn','zh')+key(isZh?'空格':'space','wide','space');
+    last+=key(kbType==='email'?'完成':'确认','ret','done');
+    rows+=`<div class="krow">${last}</div>`;
+  }
+  kb.innerHTML=`<div class="acc">${acc}</div>${rows}`;
+}
+kb.addEventListener('mousedown',e=>e.preventDefault());   // 点键盘不让输入框失焦
+kb.addEventListener('touchstart',e=>{if(e.target.closest('button'))e.preventDefault();e.target.closest('button')?.click();},{passive:false});
+kb.onclick=e=>{
+  const b=e.target.closest('[data-a]'); if(!b) return;
+  const a=b.dataset.a;
+  if(a.startsWith('i:')) insert(a.slice(2));
+  else if(a.startsWith('l:')){
+    const c=shift?a.slice(2).toUpperCase():a.slice(2);
+    if(kbType==='text'&&zh){pyBuf+=c.toLowerCase();}
+    else insert(c);
+    if(shift){shift=false;}
+  }
+  else if(a.startsWith('c:')){insert(a.slice(2));pyBuf='';}
+  else if(a==='del') backspace();
+  else if(a==='shift') shift=!shift;
+  else if(a==='sym'){sym=!sym;}
+  else if(a==='zh'){if(pyBuf){insert(pyBuf);pyBuf='';}zh=!zh;}
+  else if(a==='space'){if(pyBuf){const c=cands();insert(c[0]||pyBuf);pyBuf='';}else insert(' ');}
+  else if(a==='done'){if(pyBuf){insert(pyBuf);pyBuf='';}kbEl&&kbEl.blur();kbHide();return;}
+  renderKb();
+};
+function kbShow(el){
+  const t=kbKind(el);
+  if(kbEl!==el){pyBuf='';sym=false;shift=false;}
+  kbEl=el; kbType=t; renderKb(); kb.classList.add('on');
+  /* 把内容托到键盘上方 */
+  const h=kbH();
+  $$('.screen').forEach(s=>s.style.paddingBottom='');
+  mask.style.paddingBottom='';
+  if(el.closest('.mask')){mask.style.paddingBottom=h-22+'px';}
+  else{
+    const scr=el.closest('.screen'); scr.style.paddingBottom=h+'px';
+    const row=el.closest('.row')||el;
+    const sr=scr.getBoundingClientRect(), rr=row.getBoundingClientRect();
+    const visibleBottom=sr.bottom-h-16;
+    if(rr.bottom>visibleBottom) scr.scrollTo({top:scr.scrollTop+(rr.bottom-visibleBottom)+40,behavior:'smooth'});
+  }
+}
+function kbHide(){
+  if(pyBuf&&kbEl){insert(pyBuf);pyBuf='';}
+  kb.classList.remove('on'); kbEl=null;
+  $$('.screen').forEach(s=>s.style.paddingBottom=''); mask.style.paddingBottom='';
+}
+phone.addEventListener('focusin',e=>{if(e.target.matches('input:not([type=file])'))kbShow(e.target);});
+phone.addEventListener('focusout',e=>{
+  if(e.target!==kbEl) return;
+  setTimeout(()=>{const a=document.activeElement;if(!(a&&a.matches&&a.matches('#phone input')))kbHide();},0);
+});
+const goOrig=go; go=function(id){if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();kbHide();goOrig(id);};
+const closeOrig=closeMask; closeMask=function(){if(kbEl&&kbEl.closest('.mask')){kbEl.blur();kbHide();}closeOrig();};
+/* 演示工具条切换系统时键盘外观同步 */
+$('[data-k=os]').addEventListener('click',()=>{if(kb.classList.contains('on'))renderKb();});
 })();
 </script>
 </body>
