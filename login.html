@@ -42,6 +42,10 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .card{margin-top:-28px;background:#fff;border-radius:24px 24px 0 0;position:relative;z-index:3;padding:18px 28px 0;flex:1;display:flex;flex-direction:column}
 .card h2{text-align:center;color:var(--blue);font-size:16px;font-weight:500;margin-bottom:6px}
 
+.ltabs{display:flex;justify-content:center;gap:44px;margin-bottom:2px}
+.ltabs button{font-size:16px;color:#888;padding:2px 2px 9px;position:relative}
+.ltabs button.on{color:var(--blue);font-weight:600}
+.ltabs button.on:after{content:"";position:absolute;left:50%;bottom:0;width:20px;height:3px;border-radius:2px;background:var(--blue);transform:translateX(-50%)}
 .row{display:flex;align-items:center;min-height:56px;border-bottom:1px solid var(--line);font-size:15px;position:relative}
 .row .lab{width:86px;color:#555;flex-shrink:0}
 .row.err{border-bottom-color:var(--err)}
@@ -194,7 +198,7 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 
 <div class="bar">
   <span><b>设备</b><span class="seg" data-k="os"><button data-v="ios" class="on">iPhone</button><button data-v="android">Android</button></span></span>
-  <span><b>手机号</b><span class="seg" data-k="phoneReg"><button data-v="0" class="on">未注册</button><button data-v="1">已注册</button></span></span>
+  <span><b>手机号/邮箱</b><span class="seg" data-k="phoneReg"><button data-v="0" class="on">未注册</button><button data-v="1">已注册</button></span></span>
   <span><b>第三方账号</b><span class="seg" data-k="tpBound"><button data-v="0" class="on">首次登录</button><button data-v="1">已绑定过</button></span></span>
   <span class="hint">演示：验证码输入任意 6 位数字（000000 模拟验证码错误）。「手机号=已注册」时，第三方首登绑定会触发「该号码已有账号」分支。</span>
 </div>
@@ -236,7 +240,8 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
       <div class="slogan"><div class="l1">有<em>家</em>的地方</div><div class="l2">就有 <em>Johome</em></div></div>
     </div>
     <div class="card">
-      <h2>手机短信登录</h2>
+      <div class="ltabs" id="lTabs"><button data-lt="phone" class="on">手机号</button><button data-lt="email">邮箱</button></div>
+      <div id="lPhonePane">
       <div class="row"><span class="lab">国家/地区</span><button class="region" data-pick="login"></button></div>
       <div class="row" id="lPhoneRow"><span class="dial"></span><input class="f" id="lPhone" inputmode="numeric" placeholder="请输入手机号" maxlength="15"></div>
       <div class="msg" id="lPhoneMsg"></div>
@@ -244,6 +249,15 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
       <div class="msg" id="lCodeMsg"></div>
       <button class="primary" id="lSubmit" disabled>登录</button>
       <div class="note">未注册过的手机号将自动创建账号</div>
+      </div>
+      <div id="lMailPane" hidden>
+      <div class="row" id="emRow"><span class="lab">邮箱</span><input class="f" id="emIn" type="email" placeholder="请输入邮箱地址" maxlength="64"></div>
+      <div class="msg" id="emMsg"></div>
+      <div class="row" id="emCodeRow" style="margin-top:-18px"><span class="lab">验证码</span><input class="f" id="emCode" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="getcode" id="emGet" disabled>获取验证码</button></div>
+      <div class="msg" id="emCMsg"></div>
+      <button class="primary" id="emSubmit" disabled>登录</button>
+      <div class="note">未注册过的邮箱将自动创建账号</div>
+      </div>
       <div class="third">
         <div class="divider">第三方账号登录</div>
         <div class="icons">
@@ -286,7 +300,7 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
     </div>
     <div class="elist">
       <div class="row" id="eNameRow"><span class="lab">昵称<span class="req">*</span></span><input class="f" id="eName" maxlength="16" placeholder="请设置昵称"><span class="ecount" id="eCount">0/16</span></div>
-      <div class="row"><span class="lab">手机号</span><span class="val" id="ePhone"></span></div>
+      <button class="row" id="ePhoneRow" style="width:100%"><span class="lab">手机号</span><span class="val" id="ePhone"></span></button>
     </div>
     <div class="elist">
       <button class="row" id="eWx" style="width:100%"><span class="lab">微信<span class="opt-tag">选填</span></span><span class="val go" id="eWxVal"></span></button>
@@ -411,6 +425,44 @@ L.submit.onclick=async()=>{
   if(isNew){openEdit(true);toast('注册成功<br><span style="opacity:.75;font-size:12px">设置一下头像和昵称吧</span>',true);}
   else toast('登录成功',true);
 };
+/* ---------- 手机号 / 邮箱 tab ---------- */
+$('#lTabs').onclick=e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  $$('#lTabs button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#lPhonePane').hidden=b.dataset.lt!=='phone'; $('#lMailPane').hidden=b.dataset.lt!=='email';
+};
+/* ---------- 邮箱验证码登录 ---------- */
+const EM={sent:false,left:0,timer:0};
+const emValid=()=>/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test($('#emIn').value.trim());
+function emUpd(){
+  $('#emCode').value=$('#emCode').value.replace(/\D/g,'');
+  if(!EM.left) $('#emGet').disabled=!emValid();
+  $('#emSubmit').disabled=!(emValid()&&$('#emCode').value.length===6);
+  $('#emCMsg').textContent=''; $('#emCodeRow').classList.remove('err');
+}
+$('#emIn').oninput=()=>{$('#emMsg').textContent='';$('#emRow').classList.remove('err');emUpd();};
+$('#emIn').onblur=()=>{if($('#emIn').value.trim()&&!emValid()){$('#emMsg').textContent='请输入正确的邮箱地址';$('#emRow').classList.add('err');}};
+$('#emCode').oninput=emUpd;
+$('#emGet').onclick=()=>{
+  if(!emValid()){$('#emIn').onblur();return;}
+  if(!agreed){needAgree();return;}
+  EM.sent=true; EM.left=60; $('#emGet').disabled=true; (function tick(){$('#emGet').textContent=EM.left?`重新获取(${EM.left}s)`:'获取验证码';if(!EM.left){$('#emGet').disabled=!emValid();return;}EM.left--;EM.timer=setTimeout(tick,1000);})();
+  toast(`验证码已发送至 ${$('#emIn').value.trim()}<br><span style="opacity:.7;font-size:12px">（演示：任意 6 位数字）</span>`);
+  $('#emCode').focus();
+};
+function emReset(){clearTimeout(EM.timer);EM.left=0;EM.sent=false;$('#emIn').value='';$('#emCode').value='';$('#emGet').textContent='获取验证码';$('#emMsg').textContent='';$('#emCMsg').textContent='';emUpd();}
+$('#emSubmit').onclick=async()=>{
+  if(!agreed){needAgree();return;}
+  const err=t=>{$('#emCMsg').textContent=t;$('#emCodeRow').classList.add('err');};
+  if(!EM.sent){err('请先获取验证码');return;}
+  loading(true,'登录中');await wait(800);loading(false);
+  if($('#emCode').value==='000000'){err('验证码错误，请重新输入');return;}
+  const mail=$('#emIn').value.trim(), isNew=demo.phoneReg==='0';
+  signIn({phone:null,email:mail,via:'邮箱',name:'Johome 用户'+mail.split('@')[0].slice(0,6)});
+  emReset();
+  if(isNew){openEdit(true);toast('注册成功<br><span style="opacity:.75;font-size:12px">设置一下头像和昵称吧</span>',true);}
+  else toast('登录成功',true);
+};
 function mask4(d){return d.length>7?d.slice(0,3)+'****'+d.slice(-4):d.slice(0,2)+'****'+d.slice(-2);}
 
 /* ---------- 第三方登录 ---------- */
@@ -433,7 +485,7 @@ function authSheet(k){
       signIn({phone:'+1 604****0123',via:t.name,name:t.acct.split(' · ').pop()});
       toast('登录成功',true);
     }else{
-      pendingTp=k; B.reset();
+      pendingTp=k; bindMode='tp'; B.reset();
       $('#bTip').innerHTML=`已通过<b>${t.name}</b>授权。为了更好保障您的账号安全，请绑定您的手机号！`;
       go('bind');
     }
@@ -446,6 +498,10 @@ B.submit.onclick=async()=>{
   loading(true,'绑定中');await wait(800);loading(false);
   if(B.code.value==='000000'){B.codeErr('验证码错误，请重新输入');return;}
   const t=TP[pendingTp], phone=`+${B.dialCode()} ${mask4(B.digits())}`;
+  if(bindMode==='edit'){
+    if(demo.phoneReg==='1'){B.codeErr('该手机号已被其他账号绑定，请换个号码');return;}
+    user.phone=phone; go('edit'); renderEdit(); renderMine(); toast('手机号绑定成功',true); return;
+  }
   if(demo.phoneReg==='1'){
     const merge=await dialog('该手机号已注册',`${phone} 已有 Johome 账号。是否将${t.name}关联到该账号？关联后可用两种方式登录同一账号。`,'换个号码','关联并登录');
     if(!merge){B.code.value='';B.phone.focus();B.update();return;}
@@ -458,22 +514,23 @@ function finishBind(t,phone){
   toast('绑定成功',true);
 }
 $('#bBack').onclick=async()=>{
+  if(bindMode==='edit'){go('edit');return;}
   const quit=await dialog('确定放弃绑定？','未绑定手机号将无法完成登录，本次授权将失效。','继续绑定','放弃');
   if(quit){pendingTp=null;go('login');toast('已取消登录');}
 };
 
 /* ---------- 我的 ---------- */
 function signIn(u){
-  u.avatar=null; u.wechat=u.via==='微信'?u.name:null; u.email=u.via==='谷歌'?TP.google.acct:null;
+  u.avatar=null; u.wechat=u.via==='微信'?u.name:null; u.email=u.email||(u.via==='谷歌'?TP.google.acct:null);
   user=u;renderMine();go('mine');L.reset();
 }
 /* 默认头像（未登录） */
 const DEF_AV=`<svg width="84" height="84" viewBox="0 0 84 84"><rect width="84" height="84" fill="#e6e7ea"/><circle cx="20" cy="26" r="11" fill="#cfd1d6"/><circle cx="64" cy="26" r="11" fill="#cfd1d6"/><ellipse cx="42" cy="50" rx="30" ry="26" fill="#fff"/><path d="M26 48q5-6 10 0M48 48q5-6 10 0" fill="none" stroke="#555" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="42" cy="56" rx="4" ry="3" fill="#555"/></svg>`;
 /* 登录后头像：第三方取平台头像，手机号注册用默认生成头像（演示用首字色块代替真实照片） */
-const AV_BG={'微信':'linear-gradient(135deg,#7fd36b,#2dc100)','谷歌':'linear-gradient(135deg,#7aa7ff,#4285f4)','Apple':'linear-gradient(135deg,#666,#111)','手机号':'linear-gradient(135deg,#6f9be0,#1e4a86)'};
+const AV_BG={'微信':'linear-gradient(135deg,#7fd36b,#2dc100)','谷歌':'linear-gradient(135deg,#7aa7ff,#4285f4)','Apple':'linear-gradient(135deg,#666,#111)','手机号':'linear-gradient(135deg,#6f9be0,#1e4a86)','邮箱':'linear-gradient(135deg,#f0a35e,#d9662b)'};
 function renderMine(){
   $('#mName').textContent=user?user.name:'登录/注册';
-  $('#mTag').innerHTML=user?`<span>${user.phone}</span><span class="badge">${user.via}登录</span>`:'有家的地方就有Johome';
+  $('#mTag').innerHTML=user?`<span>${user.phone||maskMail(user.email)}</span><span class="badge">${user.via}登录</span>`:'有家的地方就有Johome';
   $('#mAvatar').innerHTML=!user?DEF_AV:user.avatar?avHtml(user.avatar):`<span class="ini" style="background:${AV_BG[user.via]}">${user.name.slice(0,1).toUpperCase()}</span>`;
 }
 $('#mWho').onclick=$('#mAvatar').onclick=()=>{if(!user)go('login');};
@@ -488,13 +545,25 @@ let draft=null, firstEdit=false;
 function openEdit(first){
   firstEdit=first;
   draft={avatar:user.avatar,name:first?'':user.name,wechat:user.wechat,email:user.email};
-  $('#eName').value=draft.name; $('#ePhone').innerHTML=`${user.phone} <span class="ok-tag">已绑定</span>`;
+  $('#eName').value=draft.name;
   renderEdit(); go('edit');
 }
+/* 邮箱注册的用户没有手机号：编辑页可去绑定（复用手机号绑定页） */
+let bindMode='tp';
+$('#ePhoneRow').onclick=()=>{
+  if(user.phone) return;
+  bindMode='edit'; B.reset();
+  $('#bTip').innerHTML='绑定手机号后，可用手机号登录并找回账号。';
+  go('bind');
+};
 function renderEdit(){
   const pic=$('#ePic');
   pic.innerHTML=draft.avatar?avHtml(draft.avatar):'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#b7bcc5" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>';
   pic.classList.toggle('set',!!draft.avatar);
+  $('#ePhone').className='val'+(user.phone?'':' go');
+  $('#ePhone').innerHTML=user.phone?`${user.phone} <span class="ok-tag">已绑定</span>`:'去绑定 ›';
+  $('#eMail').querySelector('.opt-tag').style.display=user.via==='邮箱'?'none':'';
+  $('#ePhoneRow').querySelector('.lab').innerHTML=user.phone?'手机号':'手机号<span class="opt-tag">选填</span>';
   $('#eAvTxt').innerHTML=draft.avatar?'点击更换头像':'点击设置头像<span class="req">*</span>';
   $('#eWxVal').innerHTML=draft.wechat?`${draft.wechat} <span class="ok-tag">已绑定</span>`:'去绑定 ›';
   $('#eMailVal').innerHTML=draft.email?`${maskMail(draft.email)} <span class="ok-tag">已绑定</span>`:'去绑定 ›';
