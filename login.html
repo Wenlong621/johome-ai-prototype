@@ -115,8 +115,9 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .mtag .badge{background:rgba(255,255,255,.3);border-radius:8px;padding:2px 6px;font-size:11px}
 .mav{position:absolute;left:22px;top:146px;width:84px;height:84px;border-radius:50%;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.18);overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0}
 .mav .ini{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:34px;font-weight:600}
-.mstats{position:absolute;right:16px;top:186px;display:flex;gap:40px;text-align:center}
-.mstats .k{font-size:14px;color:#555}.mstats .v{font-size:17px;color:#e5484d;font-weight:600;margin-top:4px}
+.mstats{position:absolute;right:14px;top:184px;display:flex;gap:22px;text-align:center}
+.mstats button{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:13.5px;color:#444;padding:4px 6px;border-radius:8px}
+.mstats button:active{background:#f1f2f5}
 .msec{font-size:16px;font-weight:600;padding:2px 14px;margin:6px 0 14px;border-left:3px solid var(--blue);margin-left:12px;padding-left:6px}
 .mcards{display:flex;gap:12px;padding:0 18px}
 .mcards div{flex:1;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px}
@@ -274,7 +275,7 @@ input[readonly]{cursor:text}
       <div class="mfab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5M8 8h8M8 12h5M18.5 13.5l2 2-5 5H13.5v-2z"/></svg></div>
       <button class="mwho" id="mWho"><div class="mname" id="mName">登录/注册</div><div class="mtag" id="mTag">有家的地方就有Johome</div></button>
       <button class="mav" id="mAvatar" aria-label="头像"></button>
-      <div class="mstats"><div><div class="k">收藏</div><div class="v" id="mFav">0</div></div><div><div class="k">浏览记录</div><div class="v">21</div></div></div>
+      <div class="mstats"><button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="1.7" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>收藏</button><button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1e4a86" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>浏览记录</button></div>
     </div>
     <div class="msec">我的购房工具–温哥华</div>
     <div class="mcards"><div style="background:linear-gradient(90deg,#eef5ff,#e8eaff)">我的偏好 📝</div><div style="background:linear-gradient(90deg,#ecfbef,#dcf7e4)">购房流程 📊</div></div>
