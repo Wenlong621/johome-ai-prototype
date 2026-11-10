@@ -546,8 +546,8 @@ function finishBind(t,phone){
 }
 $('#bBack').onclick=async()=>{
   if(bindMode==='edit'){go('edit');return;}
-  const quit=await dialog('确定放弃绑定？','未绑定手机号将无法完成登录，本次授权将失效。','继续绑定','放弃');
-  if(quit){pendingTp=null;go('login');toast('已取消登录');}
+  const skip=await dialog('暂不绑定手机号？','绑定后可用手机号登录，换设备或第三方账号异常时也能找回账号。之后可在「编辑个人信息」中随时绑定。','继续绑定','暂不绑定');
+  if(skip){const t=TP[pendingTp];pendingTp=null;signIn({phone:null,via:t.name,name:t.acct.split(' · ').pop()});toast('登录成功',true);}
 };
 
 /* ---------- 我的 ---------- */
@@ -561,7 +561,7 @@ const DEF_AV=`<svg width="84" height="84" viewBox="0 0 84 84"><rect width="84" h
 const AV_BG={'微信':'linear-gradient(135deg,#7fd36b,#2dc100)','谷歌':'linear-gradient(135deg,#7aa7ff,#4285f4)','Apple':'linear-gradient(135deg,#666,#111)','手机号':'linear-gradient(135deg,#6f9be0,#1e4a86)','邮箱':'linear-gradient(135deg,#f0a35e,#d9662b)'};
 function renderMine(){
   $('#mName').textContent=user?user.name:'登录/注册';
-  $('#mTag').innerHTML=user?`<span>${user.phone||maskMail(user.email)}</span><span class="badge">${user.via}登录</span>`:'有家的地方就有Johome';
+  $('#mTag').innerHTML=user?`<span>${user.phone||(user.email?maskMail(user.email):'未绑定手机号')}</span><span class="badge">${user.via}登录</span>`:'有家的地方就有Johome';
   $('#mAvatar').innerHTML=!user?DEF_AV:user.avatar?avHtml(user.avatar):`<span class="ini" style="background:${AV_BG[user.via]}">${user.name.slice(0,1).toUpperCase()}</span>`;
 }
 $('#mWho').onclick=$('#mAvatar').onclick=()=>{if(!user)go('login');};
