@@ -371,7 +371,7 @@ input[readonly]{cursor:text}
     </div>
     <div class="eav">
       <button id="eAvBtn" aria-label="Set avatar"><span class="pic" id="ePic"></span><span class="cam"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span></button>
-      <span id="eAvTxt">Tap to set avatar<span class="req">*</span></span>
+      <span id="eAvTxt">Tap to set avatar</span>
     </div>
     <div class="elist">
       <div class="row" id="eNameRow"><span class="lab">Nickname<span class="req">*</span></span><input class="f" id="eName" maxlength="30" placeholder="Set a nickname"><span class="ecount" id="eCount">0/30</span></div>
@@ -744,11 +744,11 @@ function renderEdit(){
   $('#ePhone').innerHTML=user.phone?`${user.phone} <span class="ok-tag">Linked</span>`:'Link ›';
   $('#eMail').querySelector('.opt-tag').style.display=user.via==='Email'?'none':'';
   $('#ePhoneRow').querySelector('.lab').innerHTML=user.phone?'Phone':'Phone<span class="opt-tag">Optional</span>';
-  $('#eAvTxt').innerHTML=draft.avatar?'Tap to change avatar':'Tap to set avatar<span class="req">*</span>';
+  $('#eAvTxt').innerHTML=draft.avatar?'Tap to change avatar':'Tap to set avatar';
   $('#eWxVal').innerHTML=draft.wechat?`${draft.wechat} <span class="ok-tag">Linked</span>`:'Link ›';
   $('#eMailVal').innerHTML=draft.email?`${maskMail(draft.email)} <span class="ok-tag">Linked</span>`:'Link ›';
   const n=$('#eName').value.trim(); $('#eCount').textContent=$('#eName').value.length+'/30';
-  $('#eSave').disabled=!(draft.avatar&&n.length>=2);
+  $('#eSave').disabled=n.length<2;   // 头像选填，只校验昵称
 }
 function maskMail(m){const [a,d]=m.split('@');return d?a.slice(0,2)+'***@'+d:m;}
 $('#eName').oninput=()=>{draft.name=$('#eName').value;$('#eNameRow').classList.remove('err');renderEdit();};
