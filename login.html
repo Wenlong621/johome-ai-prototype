@@ -328,7 +328,7 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
       <span id="eAvTxt">点击设置头像<span class="req">*</span></span>
     </div>
     <div class="elist">
-      <div class="row" id="eNameRow"><span class="lab">昵称<span class="req">*</span></span><input class="f" id="eName" maxlength="16" placeholder="请设置昵称"><span class="ecount" id="eCount">0/16</span></div>
+      <div class="row" id="eNameRow"><span class="lab">昵称<span class="req">*</span></span><input class="f" id="eName" maxlength="30" placeholder="请设置昵称"><span class="ecount" id="eCount">0/30</span></div>
       <button class="row" id="ePhoneRow" style="width:100%"><span class="lab">手机号</span><span class="val" id="ePhone"></span></button>
     </div>
     <div class="elist">
@@ -598,7 +598,7 @@ function renderEdit(){
   $('#eAvTxt').innerHTML=draft.avatar?'点击更换头像':'点击设置头像<span class="req">*</span>';
   $('#eWxVal').innerHTML=draft.wechat?`${draft.wechat} <span class="ok-tag">已绑定</span>`:'去绑定 ›';
   $('#eMailVal').innerHTML=draft.email?`${maskMail(draft.email)} <span class="ok-tag">已绑定</span>`:'去绑定 ›';
-  const n=$('#eName').value.trim(); $('#eCount').textContent=$('#eName').value.length+'/16';
+  const n=$('#eName').value.trim(); $('#eCount').textContent=$('#eName').value.length+'/30';
   $('#eSave').disabled=!(draft.avatar&&n.length>=2);
 }
 function maskMail(m){const [a,d]=m.split('@');return d?a.slice(0,2)+'***@'+d:m;}
