@@ -187,6 +187,10 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .kb.android .k{box-shadow:none;border-radius:6px}
 .kb.android .k.fn{background:#d5dade}
 
+/* 自绘光标（输入框为只读，原生光标不显示） */
+.caret{position:absolute;width:2px;border-radius:1px;background:#1a7cf0;z-index:34;display:none;pointer-events:none;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+input[readonly]{cursor:text}
 /* Sign in with Apple（iOS 系统样式） */
 .mask.aplmask{background:rgba(0,0,0,.25);align-items:flex-end;padding:0 8px 8px}
 .apl{width:100%;background:rgba(246,246,248,.96);backdrop-filter:blur(20px);border-radius:34px;padding:22px 18px 18px;box-shadow:0 10px 40px rgba(0,0,0,.25);animation:up .28s ease-out;font-family:-apple-system,"SF Pro Text","Helvetica Neue",Arial,sans-serif}
@@ -762,9 +766,12 @@ const kb=$('#kb'), phone=$('#phone');
 const PY={wang:'王网望往旺',xiao:'小晓笑校',lin:'林琳临',zhang:'张章',li:'李丽力莉',chen:'陈晨辰',liu:'刘柳',yang:'杨阳洋',huang:'黄',zhao:'赵',zhou:'周舟',wu:'吴武',jia:'家佳嘉',fang:'房方芳',wen:'温文',ge:'哥歌',hua:'华花',mai:'买麦',hao:'好浩豪',ai:'爱',an:'安',mei:'美梅',yu:'雨宇玉鱼',xin:'新心欣',tian:'天甜田',ming:'明',le:'乐',da:'大达',ren:'人',feng:'风枫峰',lan:'蓝兰',bai:'白',hai:'海',xue:'雪学',yun:'云',shan:'山',meng:'梦萌',qing:'青晴清',zi:'子紫',jun:'君俊',wo:'我',de:'的',jiu:'就',you:'有'};
 let kbEl=null, kbType='', shift=false, sym=false, zh=true, pyBuf='';
 const kbH=()=>kb.offsetHeight;
-$$('#phone input').forEach(i=>i.setAttribute('autocomplete','off'));
+$$('#phone input').forEach(i=>{i.setAttribute('autocomplete','off');if(i.type!=='file')i.readOnly=true;});
+/* 输入框一律 readonly：浏览器（Chrome 地址/邮箱自动填充）不会对只读框弹建议；
+   内容由模拟键盘写入，电脑实体键盘的按键也转给模拟键盘处理，光标用自绘的蓝色竖线 */
+phone.addEventListener('pointerdown',e=>{if(e.target.matches&&e.target.matches('input:not([type=file])'))e.target.readOnly=true;},true);
 function kbKind(el){
-  el.setAttribute('autocomplete','off');   // 关掉浏览器自己的自动填充浮层，建议统一放进键盘顶栏
+  el.setAttribute('autocomplete','off'); el.readOnly=true;   // 关掉浏览器自己的自动填充浮层，建议统一放进键盘顶栏
   if(!el.dataset.kb) el.dataset.kb=el.type==='email'?'email':el.id==='eName'?'text':'num';
   el.inputMode='none';
   return el.dataset.kb;
@@ -882,6 +889,48 @@ phone.addEventListener('focusin',e=>{if(e.target.matches('input:not([type=file])
 phone.addEventListener('focusout',e=>{
   if(e.target!==kbEl) return;
   setTimeout(()=>{const a=document.activeElement;if(!(a&&a.matches&&a.matches('#phone input')))kbHide();},0);
+});
+/* ---- 自绘光标 ---- */
+const caret=document.createElement('div'); caret.className='caret'; phone.appendChild(caret);
+const cvs=document.createElement('canvas').getContext('2d');
+let caretRaf=0;
+function placeCaret(){
+  caretRaf=0;
+  const el=kbEl;
+  if(!el||document.activeElement!==el||!el.offsetParent){caret.style.display='none';return;}
+  const cs=getComputedStyle(el), r=el.getBoundingClientRect(), pr=phone.getBoundingClientRect();
+  cvs.font=`${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const pl=parseFloat(cs.paddingLeft)||0, prr=parseFloat(cs.paddingRight)||0, inner=r.width-pl-prr;
+  const tw=Math.min(cvs.measureText(el.value).width,inner);
+  el.scrollLeft=el.scrollWidth;
+  const x=cs.textAlign==='right'||cs.textAlign==='end'?r.right-prr:r.left+pl+tw;
+  const h=Math.min(parseFloat(cs.fontSize)*1.3,r.height);
+  caret.style.cssText=`display:block;left:${x-pr.left-phone.clientLeft}px;top:${r.top-pr.top-phone.clientTop+(r.height-h)/2}px;height:${h}px`;
+  caretRaf=requestAnimationFrame(placeCaret);   // 键盘弹起/面板上移/页面滚动时跟随
+}
+phone.addEventListener('focusin',e=>{if(e.target.matches('input:not([type=file])')&&!caretRaf)caretRaf=requestAnimationFrame(placeCaret);});
+phone.addEventListener('input',()=>{caret.style.animation='none';void caret.offsetWidth;caret.style.animation='';});  // 打字时光标不闪
+/* ---- 电脑实体键盘 → 模拟键盘 ---- */
+document.addEventListener('keydown',e=>{
+  if(!kbEl||document.activeElement!==kbEl||e.ctrlKey||e.metaKey||e.altKey) return;
+  const k=e.key;
+  if(k==='Backspace'){e.preventDefault();backspace();renderKb();return;}
+  if(k==='Enter'||k==='Escape'){e.preventDefault();kb.querySelector('[data-a=done]').click();return;}
+  if(k.length!==1) return;           // Tab/方向键等交给浏览器
+  e.preventDefault();
+  if(kbType==='num'){if(/\d/.test(k))insert(k);renderKb();return;}
+  if(kbType==='text'&&zh&&!sym){
+    if(/[a-z]/i.test(k)){pyBuf+=k.toLowerCase();renderKb();return;}
+    if(pyBuf&&/[1-9]/.test(k)){const c=cands()[+k-1];if(c){insert(c);pyBuf='';}renderKb();return;}
+    if(pyBuf&&k===' '){const c=cands();insert(c[0]||pyBuf);pyBuf='';renderKb();return;}
+  }
+  insert(k); renderKb();
+});
+phone.addEventListener('paste',e=>{
+  if(!kbEl||document.activeElement!==kbEl) return;
+  e.preventDefault(); let t=(e.clipboardData||window.clipboardData).getData('text').trim();
+  if(kbType==='num') t=t.replace(/\D/g,'');
+  insert(t); renderKb();
 });
 const goOrig=go; go=function(id){if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();kbHide();goOrig(id);};
 const closeOrig=closeMask; closeMask=function(){if(kbEl&&kbEl.closest('.mask')){kbEl.blur();kbHide();}closeOrig();};
