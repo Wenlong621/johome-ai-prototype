@@ -60,7 +60,7 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .getcode:disabled{color:#b7bcc5;cursor:default}
 .msg{color:var(--err);font-size:12px;min-height:18px;padding-top:3px}
 
-.primary{display:block;width:78%;margin:22px auto 0;height:46px;border-radius:23px;color:#fff;font-size:17px;letter-spacing:4px;
+.primary{display:block;width:78%;margin:14px auto 0;height:46px;border-radius:23px;color:#fff;font-size:17px;letter-spacing:4px;
   background:linear-gradient(90deg,var(--navy),var(--navy2));box-shadow:0 4px 12px rgba(15,42,77,.25);transition:opacity .2s}
 .primary:disabled{opacity:.45;box-shadow:none;cursor:default}
 .note{text-align:center;color:var(--sub);font-size:13px;margin-top:12px}
@@ -68,17 +68,17 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .third{margin-top:auto;padding-top:24px}
 .divider{display:flex;align-items:center;gap:10px;color:var(--sub);font-size:13px;margin:0 -10px}
 .divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--line)}
-.icons{display:flex;justify-content:center;gap:36px;margin:16px 0 14px}
+.icons{display:flex;justify-content:center;gap:36px;margin:16px 0 26px}
 .icons button{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .15s}
 .icons button:active{transform:scale(.92)}
 .icons .wx{background:#2dc100}.icons .gg{background:#fff;box-shadow:0 0 0 1px var(--line)}.icons .ap{background:#000}
-.agree{display:flex;gap:8px;font-size:12.5px;line-height:1.55;color:#333;padding-bottom:22px;text-align:left}
+.agree{display:flex;gap:8px;font-size:12.5px;line-height:1.55;color:#333;text-align:left;margin-top:16px;position:relative}
 .agree .ck{width:18px;height:18px;border-radius:50%;border:1.5px solid #b7bcc5;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
 .agree .ck.on{background:#4a8cf0;border-color:#4a8cf0}
 .agree a{color:var(--blue);text-decoration:none}
 .agree.shake{animation:shake .4s}
 @keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-.tip{position:absolute;left:24px;bottom:58px;background:rgba(0,0,0,.78);color:#fff;font-size:12px;padding:6px 10px;border-radius:6px;display:none}
+.tip{position:absolute;left:-4px;bottom:calc(100% + 8px);white-space:nowrap;z-index:5;background:rgba(0,0,0,.78);color:#fff;font-size:12px;padding:6px 10px;border-radius:6px;display:none}
 .tip:after{content:"";position:absolute;left:12px;bottom:-5px;border:5px solid transparent;border-bottom:0;border-top-color:rgba(0,0,0,.78)}
 .tip.on{display:block}
 
@@ -305,6 +305,7 @@ input[readonly]{cursor:text}
       <div class="msg" id="lPhoneMsg"></div>
       <div class="row" id="lCodeRow" style="margin-top:-18px"><span class="lab">验证码</span><input class="f" id="lCode" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="getcode" id="lGet" disabled>获取验证码</button></div>
       <div class="msg" id="lCodeMsg"></div>
+      <div class="agree" id="lAgree"><button class="ck" id="lCk" aria-label="同意协议"></button><span>注册/登录即代表同意<a href="javascript:;">《新趋势隐私政策》</a>及<a href="javascript:;">《新趋势用户服务协议》</a></span><div class="tip" id="lTip">请先阅读并勾选同意协议</div></div>
       <button class="primary" id="lSubmit" disabled>登录</button>
       <div class="note">未注册过的手机号将自动创建账号</div>
       </div>
@@ -323,9 +324,7 @@ input[readonly]{cursor:text}
           <button class="gg" data-tp="google" aria-label="谷歌登录"><svg width="22" height="22" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3a12 12 0 0 1-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.2-.1-2.3-.4-3.5z"/></svg></button>
           <button class="ap" data-tp="apple" aria-label="苹果登录"><svg width="20" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M16.4 12.6c0-2.5 2-3.7 2.1-3.7-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.6 1.3-.1 1.7-.8 3.3-.8 1.5 0 1.9.8 3.3.8s2.2-1.3 3-2.5c1-1.4 1.4-2.8 1.4-2.8s-2.6-1-2.6-4.3ZM14 5.2c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4Z"/></svg></button>
         </div>
-        <div class="agree" id="lAgree"><button class="ck" id="lCk" aria-label="同意协议"></button><span>注册/登录即代表同意<a href="javascript:;">《新趋势隐私政策》</a>及<a href="javascript:;">《新趋势用户服务协议》</a></span></div>
       </div>
-      <div class="tip" id="lTip">请先阅读并勾选同意协议</div>
     </div>
   </section>
 
@@ -494,6 +493,7 @@ $('#lTabs').onclick=e=>{
   const b=e.target.closest('button'); if(!b) return;
   $$('#lTabs button').forEach(x=>x.classList.toggle('on',x===b));
   $('#lPhonePane').hidden=b.dataset.lt!=='phone'; $('#lMailPane').hidden=b.dataset.lt!=='email';
+  const btn=b.dataset.lt==='phone'?$('#lSubmit'):$('#emSubmit'); btn.parentNode.insertBefore($('#lAgree'),btn);
 };
 /* ---------- 邮箱验证码登录 ---------- */
 const EM={sent:false,left:0,timer:0};
