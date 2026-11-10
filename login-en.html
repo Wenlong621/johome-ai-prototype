@@ -291,7 +291,7 @@ input[readonly]{cursor:text}
         <button id="mSet" aria-label="Settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></button>
       </div>
       <div class="mfab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5M8 8h8M8 12h5M18.5 13.5l2 2-5 5H13.5v-2z"/></svg></div>
-      <button class="mwho" id="mWho"><div class="mname" id="mName">Log In / Sign Up</div><div class="mtag" id="mTag">Wherever there's home, there's Johome</div></button>
+      <button class="mwho" id="mWho"><div class="mname" id="mName">Log In / Sign Up</div><div class="mtag" id="mTag">Johome a place to find your home</div></button>
       <button class="mav" id="mAvatar" aria-label="Avatar"></button>
       <div class="mstats"><button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="1.7" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Saved</button><button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1e4a86" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>History</button></div>
     </div>
@@ -644,7 +644,7 @@ const DEF_AV=`<svg width="84" height="84" viewBox="0 0 84 84"><rect width="84" h
 const AV_BG={'WeChat':'linear-gradient(135deg,#7fd36b,#2dc100)','Google':'linear-gradient(135deg,#7aa7ff,#4285f4)','Apple':'linear-gradient(135deg,#666,#111)','Phone':'linear-gradient(135deg,#6f9be0,#1e4a86)','Email':'linear-gradient(135deg,#f0a35e,#d9662b)'};
 function renderMine(){
   $('#mName').textContent=user?user.name:'Log In / Sign Up';
-  $('#mTag').textContent='Wherever there\'s home, there\'s Johome'; $('#mTag').style.display=user?'none':'';   // 登录后只显示昵称，不显示手机号与登录方式
+  $('#mTag').textContent='Johome a place to find your home'; $('#mTag').style.display=user?'none':'';   // 登录后只显示昵称，不显示手机号与登录方式
   $('#mAvatar').innerHTML=!user?DEF_AV:user.avatar?avHtml(user.avatar):`<span class="ini" style="background:${AV_BG[user.via]}">${user.name.slice(0,1).toUpperCase()}</span>`;
 }
 $('#mWho').onclick=$('#mAvatar').onclick=()=>{if(!user)go('login');};
