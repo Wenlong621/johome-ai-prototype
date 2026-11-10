@@ -156,6 +156,7 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .avgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:6px 22px 14px}
 .avgrid button{aspect-ratio:1;border-radius:50%;overflow:hidden;padding:0}
 .efield{padding:4px 22px 6px}
+.pbtip{font-size:12.5px;color:var(--sub);line-height:1.5;text-align:center;padding:0 26px 4px;margin-top:-4px}
 .pblist{max-height:220px;overflow-y:auto;margin:0 -22px;border-bottom:1px solid var(--line)}
 .efield .row{min-height:50px}.efield input.f{height:50px}
 
@@ -410,9 +411,10 @@ function closeMask(){mask.classList.remove('on','center');mask.innerHTML='';}
 /* 只有「按下和松开都在遮罩上」才算点空白关闭——输入框聚焦弹键盘会把面板顶上去，松开时指针可能落在遮罩上 */
 let downOnMask=false;
 mask.addEventListener('pointerdown',e=>{downOnMask=e.target===mask;});
-mask.onclick=e=>{if(downOnMask&&e.target===mask&&!mask.classList.contains('center'))closeMask();downOnMask=false;};
+mask.onclick=e=>{if(downOnMask&&e.target===mask&&!mask.classList.contains('center')){const c=mask.querySelector('.cancel');c?c.click():closeMask();}downOnMask=false;};
 function dialog(title,body,cancelTxt,okTxt){
   return new Promise(res=>{
+    if(typeof kbEl!=='undefined'&&kbEl&&kbEl.closest('.mask')){kbEl.blur();kbHide();} mask.style.paddingBottom='';
     mask.className='mask on center';
     mask.innerHTML=`<div class="dialog"><h4>${title}</h4><p>${body}</p><div class="btns"><button data-r="0">${cancelTxt}</button><button data-r="1">${okTxt}</button></div></div>`;
     mask.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{closeMask();res(b.dataset.r==='1');});
@@ -553,9 +555,7 @@ function afterAuth(k){
       signIn({phone:'+1 604****0123',via:t.name,name:t.acct.split(' · ').pop()});
       toast('登录成功',true);
     }else{
-      pendingTp=k; bindMode='tp'; B.reset();
-      $('#bTip').innerHTML=`已通过<b>${t.name}</b>授权。为了更好保障您的账号安全，请绑定您的手机号！`;
-      go('bind');
+      pendingTp=k; phoneSheet('tp');
     }
 }
 /* Sign in with Apple：按 iOS 系统真实样式（悬浮毛玻璃卡片 → 面容 ID → Signing in… → Done） */
@@ -645,12 +645,13 @@ function openEdit(first){
 let bindMode='tp';
 /* 编辑页里绑定/更换手机号：底部弹起面板（与绑定邮箱同款）；第三方首登仍走整页「手机号绑定」 */
 let pbRegion=null;
-$('#ePhoneRow').onclick=()=>phoneSheet();
-function phoneSheet(){
+$('#ePhoneRow').onclick=()=>phoneSheet('edit');
+function phoneSheet(mode){
+  const tp=mode==='tp', t=tp&&TP[pendingTp];
   pbRegion=pbRegion||REGIONS.find(r=>r.id==='ca');
   let sent=false, left=0, timer=0;
   mask.className='mask on';
-  mask.innerHTML=`<div class="sheet"><h3>${user.phone?'更换手机号':'绑定手机号'}</h3><div class="efield">
+  mask.innerHTML=`<div class="sheet"><h3>${!tp&&user.phone?'更换手机号':'绑定手机号'}</h3>${tp?`<p class="pbtip">已通过${t.name}授权。绑定手机号后可用手机号登录，并在换设备时找回账号。</p>`:''}<div class="efield">
     <div class="row"><span class="lab">国家/地区</span><button class="region" id="pbReg"></button></div>
     <div class="pblist" id="pbList" hidden></div>
     <div class="row" id="pbRow"><span class="dial" id="pbDial"></span><input class="f" id="pbPhone" inputmode="numeric" placeholder="请输入手机号"></div><div class="msg" id="pbMsg"></div>
@@ -685,12 +686,28 @@ function phoneSheet(){
   ok.onclick=async()=>{
     if(!sent){$('#pbCMsg').textContent='请先获取验证码';return;}
     if(code.value==='000000'){$('#pbCMsg').textContent='验证码错误，请重新输入';return;}
+    const phone=`+${dial()} ${mask4(ph.value)}`;
+    if(tp){
+      clearTimeout(timer); closeMask();
+      if(demo.phoneReg==='1'){
+        const merge=await dialog('该手机号已注册',`${phone} 已有 Johome 账号。是否将${t.name}关联到该账号？关联后可用两种方式登录同一账号。`,'换个号码','关联并登录');
+        if(!merge){phoneSheet('tp');return;}
+      }
+      loading(true,'绑定中');await wait(700);loading(false);
+      finishBind(t,phone); return;
+    }
     if(demo.phoneReg==='1'){$('#pbCMsg').textContent='该手机号已被其他账号绑定，请换个号码';return;}
     clearTimeout(timer); closeMask();
     loading(true,'绑定中');await wait(700);loading(false);
-    user.phone=`+${dial()} ${mask4(ph.value)}`; renderEdit(); renderMine(); toast('手机号绑定成功',true);
+    user.phone=phone; renderEdit(); renderMine(); toast('手机号绑定成功',true);
   };
-  mask.querySelector('.cancel').onclick=()=>{clearTimeout(timer);closeMask();};
+  mask.querySelector('.cancel').onclick=async()=>{
+    clearTimeout(timer); closeMask();
+    if(!tp) return;
+    const skip=await dialog('暂不绑定手机号？','绑定后可用手机号登录，换设备或第三方账号异常时也能找回账号。之后可在「编辑个人信息」中随时绑定。','继续绑定','暂不绑定');
+    if(!skip){phoneSheet('tp');return;}
+    pendingTp=null; signIn({phone:null,via:t.name,name:t.acct.split(' · ').pop()}); toast('登录成功',true);
+  };
   drawReg();
 }
 function renderEdit(){
@@ -933,7 +950,8 @@ phone.addEventListener('paste',e=>{
   insert(t); renderKb();
 });
 const goOrig=go; go=function(id){if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();kbHide();goOrig(id);};
-const closeOrig=closeMask; closeMask=function(){if(kbEl&&kbEl.closest('.mask')){kbEl.blur();kbHide();}closeOrig();};
+const inMaskKb=()=>kbEl&&(!kbEl.isConnected||kbEl.closest('.mask'));
+const closeOrig=closeMask; closeMask=function(){if(inMaskKb()){kbEl.blur();kbHide();}mask.style.paddingBottom='';closeOrig();};
 /* 演示工具条切换系统时键盘外观同步 */
 $('[data-k=os]').addEventListener('click',()=>{if(kb.classList.contains('on'))renderKb();});
 })();
