@@ -403,7 +403,10 @@ function loading(on,t){$('#loading').classList.toggle('on',on);if(t)$('#loadTxt'
 function wait(ms){return new Promise(r=>setTimeout(r,ms));}
 const mask=$('#mask');
 function closeMask(){mask.classList.remove('on','center');mask.innerHTML='';}
-mask.onclick=e=>{if(e.target===mask&&!mask.classList.contains('center'))closeMask();};
+/* 只有「按下和松开都在遮罩上」才算点空白关闭——输入框聚焦弹键盘会把面板顶上去，松开时指针可能落在遮罩上 */
+let downOnMask=false;
+mask.addEventListener('pointerdown',e=>{downOnMask=e.target===mask;});
+mask.onclick=e=>{if(downOnMask&&e.target===mask&&!mask.classList.contains('center'))closeMask();downOnMask=false;};
 function dialog(title,body,cancelTxt,okTxt){
   return new Promise(res=>{
     mask.className='mask on center';
