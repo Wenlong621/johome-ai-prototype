@@ -190,7 +190,7 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .kb.android .k.fn{background:#d5dade}
 
 /* 自绘光标（输入框为只读，原生光标不显示） */
-.caret{position:absolute;width:2px;border-radius:1px;background:#1a7cf0;z-index:34;display:none;pointer-events:none;animation:blink 1s steps(1) infinite}
+.tcaret{position:absolute;width:2px;border-radius:1px;background:#1a7cf0;z-index:34;display:none;pointer-events:none;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 input[readonly]{cursor:text}
 /* Sign in with Apple（iOS 系统样式） */
@@ -916,7 +916,7 @@ phone.addEventListener('focusout',e=>{
   setTimeout(()=>{const a=document.activeElement;if(!(a&&a.matches&&a.matches('#phone input')))kbHide();},0);
 });
 /* ---- 自绘光标 ---- */
-const caret=document.createElement('div'); caret.className='caret'; phone.appendChild(caret);
+const caret=document.createElement('div'); caret.className='tcaret'; phone.appendChild(caret);
 const cvs=document.createElement('canvas').getContext('2d');
 let caretRaf=0;
 function placeCaret(){

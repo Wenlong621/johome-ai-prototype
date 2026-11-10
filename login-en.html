@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Johome Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f2a4d;--navy2:#1e4a86;--blue:#1a8ce0;--line:#e3e6ec;--txt:#222;--sub:#8a8f99;--bg:#eef0f4;--err:#e5484d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#dfe3ea;color:var(--txt);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width:0}
+
+/* demo toolbar */
+.bar{width:100%;max-width:760px;background:#fff;border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.bar b{font-weight:600;color:#555;margin-right:6px}
+.seg{display:inline-flex;background:#f0f2f5;border-radius:8px;padding:2px}
+.seg button{padding:4px 10px;border-radius:6px;font-size:12px;color:#666}
+.seg button.on{background:#fff;color:var(--navy);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.bar .hint{flex-basis:100%;color:var(--sub);font-size:12px}
+
+/* phone */
+.phone{width:375px;max-width:100%;height:780px;background:#fff;border-radius:36px;overflow:hidden;position:relative;box-shadow:0 10px 40px rgba(15,42,77,.25);border:8px solid #111}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;background:#fff}
+.screen.on{display:flex}
+.status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:14px;font-weight:600;flex-shrink:0}
+
+/* login */
+.hero{height:250px;position:relative;flex-shrink:0;background:
+  linear-gradient(180deg,rgba(14,30,58,.55),rgba(14,30,58,.75)),
+  radial-gradient(ellipse at 70% 30%,#5d7ca8 0,transparent 55%),
+  radial-gradient(ellipse at 20% 80%,#2e4a72 0,transparent 60%),
+  linear-gradient(135deg,#3a5579,#1c2f4d);color:#fff}
+.hero .status{color:#fff;position:relative;z-index:2}
+.hero .back{position:absolute;left:14px;top:58px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;z-index:2}
+.slogan{position:absolute;left:0;right:0;top:78px;text-align:center;font-family:"Ma Shan Zheng",cursive;line-height:1.15;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.slogan .l1{font-size:30px;letter-spacing:2px}.slogan .l1 em{font-style:normal;font-size:52px}
+.slogan .l2{font-size:30px;letter-spacing:2px}.slogan .l2 em{font-style:normal;font-family:Georgia,serif;font-weight:700;font-size:44px;letter-spacing:0}
+.card{margin-top:-28px;background:#fff;border-radius:24px 24px 0 0;position:relative;z-index:3;padding:18px 28px 0;flex:1;display:flex;flex-direction:column}
+.card h2{text-align:center;color:var(--blue);font-size:16px;font-weight:500;margin-bottom:6px}
+
+.ltabs{display:flex;justify-content:center;gap:44px;margin-bottom:2px}
+.ltabs button{font-size:16px;color:#888;padding:2px 2px 9px;position:relative}
+.ltabs button.on{color:var(--blue);font-weight:600}
+.ltabs button.on:after{content:"";position:absolute;left:50%;bottom:0;width:20px;height:3px;border-radius:2px;background:var(--blue);transform:translateX(-50%)}
+.row{display:flex;align-items:center;min-height:56px;border-bottom:1px solid var(--line);font-size:15px;position:relative}
+.row .lab{width:86px;color:#555;flex-shrink:0}
+.row.err{border-bottom-color:var(--err)}
+.region{flex:1;display:flex;align-items:center;gap:8px;height:56px;text-align:left}
+.region .caret{margin-left:auto;border:5px solid transparent;border-top:6px solid #555;margin-top:5px}
+.flag{width:22px;height:15px;border-radius:2px;object-fit:cover;box-shadow:0 0 0 .5px rgba(0,0,0,.15)}
+.dial{width:70px;color:#555;flex-shrink:0;padding-right:10px;margin-right:12px;border-right:1px solid var(--line);line-height:22px}
+.dial input{width:52px;color:#555}
+.row input.f{flex:1;height:56px;font-size:15px}
+.row input.f::placeholder{color:#b7bcc5}
+.getcode{color:var(--blue);font-size:14px;white-space:nowrap;padding-left:8px}
+.getcode:disabled{color:#b7bcc5;cursor:default}
+.msg{color:var(--err);font-size:12px;min-height:18px;padding-top:3px}
+
+.primary{display:block;width:78%;margin:22px auto 0;height:46px;border-radius:23px;color:#fff;font-size:17px;letter-spacing:4px;
+  background:linear-gradient(90deg,var(--navy),var(--navy2));box-shadow:0 4px 12px rgba(15,42,77,.25);transition:opacity .2s}
+.primary:disabled{opacity:.45;box-shadow:none;cursor:default}
+.note{text-align:center;color:var(--sub);font-size:13px;margin-top:12px}
+
+.third{margin-top:auto;padding-top:24px}
+.divider{display:flex;align-items:center;gap:10px;color:var(--sub);font-size:13px;margin:0 -10px}
+.divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--line)}
+.icons{display:flex;justify-content:center;gap:36px;margin:16px 0 14px}
+.icons button{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.icons button:active{transform:scale(.92)}
+.icons .wx{background:#2dc100}.icons .gg{background:#fff;box-shadow:0 0 0 1px var(--line)}.icons .ap{background:#000}
+.agree{display:flex;gap:8px;font-size:12.5px;line-height:1.55;color:#333;padding-bottom:22px;text-align:left}
+.agree .ck{width:18px;height:18px;border-radius:50%;border:1.5px solid #b7bcc5;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.agree .ck.on{background:#4a8cf0;border-color:#4a8cf0}
+.agree a{color:var(--blue);text-decoration:none}
+.agree.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.tip{position:absolute;left:24px;bottom:58px;background:rgba(0,0,0,.78);color:#fff;font-size:12px;padding:6px 10px;border-radius:6px;display:none}
+.tip:after{content:"";position:absolute;left:12px;bottom:-5px;border:5px solid transparent;border-bottom:0;border-top-color:rgba(0,0,0,.78)}
+.tip.on{display:block}
+
+/* bind */
+.bhead{background:linear-gradient(120deg,#5d9bf5,#6aa6f7);color:#fff;flex-shrink:0;position:relative;overflow:hidden}
+.bhead:before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);right:-90px;top:-110px}
+.bhead .status{color:#fff}
+.bnav{height:56px;display:flex;align-items:center;justify-content:center;position:relative;font-size:17px;font-weight:500}
+.bnav .back{position:absolute;left:14px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center}
+.bscr{background:var(--bg)}
+.btip{color:var(--sub);font-size:13px;padding:12px 16px;line-height:1.5}
+.btip b{color:#333;font-weight:500}
+.bform{background:#fff;padding:0 16px}
+.bform .row{min-height:50px}.bform .region,.bform input.f{height:50px}
+.bform .msg{padding-left:0}
+.bbtn{display:block;margin:24px 16px 0;height:44px;border-radius:6px;background:#4f9df7;color:#fff;font-size:16px}
+.bbtn:disabled{background:#a9cdf8;cursor:default}
+
+/* mine */
+.mscr{background:#fff}
+.mtop{position:relative;height:250px;flex-shrink:0}
+.mbg{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,100% 58%,0 95%);background:
+  linear-gradient(180deg,rgba(40,60,95,.45),rgba(40,60,95,.65)),
+  radial-gradient(ellipse at 75% 35%,#8aa2c4 0,transparent 55%),
+  radial-gradient(ellipse at 15% 70%,#4d6890 0,transparent 60%),
+  linear-gradient(135deg,#5b7398,#2c4468)}
+.mtop .status{color:#fff;position:relative}
+.mtools{position:absolute;right:16px;top:64px;display:flex;gap:18px}
+.mtools button{width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.mfab{position:absolute;right:30px;top:96px;width:44px;height:44px;border-radius:50%;background:var(--navy);box-shadow:0 3px 10px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center}
+.mwho{position:absolute;left:22px;top:84px;color:#fff;text-align:left;max-width:220px}
+.mname{font-size:23px;font-weight:500;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtag{display:inline-flex;gap:6px;align-items:center;margin-top:8px;background:rgba(255,255,255,.22);font-size:12px;padding:5px 7px;line-height:1}
+.mtag .badge{background:rgba(255,255,255,.3);border-radius:8px;padding:2px 6px;font-size:11px}
+.mav{position:absolute;left:22px;top:146px;width:84px;height:84px;border-radius:50%;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.18);overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0}
+.mav .ini{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:34px;font-weight:600}
+.mstats{position:absolute;right:14px;top:184px;display:flex;gap:22px;text-align:center}
+.mstats button{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:13.5px;color:#444;padding:4px 6px;border-radius:8px}
+.mstats button:active{background:#f1f2f5}
+.msec{font-size:16px;font-weight:600;padding:2px 14px;margin:6px 0 14px;border-left:3px solid var(--blue);margin-left:12px;padding-left:6px}
+.mcards{display:flex;gap:12px;padding:0 18px}
+.mcards div{flex:1;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);row-gap:22px;padding:24px 0 22px;font-size:13px;color:#555;text-align:center}
+.mgrid div{display:flex;flex-direction:column;align-items:center;gap:10px}
+.mban{margin:0 14px;height:84px;border-radius:4px;background:linear-gradient(100deg,#bfe7f6,#56a8ee);display:flex;align-items:center;padding:0 12px;gap:10px;color:#fff;position:relative}
+.mban b{font-size:18px;text-shadow:0 1px 3px rgba(0,60,140,.4)}.mban small{display:block;font-size:10px;opacity:.9}
+.mban i{position:absolute;right:10px;bottom:8px;font-style:normal;background:linear-gradient(90deg,#fff7df,#f2d58e);color:#8a5a12;font-size:12px;padding:5px 12px;border-radius:14px}
+.mtab{margin-top:auto;display:flex;border-top:1px solid #f0f1f4;padding:6px 8px 18px;background:#fff;flex-shrink:0}
+.mtab div{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:#333;padding:5px 0}
+.mtab div.on{color:#2f6fe4;background:#eef0f3;border-radius:16px}
+
+/* 编辑个人信息 */
+.escr{background:var(--bg)}
+.ehead{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;flex-shrink:0}
+.ehead .status{color:#fff}
+.enav{height:48px;display:flex;align-items:center;justify-content:center;position:relative;font-size:17px}
+.enav .back{position:absolute;left:12px;width:36px;height:36px;display:flex;align-items:center;justify-content:center}
+.eav{display:flex;flex-direction:column;align-items:center;padding:22px 0 16px;background:#fff;gap:8px;font-size:12.5px;color:var(--sub)}
+.eav button{width:80px;height:80px;border-radius:50%;position:relative;overflow:visible;padding:0}
+.eav .pic{width:80px;height:80px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#eef0f4;border:1.5px dashed #b7bcc5}
+.eav .pic.set{border:0}
+.eav .pic img,.mav img{width:100%;height:100%;object-fit:cover}
+.eav .cam{position:absolute;right:-2px;bottom:0;width:26px;height:26px;border-radius:50%;background:var(--navy2);border:2px solid #fff;display:flex;align-items:center;justify-content:center}
+.elist{background:#fff;margin-top:10px;padding:0 16px}
+.screen>*{flex-shrink:0}
+.elist .row{min-height:52px;text-align:left}.elist .row .lab{width:104px;white-space:nowrap}
+.elist .row .val{flex:1;text-align:right;color:#333;font-size:14.5px;display:flex;justify-content:flex-end;align-items:center;gap:6px}
+.elist .row .val.go{color:var(--sub)}
+.elist .row input.f{text-align:right;height:52px}
+.req{color:var(--err);margin-left:2px}
+.opt-tag{font-size:11px;color:var(--sub);background:#f1f2f5;border-radius:4px;padding:1px 5px;margin-left:4px;font-weight:400}
+.ok-tag{font-size:11px;color:#2a9d4b;background:#e8f6ec;border-radius:4px;padding:1px 6px}
+.ecount{font-size:12px;color:#b7bcc5;margin-left:8px}
+.esave{display:block;margin:28px 16px 20px;height:46px;border-radius:23px;color:#fff;font-size:16px;background:linear-gradient(90deg,var(--navy),var(--navy2))}
+.esave:disabled{opacity:.4;cursor:default}
+.avgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:6px 22px 14px}
+.avgrid button{aspect-ratio:1;border-radius:50%;overflow:hidden;padding:0}
+.efield{padding:4px 22px 6px}
+.pbtip{font-size:12.5px;color:var(--sub);line-height:1.5;text-align:center;padding:0 26px 4px;margin-top:-4px}
+.pblist{max-height:220px;overflow-y:auto;margin:0 -22px;border-bottom:1px solid var(--line)}
+.efield .row{min-height:50px}.efield input.f{height:50px}
+
+/* 模拟键盘 */
+.kb{position:absolute;left:0;right:0;bottom:0;z-index:35;background:#d1d4db;padding:0 3px 22px;transform:translateY(calc(100% + 40px));transition:transform .25s ease-out;pointer-events:none;user-select:none;-webkit-user-select:none;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.kb.on{transform:none;pointer-events:auto}
+.kb .acc{height:40px;display:flex;align-items:center;background:#f6f7f9;margin:0 -3px 6px;padding:0 12px;border-top:1px solid #c7cad1;gap:4px;overflow-x:auto;white-space:nowrap}
+.kb .acc .py{color:var(--blue);font-size:14px;margin-right:6px}
+.kb .acc .cand{font-size:16px;padding:4px 10px;border-radius:6px}
+.kb .acc .cand:active{background:#dde1e7}
+.kb .acc .sug{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;color:#111;line-height:1.15;border-radius:6px;padding:3px 0;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.kb .acc .sug small{font-size:10.5px;color:#666}
+.kb .acc .sug:active{background:#dde1e7}
+.kb .acc .done{margin-left:auto;color:var(--blue);font-size:15px;font-weight:600;padding:6px 4px}
+.kb .krow{display:flex;justify-content:center;gap:5px;margin-bottom:9px}
+.kb .k{height:40px;flex:1;max-width:32px;background:#fff;border-radius:5px;box-shadow:0 1px 0 #898a8d;font-size:19px;display:flex;align-items:center;justify-content:center;color:#111}
+.kb .k:active{background:#bcc0c7}
+.kb .k.fn{background:#abb0ba;max-width:44px;font-size:14px;flex:1.4}
+.kb .k.fn:active{background:#fff}
+.kb .k.wide{max-width:none;flex:5;font-size:14px}
+.kb .k.ret{background:var(--blue);color:#fff;max-width:none;flex:2.2;font-size:14px}
+.kb .k.on{background:#fff}
+.kb.num .krow{gap:6px;margin-bottom:7px;padding:0 3px}
+.kb.num .k{max-width:none;height:46px;flex-direction:column;font-size:24px;line-height:1}
+.kb.num .k small{font-size:9px;letter-spacing:2px;margin-top:1px;color:#333}
+.kb.num .k.blank{background:none;box-shadow:none}
+.kb.num .k.del{background:none;box-shadow:none}
+.kb.android{background:#eceff1}
+.kb.android .k{box-shadow:none;border-radius:6px}
+.kb.android .k.fn{background:#d5dade}
+
+/* 自绘光标（输入框为只读，原生光标不显示） */
+.tcaret{position:absolute;width:2px;border-radius:1px;background:#1a7cf0;z-index:34;display:none;pointer-events:none;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+input[readonly]{cursor:text}
+/* Sign in with Apple（iOS 系统样式） */
+.mask.aplmask{background:rgba(0,0,0,.25);align-items:flex-end;padding:0 8px 8px}
+.apl{width:100%;background:rgba(246,246,248,.96);backdrop-filter:blur(20px);border-radius:34px;padding:22px 18px 18px;box-shadow:0 10px 40px rgba(0,0,0,.25);animation:up .28s ease-out;font-family:-apple-system,"SF Pro Text","Helvetica Neue",Arial,sans-serif}
+.apl-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.apl-h b{font-size:19px;font-weight:700;color:#000}
+.apl-x{width:34px;height:34px;border-radius:50%;background:#e4e4e9;color:#777;font-size:15px}
+.apl-app{display:flex;align-items:center;gap:12px;font-size:14px;color:#111;line-height:1.35;margin-bottom:16px}
+.apl-app svg{flex-shrink:0}
+.apl-acct{display:flex;align-items:center;gap:12px;background:#e9e9ee;border-radius:20px;padding:10px 14px;margin-bottom:16px}
+.apl-acct b{display:block;font-size:15px;font-weight:600;color:#000}.apl-acct small{font-size:12px;color:#8a8a8e}
+.apl-foot{min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.apl-foot small{font-size:13px;color:#555}
+.apl-go{height:46px;padding:0 26px;border-radius:23px;background:#0a84ff;color:#fff;font-size:17px;font-weight:600}
+.apl-go:active{opacity:.8}
+.apl-spin{width:40px;height:40px;border-radius:50%;border:3px solid #cfe3fb;border-top-color:#1a7cf0;animation:sp .9s linear infinite}
+.apl-done{width:40px;height:40px;border-radius:50%;background:#1a7cf0;color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;animation:pop .2s}
+.faceid{position:absolute;left:50%;top:14px;width:120px;height:120px;margin-left:-60px;border-radius:30px;background:#000;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.6);transition:all .25s;pointer-events:none}
+.faceid.on{opacity:1;transform:scale(1)}
+.faceid svg{animation:fid 1s ease-in-out infinite}
+.faceid.ok svg{animation:none}
+@keyframes fid{50%{opacity:.45}}
+
+/* overlay: sheet / dialog / toast / loading */
+.mask{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:20;display:none;align-items:flex-end}
+.mask.on{display:flex}.mask.center{align-items:center;justify-content:center}
+.sheet{background:#fff;width:100%;border-radius:16px 16px 0 0;padding-bottom:20px;animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(100%)}}
+.sheet h3{font-size:16px;font-weight:600;text-align:center;padding:16px 0 10px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;padding:13px 22px;font-size:15px;text-align:left}
+.opt .code{margin-left:auto;color:var(--sub)}
+.opt.on{color:var(--blue)}.opt.on .code{color:var(--blue)}
+.cancel{display:block;width:100%;border-top:8px solid #f3f4f6;padding:14px 0;font-size:15px;color:#555}
+.dialog{background:#fff;width:290px;border-radius:14px;overflow:hidden;text-align:center;animation:pop .18s}
+@keyframes pop{from{transform:scale(.9);opacity:0}}
+.dialog h4{font-size:16px;padding:20px 18px 6px}
+.dialog p{font-size:13.5px;color:#666;line-height:1.55;padding:0 18px 18px}
+.dialog .btns{display:flex;border-top:1px solid var(--line)}
+.dialog .btns button{flex:1;height:46px;font-size:15px}
+.dialog .btns button+button{border-left:1px solid var(--line);color:var(--blue);font-weight:600}
+.auth{padding:6px 22px 4px}
+.auth .who{display:flex;align-items:center;gap:10px;font-size:14px;color:#555;margin-bottom:14px}
+.auth .who i{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.auth h5{font-size:17px;font-weight:600;margin-bottom:6px}
+.auth p{font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:16px}
+.auth .acct{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:10px;margin-bottom:18px;font-size:14px}
+.auth .acct .av{width:36px;height:36px;border-radius:50%;background:#e8eef8;display:flex;align-items:center;justify-content:center}
+.auth .acts{display:flex;gap:12px}
+.auth .acts button{flex:1;height:42px;border-radius:8px;font-size:15px;background:#f2f3f5}
+.auth .acts .ok{color:#fff}
+.toast{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);color:#fff;font-size:14px;padding:10px 18px;border-radius:8px;z-index:40;display:none;max-width:260px;text-align:center;line-height:1.5}
+.toast.on{display:block;animation:pop .18s}
+.toast .ok{display:block;font-size:26px;margin-bottom:2px}
+.loading{position:absolute;inset:0;z-index:30;display:none;align-items:center;justify-content:center}
+.loading.on{display:flex}
+.loading div{background:rgba(0,0,0,.75);color:#fff;font-size:13px;padding:16px 20px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.spin{width:24px;height:24px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ---- EN overrides ---- */
+.slogan{font-family:"Playfair Display",Georgia,serif;font-style:italic;top:92px}
+.slogan .l1{font-size:22px;letter-spacing:.5px}.slogan .l1 em{font-size:34px;font-style:italic}
+.slogan .l2{font-size:22px;letter-spacing:.5px;margin-top:4px}.slogan .l2 em{font-family:"Playfair Display",Georgia,serif;font-size:40px}
+.row .lab{width:112px;font-size:14px}
+.bform .row .lab,.efield .row .lab{width:112px}
+.mname{font-size:21px;letter-spacing:0}
+.mtag{font-size:11.5px}
+.mstats button{font-size:13px}
+.mgrid{font-size:12px}
+.mcards div{font-size:13px}
+.msec{font-size:15px}
+.ltabs{gap:52px}
+.agree{font-size:12px}
+.getcode{font-size:13.5px}
+.primary{letter-spacing:.5px}
+.esave,.bbtn{letter-spacing:.5px}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <span><b>Device</b><span class="seg" data-k="os"><button data-v="ios" class="on">iPhone</button><button data-v="android">Android</button></span></span>
+  <span><b>Phone/Email</b><span class="seg" data-k="phoneReg"><button data-v="0" class="on">New</button><button data-v="1">Registered</button></span></span>
+  <span><b>Third-party</b><span class="seg" data-k="tpBound"><button data-v="0" class="on">First login</button><button data-v="1">Linked before</button></span></span>
+  <span class="hint">Demo: any 6-digit code works (000000 simulates a wrong code). With Phone/Email = Registered, linking a phone after a first third-party login triggers the "number already has an account" branch.</span>
+</div>
+
+<div class="phone" id="phone">
+
+  <!-- 我的 -->
+  <section class="screen mscr on" id="s-mine">
+    <div class="mtop">
+      <div class="mbg"></div>
+      <div class="status"><span>3:02</span><span>●●● ▮</span></div>
+      <div class="mtools">
+        <button aria-label="Scan"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3M3 12h18"/></svg></button>
+        <button id="mSet" aria-label="Settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></button>
+      </div>
+      <div class="mfab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5M8 8h8M8 12h5M18.5 13.5l2 2-5 5H13.5v-2z"/></svg></div>
+      <button class="mwho" id="mWho"><div class="mname" id="mName">Log In / Sign Up</div><div class="mtag" id="mTag">Wherever there's home, there's Johome</div></button>
+      <button class="mav" id="mAvatar" aria-label="Avatar"></button>
+      <div class="mstats"><button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="1.7" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>Saved</button><button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1e4a86" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>History</button></div>
+    </div>
+    <div class="msec">My Home-Buying Tools – Vancouver</div>
+    <div class="mcards"><div style="background:linear-gradient(90deg,#eef5ff,#e8eaff)">My Preferences 📝</div><div style="background:linear-gradient(90deg,#ecfbef,#dcf7e4)">Buying Process 📊</div></div>
+    <div class="mgrid">
+      <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#557" stroke-width="1.6"><path d="M4 20V13M9 20V9M14 20V11M19 20V4"/></svg>Market Trends</div>
+      <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#557" stroke-width="1.6"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v4c0 1.7 3 3 7 3s7-1.3 7-3V6M5 10v4c0 1.7 3 3 7 3s7-1.3 7-3v-4"/></svg>Mortgage Calculator</div>
+      <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#557" stroke-width="1.6"><path d="M3 17 17 3l4 4L7 21zM7 13l2 2M10 10l2 2M13 7l2 2"/></svg>AR Settings</div>
+      <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#557" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M8.5 14.5c2 2 5 2 7 0"/></svg>About Us</div>
+      <div><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#557" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6z"/></svg>Agent Verification</div>
+    </div>
+    <div class="mban"><span style="font-size:34px">📣</span><div><b>Invite Friends to JoHome</b><small>Share the app with friends</small></div><i>Invite Now</i></div>
+    <div class="mtab"><div>⌂<span>Home</span></div><div>▦<span>Map</span></div><div>▤<span>News</span></div><div class="on">●<span>Me</span></div></div>
+  </section>
+
+  <!-- 登录 -->
+  <section class="screen" id="s-login">
+    <div class="hero">
+      <div class="status"><span>11:34</span><span>●●● ▮</span></div>
+      <button class="back" data-go="mine" aria-label="Back"><svg width="12" height="20" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="slogan"><div class="l1">Wherever there's <em>home</em>,</div><div class="l2">there's <em>Johome</em></div></div>
+    </div>
+    <div class="card">
+      <div class="ltabs" id="lTabs"><button data-lt="phone" class="on">Phone</button><button data-lt="email">Email</button></div>
+      <div id="lPhonePane">
+      <div class="row"><span class="lab">Country/Region</span><button class="region" data-pick="login"></button></div>
+      <div class="row" id="lPhoneRow"><span class="dial"></span><input class="f" id="lPhone" inputmode="numeric" placeholder="Phone number" maxlength="15"></div>
+      <div class="msg" id="lPhoneMsg"></div>
+      <div class="row" id="lCodeRow" style="margin-top:-18px"><span class="lab">Code</span><input class="f" id="lCode" inputmode="numeric" maxlength="6" placeholder="Enter code"><button class="getcode" id="lGet" disabled>Get code</button></div>
+      <div class="msg" id="lCodeMsg"></div>
+      <button class="primary" id="lSubmit" disabled>Log In</button>
+      <div class="note">New phone numbers get an account automatically</div>
+      </div>
+      <div id="lMailPane" hidden>
+      <div class="row" id="emRow"><span class="lab">Email</span><input class="f" id="emIn" type="text" data-kb="email" autocomplete="off" placeholder="Email address" maxlength="64"></div>
+      <div class="msg" id="emMsg"></div>
+      <div class="row" id="emCodeRow" style="margin-top:-18px"><span class="lab">Code</span><input class="f" id="emCode" inputmode="numeric" maxlength="6" placeholder="Enter code"><button class="getcode" id="emGet" disabled>Get code</button></div>
+      <div class="msg" id="emCMsg"></div>
+      <button class="primary" id="emSubmit" disabled>Log In</button>
+      <div class="note">New email addresses get an account automatically</div>
+      </div>
+      <div class="third">
+        <div class="divider">Or continue with</div>
+        <div class="icons">
+          <button class="wx" data-tp="wechat" aria-label="Sign in with WeChat"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M9.1 3.5C5 3.5 1.7 6.3 1.7 9.7c0 1.9 1 3.6 2.7 4.8l-.7 2.1 2.5-1.3c.9.3 1.9.4 2.9.4h.5a5.6 5.6 0 0 1-.2-1.5c0-3.4 3.2-6.1 7.2-6.1h.6C16.4 5.6 13.1 3.5 9.1 3.5Zm-2.6 4.4a.9.9 0 1 1 0-1.9.9.9 0 0 1 0 1.9Zm5.1 0a.9.9 0 1 1 0-1.9.9.9 0 0 1 0 1.9Z"/><path d="M22.3 14.1c0-2.9-2.8-5.2-6.2-5.2s-6.2 2.3-6.2 5.2 2.8 5.2 6.2 5.2c.7 0 1.4-.1 2.1-.3l2 1.1-.5-1.8c1.6-1 2.6-2.5 2.6-4.2Zm-8.2-.9a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Zm4 0a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"/></svg></button>
+          <button class="gg" data-tp="google" aria-label="Sign in with Google"><svg width="22" height="22" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3a12 12 0 0 1-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.2-.1-2.3-.4-3.5z"/></svg></button>
+          <button class="ap" data-tp="apple" aria-label="Sign in with Apple"><svg width="20" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M16.4 12.6c0-2.5 2-3.7 2.1-3.7-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.6 1.3-.1 1.7-.8 3.3-.8 1.5 0 1.9.8 3.3.8s2.2-1.3 3-2.5c1-1.4 1.4-2.8 1.4-2.8s-2.6-1-2.6-4.3ZM14 5.2c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4Z"/></svg></button>
+        </div>
+        <div class="agree" id="lAgree"><button class="ck" id="lCk" aria-label="Accept agreements"></button><span>By signing up or logging in, you agree to the <a href="javascript:;">Privacy Policy</a> and <a href="javascript:;">Terms of Service</a></span></div>
+      </div>
+      <div class="tip" id="lTip">Please read and accept the agreements first</div>
+    </div>
+  </section>
+
+  <!-- 手机号绑定 -->
+  <section class="screen bscr" id="s-bind">
+    <div class="bhead">
+      <div class="status"><span>2:31</span><span>●●● ▮</span></div>
+      <div class="bnav"><button class="back" id="bBack" aria-label="Back"><svg width="10" height="17" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>Link Phone Number</div>
+    </div>
+    <div class="btip" id="bTip">For your account security, please link your phone number.</div>
+    <div class="bform">
+      <div class="row"><span class="lab">Country/Region</span><button class="region" data-pick="bind"></button></div>
+      <div class="row" id="bPhoneRow"><span class="dial"></span><input class="f" id="bPhone" inputmode="numeric" placeholder="Phone number" maxlength="15"></div>
+      <div class="msg" id="bPhoneMsg"></div>
+      <div class="row" id="bCodeRow" style="margin-top:-18px"><span class="lab">Code</span><input class="f" id="bCode" inputmode="numeric" maxlength="6" placeholder="Enter code"><button class="getcode" id="bGet" disabled>Get code</button></div>
+      <div class="msg" id="bCodeMsg" style="padding-bottom:4px"></div>
+    </div>
+    <button class="bbtn" id="bSubmit" disabled>Confirm</button>
+  </section>
+
+  <!-- 编辑个人信息 -->
+  <section class="screen escr" id="s-edit">
+    <div class="ehead">
+      <div class="status"><span>3:02</span><span>●●● ▮</span></div>
+      <div class="enav"><button class="back" id="eBack" aria-label="Back"><svg width="11" height="18" viewBox="0 0 12 20"><path d="M10 2 2 10l8 8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>Edit Profile</div>
+    </div>
+    <div class="eav">
+      <button id="eAvBtn" aria-label="Set avatar"><span class="pic" id="ePic"></span><span class="cam"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span></button>
+      <span id="eAvTxt">Tap to set avatar<span class="req">*</span></span>
+    </div>
+    <div class="elist">
+      <div class="row" id="eNameRow"><span class="lab">Nickname<span class="req">*</span></span><input class="f" id="eName" maxlength="30" placeholder="Set a nickname"><span class="ecount" id="eCount">0/30</span></div>
+      <button class="row" id="ePhoneRow" style="width:100%"><span class="lab">Phone</span><span class="val" id="ePhone"></span></button>
+    </div>
+    <div class="elist">
+      <button class="row" id="eWx" style="width:100%"><span class="lab">WeChat<span class="opt-tag">Optional</span></span><span class="val go" id="eWxVal"></span></button>
+      <button class="row" id="eMail" style="width:100%;border-bottom:0"><span class="lab">Email<span class="opt-tag">Optional</span></span><span class="val go" id="eMailVal"></span></button>
+    </div>
+    <button class="esave" id="eSave" disabled>Done</button>
+    <input type="file" id="eFile" accept="image/*" hidden>
+  </section>
+
+  <div class="mask" id="mask"></div>
+  <div class="kb" id="kb"></div>
+  <div class="loading" id="loading"><div><span class="spin"></span><span id="loadTxt">请稍候</span></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const FLAG=c=>`<img class="flag" src="https://flagcdn.com/w40/${c}.png" alt="">`;
+const GLOBE=`<svg class="flag" viewBox="0 0 24 16" style="box-shadow:none"><circle cx="12" cy="8" r="7" fill="none" stroke="#888" stroke-width="1.3"/><path d="M5 8h14M12 1c-3 3.5-3 10.5 0 14M12 1c3 3.5 3 10.5 0 14" fill="none" stroke="#888" stroke-width="1.1"/></svg>`;
+/* 号码规则：去掉空格/横线后校验 */
+const REGIONS=[
+  {id:'cn',name:'China',dial:'86',icon:FLAG('cn'),re:/^1[3-9]\d{9}$/,len:11,err:'Enter an 11-digit mainland China mobile number'},
+  {id:'hk',name:'Hong Kong, China',dial:'852',icon:FLAG('hk'),re:/^[4-9]\d{7}$/,len:8,err:'Enter an 8-digit Hong Kong mobile number'},
+  {id:'tw',name:'Taiwan, China',dial:'886',icon:FLAG('tw'),re:/^0?9\d{8}$/,len:10,err:'Enter a Taiwan mobile number starting with 09'},
+  {id:'ca',name:'Canada',dial:'1',icon:FLAG('ca'),re:/^[2-9]\d{2}[2-9]\d{6}$/,len:10,err:'Enter a 10-digit Canadian mobile number'},
+  {id:'us',name:'United States',dial:'1',icon:FLAG('us'),re:/^[2-9]\d{2}[2-9]\d{6}$/,len:10,err:'Enter a 10-digit US mobile number'},
+  {id:'other',name:'Other',dial:'',icon:GLOBE,re:/^\d{5,15}$/,len:15,err:'Enter a valid mobile number'}
+];
+const TP={wechat:{name:'WeChat',color:'#2dc100',acct:'WeChat User · Xiao Lin'},google:{name:'Google',color:'#4285f4',acct:'lin.j****@gmail.com'},apple:{name:'Apple',color:'#000',acct:'Xiao Lin'}};
+const demo={os:'ios',phoneReg:'0',tpBound:'0'};
+let user=null, pendingTp=null;
+const SMS={}; const genCode=()=>String(100000+Math.floor(Math.random()*900000));  /* 每次发送生成一个演示验证码，键盘建议栏可一键填入 */
+
+/* ---------- 演示工具条 ---------- */
+$$('.seg').forEach(seg=>seg.onclick=e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  demo[seg.dataset.k]=b.dataset.v;
+  if(seg.dataset.k==='os') $('[data-tp=apple]').style.display=demo.os==='ios'?'':'none';
+});
+
+/* ---------- 通用 ---------- */
+function go(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id==='s-'+id));}
+$$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+let tt; function toast(t,ok){const el=$('#toast');el.innerHTML=(ok?'<span class="ok">✓</span>':'')+t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),1800);}
+function loading(on,t){$('#loading').classList.toggle('on',on);if(t)$('#loadTxt').textContent=t;}
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+const mask=$('#mask');
+function closeMask(){mask.classList.remove('on','center');mask.innerHTML='';}
+/* 只有「按下和松开都在遮罩上」才算点空白关闭——输入框聚焦弹键盘会把面板顶上去，松开时指针可能落在遮罩上 */
+let downOnMask=false;
+mask.addEventListener('pointerdown',e=>{downOnMask=e.target===mask;});
+mask.onclick=e=>{if(downOnMask&&e.target===mask&&!mask.classList.contains('center')){const c=mask.querySelector('.cancel');c?c.click():closeMask();}downOnMask=false;};
+function dialog(title,body,cancelTxt,okTxt){
+  return new Promise(res=>{
+    if(typeof kbEl!=='undefined'&&kbEl&&kbEl.closest('.mask')){kbEl.blur();kbHide();} mask.style.paddingBottom='';
+    mask.className='mask on center';
+    mask.innerHTML=`<div class="dialog"><h4>${title}</h4><p>${body}</p><div class="btns"><button data-r="0">${cancelTxt}</button><button data-r="1">${okTxt}</button></div></div>`;
+    mask.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{closeMask();res(b.dataset.r==='1');});
+  });
+}
+
+/* ---------- 表单（登录页与绑定页共用） ---------- */
+function makeForm(p){
+  const f={region:REGIONS.find(r=>r.id==='ca'),timer:0,left:0,sent:false,
+    phone:$('#'+p+'Phone'),code:$('#'+p+'Code'),get:$('#'+p+'Get'),submit:$('#'+p+'Submit'),
+    pRow:$('#'+p+'PhoneRow'),pMsg:$('#'+p+'PhoneMsg'),cRow:$('#'+p+'CodeRow'),cMsg:$('#'+p+'CodeMsg'),
+    regBtn:$(`[data-pick=${p==='l'?'login':'bind'}]`),dial:$('#'+p+'PhoneRow .dial')};
+  f.digits=()=>f.phone.value.replace(/\D/g,'');
+  f.dialCode=()=>f.region.id==='other'?(f.dial.querySelector('input').value.replace(/\D/g,'')):f.region.dial;
+  f.valid=()=>f.region.re.test(f.digits())&&(f.region.id!=='other'||/^\d{1,4}$/.test(f.dialCode()));
+  f.render=()=>{
+    f.regBtn.innerHTML=`${f.region.icon}<span>${f.region.name}</span><i class="caret"></i>`;
+    f.dial.innerHTML=f.region.id==='other'?`+<input placeholder="Code" maxlength="4" inputmode="numeric">`:'+'+f.region.dial;
+    const di=f.dial.querySelector('input'); if(di) di.oninput=f.update;
+    f.phone.maxLength=f.region.len; f.phone.value=f.phone.value.slice(0,f.region.len);
+    f.update();
+  };
+  f.update=()=>{
+    f.phone.value=f.phone.value.replace(/\D/g,''); f.code.value=f.code.value.replace(/\D/g,'');
+    if(!f.left) f.get.disabled=!f.valid();
+    f.submit.disabled=!(f.valid()&&f.code.value.length===6);
+    f.cMsg.textContent=''; f.cRow.classList.remove('err');
+  };
+  f.phone.oninput=()=>{f.pMsg.textContent='';f.pRow.classList.remove('err');f.update();};
+  f.phone.onblur=()=>{if(f.digits()&&!f.valid()){f.pMsg.textContent=f.region.id==='other'&&!f.dialCode()?'Enter the country/region dial code':f.region.err;f.pRow.classList.add('err');}};
+  f.code.oninput=f.update;
+  f.get.onclick=()=>{
+    if(!f.valid()){f.phone.onblur();return;}
+    if(p==='l'&&!agreed){needAgree();return;}
+    f.sent=true; f.left=60; f.get.disabled=true; SMS[p]=genCode(); tick();
+    toast(`Code sent to +${f.dialCode()} ${f.digits()}<br><span style="opacity:.7;font-size:12px">(Demo: tap the suggestion above the keyboard to fill it in)</span>`);
+    f.code.focus();
+  };
+  function tick(){f.get.textContent=f.left?`Resend (${f.left}s)`:'Get code';if(!f.left){f.get.disabled=!f.valid();return;}f.left--;f.timer=setTimeout(tick,1000);}
+  f.reset=()=>{clearTimeout(f.timer);f.left=0;f.sent=false;f.phone.value='';f.code.value='';f.get.textContent='Get code';f.pMsg.textContent='';f.cMsg.textContent='';f.pRow.classList.remove('err');f.cRow.classList.remove('err');f.region=REGIONS.find(r=>r.id==='ca');f.render();};
+  f.codeErr=t=>{f.cMsg.textContent=t;f.cRow.classList.add('err');};
+  f.regBtn.onclick=()=>pickRegion(f);
+  f.render();
+  return f;
+}
+function pickRegion(f){
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><h3>Select Country/Region</h3>${REGIONS.map(r=>`<button class="opt ${r.id===f.region.id?'on':''}" data-id="${r.id}">${r.icon}<span>${r.name}</span><span class="code">${r.dial?'+'+r.dial:'Enter manually'}</span></button>`).join('')}<button class="cancel">Cancel</button></div>`;
+  mask.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const r=REGIONS.find(x=>x.id===b.dataset.id);
+    if(r.id!==f.region.id){f.region=r;f.pMsg.textContent='';f.pRow.classList.remove('err');clearTimeout(f.timer);f.left=0;f.get.textContent='Get code';f.render();}
+    closeMask(); if(r.id==='other') f.dial.querySelector('input').focus();
+  });
+  mask.querySelector('.cancel').onclick=closeMask;
+}
+const L=makeForm('l'), B=makeForm('b');
+
+/* ---------- 协议勾选 ---------- */
+let agreed=false;
+$('#lCk').onclick=()=>{agreed=!agreed;$('#lCk').classList.toggle('on',agreed);$('#lCk').innerHTML=agreed?'<svg width="10" height="8" viewBox="0 0 10 8"><path d="M1 4l3 3 5-6" fill="none" stroke="#fff" stroke-width="1.8"/></svg>':'';$('#lTip').classList.remove('on');};
+function needAgree(){const a=$('#lAgree');a.classList.remove('shake');void a.offsetWidth;a.classList.add('shake');$('#lTip').classList.add('on');setTimeout(()=>$('#lTip').classList.remove('on'),2200);}
+
+/* ---------- 手机号登录 ---------- */
+L.submit.onclick=async()=>{
+  if(!agreed){needAgree();return;}
+  if(!L.sent){L.codeErr('Please get a code first');return;}
+  loading(true,'Logging in');await wait(800);loading(false);
+  if(L.code.value==='000000'){L.codeErr('Incorrect code. Please try again.');return;}
+  const isNew=demo.phoneReg==='0';
+  signIn({phone:`+${L.dialCode()} ${mask4(L.digits())}`,via:'Phone',name:'Johome User '+L.digits().slice(-4)});
+  if(isNew){openEdit(true);toast('Account created<br><span style="opacity:.75;font-size:12px">Now set your avatar and nickname</span>',true);}
+  else toast('Logged in',true);
+};
+/* ---------- 手机号 / 邮箱 tab ---------- */
+$('#lTabs').onclick=e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  $$('#lTabs button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#lPhonePane').hidden=b.dataset.lt!=='phone'; $('#lMailPane').hidden=b.dataset.lt!=='email';
+};
+/* ---------- 邮箱验证码登录 ---------- */
+const EM={sent:false,left:0,timer:0};
+const emValid=()=>/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test($('#emIn').value.trim());
+function emUpd(){
+  $('#emCode').value=$('#emCode').value.replace(/\D/g,'');
+  if(!EM.left) $('#emGet').disabled=!emValid();
+  $('#emSubmit').disabled=!(emValid()&&$('#emCode').value.length===6);
+  $('#emCMsg').textContent=''; $('#emCodeRow').classList.remove('err');
+}
+$('#emIn').oninput=()=>{$('#emMsg').textContent='';$('#emRow').classList.remove('err');emUpd();};
+$('#emIn').onblur=()=>{if($('#emIn').value.trim()&&!emValid()){$('#emMsg').textContent='Enter a valid email address';$('#emRow').classList.add('err');}};
+$('#emCode').oninput=emUpd;
+$('#emGet').onclick=()=>{
+  if(!emValid()){$('#emIn').onblur();return;}
+  if(!agreed){needAgree();return;}
+  EM.sent=true; SMS.em=genCode(); EM.left=60; $('#emGet').disabled=true; (function tick(){$('#emGet').textContent=EM.left?`Resend (${EM.left}s)`:'Get code';if(!EM.left){$('#emGet').disabled=!emValid();return;}EM.left--;EM.timer=setTimeout(tick,1000);})();
+  toast(`Code sent to ${$('#emIn').value.trim()}<br><span style="opacity:.7;font-size:12px">(Demo: tap the suggestion above the keyboard to fill it in)</span>`);
+  $('#emCode').focus();
+};
+function emReset(){clearTimeout(EM.timer);EM.left=0;EM.sent=false;$('#emIn').value='';$('#emCode').value='';$('#emGet').textContent='Get code';$('#emMsg').textContent='';$('#emCMsg').textContent='';emUpd();}
+$('#emSubmit').onclick=async()=>{
+  if(!agreed){needAgree();return;}
+  const err=t=>{$('#emCMsg').textContent=t;$('#emCodeRow').classList.add('err');};
+  if(!EM.sent){err('Please get a code first');return;}
+  loading(true,'Logging in');await wait(800);loading(false);
+  if($('#emCode').value==='000000'){err('Incorrect code. Please try again.');return;}
+  const mail=$('#emIn').value.trim(), isNew=demo.phoneReg==='0';
+  signIn({phone:null,email:mail,via:'Email',name:'Johome User '+mail.split('@')[0].slice(0,6)});
+  emReset();
+  if(isNew){openEdit(true);toast('Account created<br><span style="opacity:.75;font-size:12px">Now set your avatar and nickname</span>',true);}
+  else toast('Logged in',true);
+};
+function mask4(d){return d.length>7?d.slice(0,3)+'****'+d.slice(-4):d.slice(0,2)+'****'+d.slice(-2);}
+
+/* ---------- 第三方登录 ---------- */
+$$('[data-tp]').forEach(b=>b.onclick=()=>{if(!agreed){needAgree();return;}authSheet(b.dataset.tp);});
+function authSheet(k){
+  if(k==='apple') return appleSheet();
+  const t=TP[k], ico=document.querySelector(`[data-tp=${k}]`).innerHTML;
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><div class="auth">
+    <div class="who"><i style="background:${k==='google'?'#fff;box-shadow:0 0 0 1px #e3e6ec':t.color}">${ico.replace(/width="\d+" height="\d+"/,'width="16" height="16"')}</i>Sign in with ${t.name}</div>
+    <h5>Johome wants to sign you in with your ${t.name} account</h5>
+    <p>It will access your public profile (nickname, avatar${k==='google'?', email address':''}) to create or sign in to your Johome account.</p>
+    <div class="acct"><span class="av">👤</span>${t.acct}</div>
+    <div class="acts"><button data-r="0">Deny</button><button class="ok" data-r="1" style="background:${k==='google'?'#4285f4':t.color}">${k==='apple'?'Continue with Face ID':'Allow'}</button></div>
+  </div></div>`;
+  mask.querySelectorAll('[data-r]').forEach(b=>b.onclick=async()=>{
+    closeMask();
+    if(b.dataset.r==='0'){toast('Authorization cancelled');return;}
+    loading(true,'Logging in');await wait(900);loading(false);
+    afterAuth(k);
+  });
+}
+/* 授权完成后：已绑定过→直接登录；首次→手机号绑定页 */
+function afterAuth(k){
+    const t=TP[k];
+    if(demo.tpBound==='1'){
+      signIn({phone:'+1 604****0123',via:t.name,name:t.acct.split(' · ').pop()});
+      toast('Logged in',true);
+    }else{
+      signIn({phone:null,via:t.name,name:t.acct.split(' · ').pop()});
+      openEdit(true); toast('Authorized',true);
+      setTimeout(()=>phoneSheet('tpEdit'),500);
+    }
+}
+/* Sign in with Apple：按 iOS 系统真实样式（悬浮毛玻璃卡片 → 面容 ID → Signing in… → Done） */
+const JO_ICON=`<svg width="44" height="44" viewBox="0 0 44 44"><rect width="44" height="44" rx="10" fill="#3b8cf2"/><path d="M22 8 8 19v2h3v14h22V21h3v-2z" fill="#fff"/><text x="22" y="31" font-size="11" font-weight="800" text-anchor="middle" fill="#3b8cf2" font-family="Arial">JO</text></svg>`;
+const MEMOJI=`<svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="18" fill="#cfe9c4"/><circle cx="18" cy="16" r="9" fill="#f2c49b"/><path d="M9 14q1-8 9-8t9 8q-3-3-9-3t-9 3z" fill="#5b3a24"/><circle cx="14.5" cy="16" r="1.3" fill="#333"/><circle cx="21.5" cy="16" r="1.3" fill="#333"/><path d="M15 20q3 2 6 0" stroke="#a35d3c" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M6 36q2-9 12-9t12 9z" fill="#4a6fa5"/></svg>`;
+function appleSheet(){
+  mask.className='mask on aplmask';
+  mask.innerHTML=`<div class="apl" id="apl">
+    <div class="apl-h"><b>Sign in with Apple</b><button class="apl-x" id="aplX" aria-label="Close">✕</button></div>
+    <div class="apl-app">${JO_ICON}<span>Sign in to Johome using your Apple Account.</span></div>
+    <div class="apl-acct">${MEMOJI}<div><b>${TP.apple.acct}</b><small>Your account</small></div></div>
+    <div class="apl-foot" id="aplFoot"><button class="apl-go" id="aplGo">Sign In</button></div>
+  </div>
+  <div class="faceid" id="faceid"><svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#3ee07a" stroke-width="3.2" stroke-linecap="round"><circle cx="32" cy="32" r="27"/><path d="M23 25v4M41 25v4M32 26v10h-3M23 42q9 7 18 0"/></svg></div>`;
+  $('#aplX').onclick=()=>{closeMask();toast('Authorization cancelled');};
+  $('#aplGo').onclick=async()=>{
+    const foot=$('#aplFoot'), fid=$('#faceid');
+    fid.classList.add('on');                                   // 面容 ID 识别
+    await wait(1100);
+    fid.classList.add('ok');                                    // 识别通过（脸变成对勾态）
+    foot.innerHTML='<span class="apl-spin"></span><small>Signing in…</small>';
+    await wait(500); fid.classList.remove('on');
+    await wait(800);
+    foot.innerHTML='<span class="apl-done">✓</span><small>Done</small>';
+    await wait(700);
+    closeMask(); afterAuth('apple');
+  };
+}
+
+/* ---------- 手机号绑定 ---------- */
+B.submit.onclick=async()=>{
+  if(!B.sent){B.codeErr('Please get a code first');return;}
+  loading(true,'Linking');await wait(800);loading(false);
+  if(B.code.value==='000000'){B.codeErr('Incorrect code. Please try again.');return;}
+  const t=TP[pendingTp], phone=`+${B.dialCode()} ${mask4(B.digits())}`;
+  if(bindMode==='edit'){
+    if(demo.phoneReg==='1'){B.codeErr('This number is linked to another account. Please use a different one.');return;}
+    user.phone=phone; go('edit'); renderEdit(); renderMine(); toast('Phone number linked',true); return;
+  }
+  if(demo.phoneReg==='1'){
+    const merge=await dialog('Number already registered',`${phone} already has a Johome account. Link ${t.name} to it? You'll be able to sign in to the same account either way.`,'Use another number','Link & sign in');
+    if(!merge){B.code.value='';B.phone.focus();B.update();return;}
+  }
+  finishBind(t,phone);
+};
+function finishBind(t,phone){
+  signIn({phone,via:t.name,name:t.acct.split(' · ').pop()});
+  pendingTp=null;
+  toast('Linked',true);
+}
+$('#bBack').onclick=async()=>{
+  if(bindMode==='edit'){go('edit');return;}
+  const skip=await dialog('Skip linking a phone number?','A linked number lets you sign in by phone and recover your account on a new device or if your third-party account has problems. You can link one anytime in Edit Profile.','Keep linking','Skip for now');
+  if(skip){const t=TP[pendingTp];pendingTp=null;signIn({phone:null,via:t.name,name:t.acct.split(' · ').pop()});toast('Logged in',true);}
+};
+
+/* ---------- 我的 ---------- */
+function signIn(u){
+  u.avatar=null; u.wechat=u.via==='WeChat'?u.name:null; u.email=u.email||(u.via==='Google'?TP.google.acct:null);
+  user=u;renderMine();go('mine');L.reset();
+}
+/* 默认头像（未登录） */
+const DEF_AV=`<svg width="84" height="84" viewBox="0 0 84 84"><rect width="84" height="84" fill="#e6e7ea"/><circle cx="20" cy="26" r="11" fill="#cfd1d6"/><circle cx="64" cy="26" r="11" fill="#cfd1d6"/><ellipse cx="42" cy="50" rx="30" ry="26" fill="#fff"/><path d="M26 48q5-6 10 0M48 48q5-6 10 0" fill="none" stroke="#555" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="42" cy="56" rx="4" ry="3" fill="#555"/></svg>`;
+/* 登录后头像：第三方取平台头像，手机号注册用默认生成头像（演示用首字色块代替真实照片） */
+const AV_BG={'WeChat':'linear-gradient(135deg,#7fd36b,#2dc100)','Google':'linear-gradient(135deg,#7aa7ff,#4285f4)','Apple':'linear-gradient(135deg,#666,#111)','Phone':'linear-gradient(135deg,#6f9be0,#1e4a86)','Email':'linear-gradient(135deg,#f0a35e,#d9662b)'};
+function renderMine(){
+  $('#mName').textContent=user?user.name:'Log In / Sign Up';
+  $('#mTag').textContent='Wherever there\'s home, there\'s Johome'; $('#mTag').style.display=user?'none':'';   // 登录后只显示昵称，不显示手机号与登录方式
+  $('#mAvatar').innerHTML=!user?DEF_AV:user.avatar?avHtml(user.avatar):`<span class="ini" style="background:${AV_BG[user.via]}">${user.name.slice(0,1).toUpperCase()}</span>`;
+}
+$('#mWho').onclick=$('#mAvatar').onclick=()=>{if(!user)go('login');};
+$('.mfab').onclick=()=>user?openEdit(false):go('login');
+
+/* ---------- 编辑个人信息 ---------- */
+/* 预设头像（演示用；生产为运营配置的头像库） */
+const PRESET=[['#ffd8a8','🐻'],['#c3e6cb','🐼'],['#cfe2ff','🐱'],['#f8d7da','🐰'],['#e2d9f3','🦊'],['#fff3bf','🐶'],['#d0ebff','🐧'],['#ffe3e3','🐨']]
+  .map(([bg,e])=>`<svg viewBox="0 0 80 80"><rect width="80" height="80" fill="${bg}"/><text x="40" y="54" font-size="40" text-anchor="middle">${e}</text></svg>`);
+const avHtml=a=>a.startsWith('data:')?`<img src="${a}" alt="">`:a;
+let draft=null, firstEdit=false;
+function openEdit(first){
+  firstEdit=first;
+  draft={avatar:user.avatar,name:first&&(user.via==='Phone'||user.via==='Email')?'':user.name,wechat:user.wechat,email:user.email};
+  $('#eName').value=draft.name;
+  renderEdit(); go('edit');
+}
+/* 邮箱注册的用户没有手机号：编辑页可去绑定（复用手机号绑定页） */
+let bindMode='tp';
+/* 编辑页里绑定/更换手机号：底部弹起面板（与绑定邮箱同款）；第三方首登仍走整页「手机号绑定」 */
+let pbRegion=null;
+$('#ePhoneRow').onclick=()=>phoneSheet('edit');
+function phoneSheet(mode){
+  const tp=mode==='tp', t=tp&&TP[pendingTp];
+  pbRegion=pbRegion||REGIONS.find(r=>r.id==='ca');
+  let sent=false, left=0, timer=0;
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><h3>${!tp&&user.phone?'Change Phone Number':'Link Phone Number'}</h3>${tp?`<p class="pbtip">Authorized with ${t.name}. Link a phone number to sign in by phone and recover your account on a new device.</p>`:''}<div class="efield">
+    <div class="row"><span class="lab">Country/Region</span><button class="region" id="pbReg"></button></div>
+    <div class="pblist" id="pbList" hidden></div>
+    <div class="row" id="pbRow"><span class="dial" id="pbDial"></span><input class="f" id="pbPhone" inputmode="numeric" placeholder="Phone number"></div><div class="msg" id="pbMsg"></div>
+    <div class="row" style="margin-top:-18px"><span class="lab">Code</span><input class="f" id="pbCode" inputmode="numeric" maxlength="6" placeholder="Enter code"><button class="getcode" id="pbGet" disabled>Get code</button></div><div class="msg" id="pbCMsg"></div>
+  </div><button class="primary" id="pbOk" style="margin:6px auto 16px" disabled>Link</button><button class="cancel">Cancel</button></div>`;
+  const ph=$('#pbPhone'),code=$('#pbCode'),get=$('#pbGet'),ok=$('#pbOk');
+  const dial=()=>pbRegion.id==='other'?($('#pbDial input')?.value||'').replace(/\D/g,''):pbRegion.dial;
+  const valid=()=>pbRegion.re.test(ph.value)&&!!dial();
+  const upd=()=>{ph.value=ph.value.replace(/\D/g,'');code.value=code.value.replace(/\D/g,'');if(!left)get.disabled=!valid();ok.disabled=!(valid()&&code.value.length===6);$('#pbCMsg').textContent='';};
+  const drawReg=()=>{
+    $('#pbReg').innerHTML=`${pbRegion.icon}<span>${pbRegion.name}</span><i class="caret"></i>`;
+    $('#pbDial').innerHTML=pbRegion.id==='other'?'+<input placeholder="Code" maxlength="4" inputmode="numeric">':'+'+pbRegion.dial;
+    const di=$('#pbDial input'); if(di) di.oninput=upd;
+    ph.maxLength=pbRegion.len; ph.value=ph.value.slice(0,pbRegion.len); upd();
+  };
+  /* 面板内展开地区列表（不再叠第二层弹窗） */
+  $('#pbReg').onclick=()=>{
+    const l=$('#pbList'); l.hidden=!l.hidden;
+    l.innerHTML=REGIONS.map(r=>`<button class="opt ${r.id===pbRegion.id?'on':''}" data-id="${r.id}">${r.icon}<span>${r.name}</span><span class="code">${r.dial?'+'+r.dial:'Enter manually'}</span></button>`).join('');
+    l.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{pbRegion=REGIONS.find(x=>x.id===b.dataset.id);l.hidden=true;$('#pbMsg').textContent='';drawReg();});
+  };
+  ph.oninput=()=>{$('#pbMsg').textContent='';$('#pbRow').classList.remove('err');upd();};
+  ph.onblur=()=>{if(ph.value&&!valid()){$('#pbMsg').textContent=pbRegion.err;$('#pbRow').classList.add('err');}};
+  code.oninput=upd;
+  get.onclick=()=>{
+    if(!valid()){ph.onblur();return;}
+    sent=true; SMS.pb=genCode(); left=60; get.disabled=true;
+    (function tick(){if(!get.isConnected)return;get.textContent=left?`Resend (${left}s)`:'Get code';if(!left){get.disabled=!valid();return;}left--;timer=setTimeout(tick,1000);})();
+    toast(`Code sent to +${dial()} ${ph.value}<br><span style="opacity:.7;font-size:12px">(Demo: tap the suggestion above the keyboard to fill it in)</span>`);
+    code.focus();
+  };
+  ok.onclick=async()=>{
+    if(!sent){$('#pbCMsg').textContent='Please get a code first';return;}
+    if(code.value==='000000'){$('#pbCMsg').textContent='Incorrect code. Please try again.';return;}
+    const phone=`+${dial()} ${mask4(ph.value)}`;
+    if(tp){
+      clearTimeout(timer); closeMask();
+      if(demo.phoneReg==='1'){
+        const merge=await dialog('Number already registered',`${phone} already has a Johome account. Link ${t.name} to it? You'll be able to sign in to the same account either way.`,'Use another number','Link & sign in');
+        if(!merge){phoneSheet('tp');return;}
+      }
+      loading(true,'Linking');await wait(700);loading(false);
+      finishBind(t,phone); return;
+    }
+    if(demo.phoneReg==='1'&&mode!=='tpEdit'){$('#pbCMsg').textContent='This number is linked to another account. Please use a different one.';return;}
+    clearTimeout(timer); closeMask();
+    if(demo.phoneReg==='1'){
+      const via=user.via;
+      const merge=await dialog('Number already registered',`${phone} already has a Johome account. Link ${via} to it? You'll be able to sign in to the same account either way.`,'Use another number','Link');
+      if(!merge){phoneSheet('tpEdit');return;}
+    }
+    loading(true,'Linking');await wait(700);loading(false);
+    user.phone=phone; renderEdit(); renderMine(); toast('Phone number linked',true);
+  };
+  mask.querySelector('.cancel').onclick=async()=>{
+    clearTimeout(timer); closeMask();
+    if(!tp) return;
+    const skip=await dialog('Skip linking a phone number?','A linked number lets you sign in by phone and recover your account on a new device or if your third-party account has problems. You can link one anytime in Edit Profile.','Keep linking','Skip for now');
+    if(!skip){phoneSheet('tp');return;}
+    pendingTp=null; signIn({phone:null,via:t.name,name:t.acct.split(' · ').pop()}); toast('Logged in',true);
+  };
+  drawReg();
+}
+function renderEdit(){
+  const pic=$('#ePic');
+  pic.innerHTML=draft.avatar?avHtml(draft.avatar):'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#b7bcc5" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>';
+  pic.classList.toggle('set',!!draft.avatar);
+  $('#ePhone').className='val'+(user.phone?'':' go');
+  $('#ePhone').innerHTML=user.phone?`${user.phone} <span class="ok-tag">Linked</span>`:'Link ›';
+  $('#eMail').querySelector('.opt-tag').style.display=user.via==='Email'?'none':'';
+  $('#ePhoneRow').querySelector('.lab').innerHTML=user.phone?'Phone':'Phone<span class="opt-tag">Optional</span>';
+  $('#eAvTxt').innerHTML=draft.avatar?'Tap to change avatar':'Tap to set avatar<span class="req">*</span>';
+  $('#eWxVal').innerHTML=draft.wechat?`${draft.wechat} <span class="ok-tag">Linked</span>`:'Link ›';
+  $('#eMailVal').innerHTML=draft.email?`${maskMail(draft.email)} <span class="ok-tag">Linked</span>`:'Link ›';
+  const n=$('#eName').value.trim(); $('#eCount').textContent=$('#eName').value.length+'/30';
+  $('#eSave').disabled=!(draft.avatar&&n.length>=2);
+}
+function maskMail(m){const [a,d]=m.split('@');return d?a.slice(0,2)+'***@'+d:m;}
+$('#eName').oninput=()=>{draft.name=$('#eName').value;$('#eNameRow').classList.remove('err');renderEdit();};
+$('#eAvBtn').onclick=()=>{
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><h3>Set Avatar</h3><button class="opt" id="avCam">Take Photo</button><button class="opt" id="avAlb">Choose from Library</button><div style="font-size:13px;color:var(--sub);padding:8px 22px 10px">Or pick a default avatar</div><div class="avgrid">${PRESET.map((p,i)=>`<button data-i="${i}">${p}</button>`).join('')}</div><button class="cancel">Cancel</button></div>`;
+  mask.querySelector('.cancel').onclick=closeMask;
+  $('#avCam').onclick=$('#avAlb').onclick=()=>{closeMask();$('#eFile').click();};
+  mask.querySelectorAll('.avgrid button').forEach(b=>b.onclick=()=>{draft.avatar=PRESET[b.dataset.i];closeMask();renderEdit();});
+};
+$('#eFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{draft.avatar=r.result;renderEdit();};r.readAsDataURL(f);e.target.value='';};
+$('#eWx').onclick=async()=>{
+  if(draft.wechat){if(await dialog('Unlink WeChat','You won\'t be able to sign in to this account with WeChat.','Cancel','Unlink')){draft.wechat=null;renderEdit();}return;}
+  if(!await dialog('Link WeChat','You\'ll be taken to WeChat to authorize. Once linked, you can sign in with WeChat in one tap.','Cancel','Authorize'))return;
+  loading(true,'Opening WeChat');await wait(900);loading(false);
+  draft.wechat='Xiao Lin';renderEdit();toast('WeChat linked',true);
+};
+$('#eMail').onclick=()=>{
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><h3>${draft.email?'Change Email':'Link Email'}</h3><div class="efield">
+    <div class="row"><span class="lab">Email</span><input class="f" id="mlIn" type="text" data-kb="email" autocomplete="off" placeholder="Email address"></div><div class="msg" id="mlMsg"></div>
+    <div class="row" style="margin-top:-18px"><span class="lab">Code</span><input class="f" id="mlCode" inputmode="numeric" maxlength="6" placeholder="Enter code"><button class="getcode" id="mlGet">Get code</button></div><div class="msg" id="mlCMsg"></div>
+  </div><button class="primary" id="mlOk" style="margin:6px auto 16px" disabled>Link</button><button class="cancel">Cancel</button></div>`;
+  const inp=$('#mlIn'),code=$('#mlCode'),ok=$('#mlOk'),valid=()=>/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(inp.value.trim());
+  let sent=false;
+  const upd=()=>{code.value=code.value.replace(/\D/g,'');ok.disabled=!(valid()&&code.value.length===6);$('#mlMsg').textContent='';};
+  inp.oninput=code.oninput=upd;
+  $('#mlGet').onclick=()=>{if(!valid()){$('#mlMsg').textContent='Enter a valid email address';return;}sent=true;SMS.ml=genCode();$('#mlGet').disabled=true;$('#mlGet').textContent='Sent';toast('Code sent to your email<br><span style="opacity:.7;font-size:12px">(Demo: tap the suggestion above the keyboard to fill it in)</span>');};
+  ok.onclick=()=>{if(!sent){$('#mlCMsg').textContent='Please get a code first';return;}if(code.value==='000000'){$('#mlCMsg').textContent='Incorrect code. Please try again.';return;}draft.email=inp.value.trim();closeMask();renderEdit();toast('Email linked',true);};
+  mask.querySelector('.cancel').onclick=closeMask;
+};
+$('#eSave').onclick=()=>{
+  const n=$('#eName').value.trim();
+  if(n.length<2){$('#eNameRow').classList.add('err');toast('Nickname must be at least 2 characters');return;}
+  Object.assign(user,{avatar:draft.avatar,name:n,wechat:draft.wechat,email:draft.email});
+  renderMine();go('mine');toast(firstEdit?'Profile set up':'Saved',true);firstEdit=false;
+};
+$('#eBack').onclick=async()=>{
+  if(firstEdit){
+    if(!await dialog('Set up later?','You can finish your avatar and nickname anytime from the edit button at the top right of the Me page.','Keep editing','Later'))return;
+  }
+  go('mine');
+};
+/* 退出登录放在设置里 */
+$('#mSet').onclick=()=>{
+  if(!user){toast('Log in to open Settings');return;}
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><h3>Settings</h3><button class="opt">Account &amp; Security</button><button class="opt">Notifications</button><button class="opt" id="doOut" style="color:var(--err)">Log Out</button><button class="cancel">Cancel</button></div>`;
+  mask.querySelector('.cancel').onclick=closeMask;
+  $('#doOut').onclick=async()=>{closeMask();if(await dialog('Log Out','You won\'t be able to sync your saved homes and search tasks after logging out.','Cancel','Log Out')){user=null;renderMine();toast('Logged out');}};
+};
+renderMine();
+
+/* ================= 模拟系统键盘 =================
+   聚焦输入框时从底部弹起；数字框=九宫格数字键盘，邮箱=带 @ . 的英文键盘，昵称=中英文键盘（简易拼音候选）。
+   inputmode=none 让真机不再弹系统键盘；电脑上的实体键盘仍可直接输入。 */
+const kb=$('#kb'), phone=$('#phone');
+const PY={wang:'王网望往旺',xiao:'小晓笑校',lin:'林琳临',zhang:'张章',li:'李丽力莉',chen:'陈晨辰',liu:'刘柳',yang:'杨阳洋',huang:'黄',zhao:'赵',zhou:'周舟',wu:'吴武',jia:'家佳嘉',fang:'房方芳',wen:'温文',ge:'哥歌',hua:'华花',mai:'买麦',hao:'好浩豪',ai:'爱',an:'安',mei:'美梅',yu:'雨宇玉鱼',xin:'新心欣',tian:'天甜田',ming:'明',le:'乐',da:'大达',ren:'人',feng:'风枫峰',lan:'蓝兰',bai:'白',hai:'海',xue:'雪学',yun:'云',shan:'山',meng:'梦萌',qing:'青晴清',zi:'子紫',jun:'君俊',wo:'我',de:'的',jiu:'就',you:'有'};
+let kbEl=null, kbType='', shift=false, sym=false, zh=false, pyBuf='';
+const kbH=()=>kb.offsetHeight;
+$$('#phone input').forEach(i=>{i.setAttribute('autocomplete','off');if(i.type!=='file')i.readOnly=true;});
+/* 输入框一律 readonly：浏览器（Chrome 地址/邮箱自动填充）不会对只读框弹建议；
+   内容由模拟键盘写入，电脑实体键盘的按键也转给模拟键盘处理，光标用自绘的蓝色竖线 */
+phone.addEventListener('pointerdown',e=>{if(e.target.matches&&e.target.matches('input:not([type=file])'))e.target.readOnly=true;},true);
+function kbKind(el){
+  el.setAttribute('autocomplete','off'); el.readOnly=true;   // 关掉浏览器自己的自动填充浮层，建议统一放进键盘顶栏
+  if(!el.dataset.kb) el.dataset.kb=el.type==='email'?'email':el.id==='eName'?'text':'num';
+  el.inputMode='none';
+  return el.dataset.kb;
+}
+function insert(s){
+  const el=kbEl; if(!el) return;
+  const max=el.maxLength>0?el.maxLength:999;
+  if(el.value.length>=max) return;
+  el.value=(el.value+s).slice(0,max); el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function backspace(){
+  if(pyBuf){pyBuf=pyBuf.slice(0,-1);renderKb();return;}
+  if(!kbEl||!kbEl.value) return;
+  kbEl.value=[...kbEl.value].slice(0,-1).join(''); kbEl.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function cands(){
+  if(!pyBuf) return [];
+  const out=[]; if(PY[pyBuf]) out.push(...PY[pyBuf]);
+  Object.keys(PY).filter(k=>k!==pyBuf&&k.startsWith(pyBuf)).forEach(k=>out.push(PY[k][0]));
+  return [...new Set(out)].slice(0,8);
+}
+/* 键盘顶部建议栏（iOS QuickType / Android 自动填充）：邮箱=本机账号邮箱，手机号=本机号码，验证码=来自信息/邮件 */
+const DEMO_MAIL='xiaolin.demo@gmail.com';
+const DEMO_TEL={'1':['6045550123','604-555-0123'],'86':['13800138000','138 0013 8000'],'852':['51234567','5123 4567'],'886':['0912345678','0912 345 678']};
+function sugg(){
+  if(!kbEl) return '';
+  const id=kbEl.id, v=kbEl.value;
+  const chip=(val,html)=>`<button class="sug" data-a="s:${val}">${html}</button>`;
+  if(id==='emIn'||id==='mlIn') return DEMO_MAIL.startsWith(v)&&v!==DEMO_MAIL?chip(DEMO_MAIL,DEMO_MAIL):'';
+  if(id==='lPhone'||id==='bPhone'||id==='pbPhone'){
+    const t=DEMO_TEL[id==='pbPhone'?pbRegion.dial:(id==='lPhone'?L:B).dialCode()]; return t&&t[0].startsWith(v)&&v!==t[0]?chip(t[0],t[1]):'';
+  }
+  const k={lCode:'l',bCode:'b',emCode:'em',mlCode:'ml',pbCode:'pb'}[id], c=k&&SMS[k];
+  if(c&&v!==c) return chip(c,`<small>${k==='em'||k==='ml'?'From Mail':'From Messages'}</small>${c}`);
+  return '';
+}
+function key(label,cls,act,extra){return `<button class="k ${cls||''}" data-a="${act}">${label}${extra||''}</button>`;}
+function renderKb(){
+  kb.classList.toggle('android',demo.os==='android');
+  kb.classList.toggle('num',kbType==='num');
+  const isZh=kbType==='text'&&zh&&!sym;
+  let acc='';
+  if(isZh&&pyBuf) acc=`<span class="py">${pyBuf}</span>`+cands().map(c=>`<button class="cand" data-a="c:${c}">${c}</button>`).join('');
+  else acc+=sugg();
+  acc+=`<button class="done" data-a="done">Done</button>`;
+  let rows='';
+  if(kbType==='num'){
+    const sub=['','ABC','DEF','GHI','JKL','MNO','PQRS','TUV','WXYZ'];
+    for(let r=0;r<3;r++) rows+=`<div class="krow">${[1,2,3].map(i=>{const n=r*3+i;return key(n,'','i:'+n,`<small>${sub[n-1]}</small>`);}).join('')}</div>`;
+    rows+=`<div class="krow">${key('','blank','none')}${key('0','','i:0')}${key('⌫','del','del')}</div>`;
+  }else if(sym){
+    rows+=`<div class="krow">${'1234567890'.split('').map(c=>key(c,'','i:'+c)).join('')}</div>`;
+    rows+=`<div class="krow">${'-/:;()$&@"'.split('').map(c=>key(c,'','i:'+c)).join('')}</div>`;
+    rows+=`<div class="krow">${key('#+=','fn','none')}${'._,?!\''.split('').map(c=>key(c,'','i:'+c)).join('')}${key('⌫','fn','del')}</div>`;
+  }else{
+    const up=c=>shift?c.toUpperCase():c;
+    rows+=`<div class="krow">${'qwertyuiop'.split('').map(c=>key(up(c),'','l:'+c)).join('')}</div>`;
+    rows+=`<div class="krow" style="padding:0 16px">${'asdfghjkl'.split('').map(c=>key(up(c),'','l:'+c)).join('')}</div>`;
+    rows+=`<div class="krow">${key('⇧','fn'+(shift?' on':''),'shift')}${'zxcvbnm'.split('').map(c=>key(up(c),'','l:'+c)).join('')}${key('⌫','fn','del')}</div>`;
+  }
+  if(kbType!=='num'){
+    let last=key(sym?'ABC':'123','fn','sym');
+    if(kbType==='email') last+=key('@','','i:@')+key('.','','i:.')+key('space','wide','i: ');
+    else last+=key(zh?'中':'EN','fn','zh')+key(isZh?'空格':'space','wide','space');
+    last+=key('Done','ret','done');
+    rows+=`<div class="krow">${last}</div>`;
+  }
+  kb.innerHTML=`<div class="acc">${acc}</div>${rows}`;
+}
+kb.addEventListener('mousedown',e=>e.preventDefault());   // 点键盘不让输入框失焦
+kb.addEventListener('touchstart',e=>{if(e.target.closest('button'))e.preventDefault();e.target.closest('button')?.click();},{passive:false});
+kb.onclick=e=>{
+  const b=e.target.closest('[data-a]'); if(!b) return;
+  const a=b.dataset.a;
+  if(a.startsWith('s:')){kbEl.value=a.slice(2);kbEl.dispatchEvent(new Event('input',{bubbles:true}));}
+  else if(a.startsWith('i:')) insert(a.slice(2));
+  else if(a.startsWith('l:')){
+    const c=shift?a.slice(2).toUpperCase():a.slice(2);
+    if(kbType==='text'&&zh){pyBuf+=c.toLowerCase();}
+    else insert(c);
+    if(shift){shift=false;}
+  }
+  else if(a.startsWith('c:')){insert(a.slice(2));pyBuf='';}
+  else if(a==='del') backspace();
+  else if(a==='shift') shift=!shift;
+  else if(a==='sym'){sym=!sym;}
+  else if(a==='zh'){if(pyBuf){insert(pyBuf);pyBuf='';}zh=!zh;}
+  else if(a==='space'){if(pyBuf){const c=cands();insert(c[0]||pyBuf);pyBuf='';}else insert(' ');}
+  else if(a==='done'){if(pyBuf){insert(pyBuf);pyBuf='';}kbEl&&kbEl.blur();kbHide();return;}
+  renderKb();
+};
+function kbShow(el){
+  const t=kbKind(el);
+  if(kbEl!==el){pyBuf='';sym=false;shift=false;}
+  kbEl=el; kbType=t; renderKb(); kb.classList.add('on');
+  /* 把内容托到键盘上方 */
+  const h=kbH();
+  $$('.screen').forEach(s=>s.style.paddingBottom='');
+  mask.style.paddingBottom='';
+  if(el.closest('.mask')){mask.style.paddingBottom=h-22+'px';}
+  else{
+    const scr=el.closest('.screen'); scr.style.paddingBottom=h+'px';
+    const row=el.closest('.row')||el;
+    const sr=scr.getBoundingClientRect(), rr=row.getBoundingClientRect();
+    const visibleBottom=sr.bottom-h-16;
+    if(rr.bottom>visibleBottom) scr.scrollTo({top:scr.scrollTop+(rr.bottom-visibleBottom)+40,behavior:'smooth'});
+  }
+}
+function kbHide(){
+  if(pyBuf&&kbEl){insert(pyBuf);pyBuf='';}
+  kb.classList.remove('on'); kbEl=null;
+  $$('.screen').forEach(s=>s.style.paddingBottom=''); mask.style.paddingBottom='';
+}
+phone.addEventListener('focusin',e=>{if(e.target.matches('input:not([type=file])'))kbShow(e.target);});
+phone.addEventListener('focusout',e=>{
+  if(e.target!==kbEl) return;
+  setTimeout(()=>{const a=document.activeElement;if(!(a&&a.matches&&a.matches('#phone input')))kbHide();},0);
+});
+/* ---- 自绘光标 ---- */
+const caret=document.createElement('div'); caret.className='tcaret'; phone.appendChild(caret);
+const cvs=document.createElement('canvas').getContext('2d');
+let caretRaf=0;
+function placeCaret(){
+  caretRaf=0;
+  const el=kbEl;
+  if(!el||document.activeElement!==el||!el.offsetParent){caret.style.display='none';return;}
+  const cs=getComputedStyle(el), r=el.getBoundingClientRect(), pr=phone.getBoundingClientRect();
+  cvs.font=`${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const pl=parseFloat(cs.paddingLeft)||0, prr=parseFloat(cs.paddingRight)||0, inner=r.width-pl-prr;
+  const tw=Math.min(cvs.measureText(el.value).width,inner);
+  el.scrollLeft=el.scrollWidth;
+  const x=cs.textAlign==='right'||cs.textAlign==='end'?r.right-prr:r.left+pl+tw;
+  const h=Math.min(parseFloat(cs.fontSize)*1.3,r.height);
+  caret.style.cssText=`display:block;left:${x-pr.left-phone.clientLeft}px;top:${r.top-pr.top-phone.clientTop+(r.height-h)/2}px;height:${h}px`;
+  caretRaf=requestAnimationFrame(placeCaret);   // 键盘弹起/面板上移/页面滚动时跟随
+}
+phone.addEventListener('focusin',e=>{if(e.target.matches('input:not([type=file])')&&!caretRaf)caretRaf=requestAnimationFrame(placeCaret);});
+phone.addEventListener('input',()=>{caret.style.animation='none';void caret.offsetWidth;caret.style.animation='';});  // 打字时光标不闪
+/* ---- 电脑实体键盘 → 模拟键盘 ---- */
+document.addEventListener('keydown',e=>{
+  if(!kbEl||document.activeElement!==kbEl||e.ctrlKey||e.metaKey||e.altKey) return;
+  const k=e.key;
+  if(k==='Backspace'){e.preventDefault();backspace();renderKb();return;}
+  if(k==='Enter'||k==='Escape'){e.preventDefault();kb.querySelector('[data-a=done]').click();return;}
+  if(k.length!==1) return;           // Tab/方向键等交给浏览器
+  e.preventDefault();
+  if(kbType==='num'){if(/\d/.test(k))insert(k);renderKb();return;}
+  if(kbType==='text'&&zh&&!sym){
+    if(/[a-z]/i.test(k)){pyBuf+=k.toLowerCase();renderKb();return;}
+    if(pyBuf&&/[1-9]/.test(k)){const c=cands()[+k-1];if(c){insert(c);pyBuf='';}renderKb();return;}
+    if(pyBuf&&k===' '){const c=cands();insert(c[0]||pyBuf);pyBuf='';renderKb();return;}
+  }
+  insert(k); renderKb();
+});
+phone.addEventListener('paste',e=>{
+  if(!kbEl||document.activeElement!==kbEl) return;
+  e.preventDefault(); let t=(e.clipboardData||window.clipboardData).getData('text').trim();
+  if(kbType==='num') t=t.replace(/\D/g,'');
+  insert(t); renderKb();
+});
+const goOrig=go; go=function(id){if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();kbHide();goOrig(id);};
+const inMaskKb=()=>kbEl&&(!kbEl.isConnected||kbEl.closest('.mask'));
+const closeOrig=closeMask; closeMask=function(){if(inMaskKb()){kbEl.blur();kbHide();}mask.style.paddingBottom='';closeOrig();};
+/* 演示工具条切换系统时键盘外观同步 */
+$('[data-k=os]').addEventListener('click',()=>{if(kb.classList.contains('on'))renderKb();});
+})();
+</script>
+</body>
+</html>
