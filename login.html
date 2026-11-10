@@ -156,11 +156,12 @@ input{font:inherit;border:0;outline:0;background:none;color:var(--txt);min-width
 .avgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:6px 22px 14px}
 .avgrid button{aspect-ratio:1;border-radius:50%;overflow:hidden;padding:0}
 .efield{padding:4px 22px 6px}
+.pblist{max-height:220px;overflow-y:auto;margin:0 -22px;border-bottom:1px solid var(--line)}
 .efield .row{min-height:50px}.efield input.f{height:50px}
 
 /* 模拟键盘 */
-.kb{position:absolute;left:0;right:0;bottom:0;z-index:35;background:#d1d4db;padding:0 3px 22px;transform:translateY(100%);transition:transform .25s ease-out;user-select:none;-webkit-user-select:none;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
-.kb.on{transform:none}
+.kb{position:absolute;left:0;right:0;bottom:0;z-index:35;background:#d1d4db;padding:0 3px 22px;transform:translateY(calc(100% + 40px));transition:transform .25s ease-out;pointer-events:none;user-select:none;-webkit-user-select:none;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.kb.on{transform:none;pointer-events:auto}
 .kb .acc{height:40px;display:flex;align-items:center;background:#f6f7f9;margin:0 -3px 6px;padding:0 12px;border-top:1px solid #c7cad1;gap:4px;overflow-x:auto;white-space:nowrap}
 .kb .acc .py{color:var(--blue);font-size:14px;margin-right:6px}
 .kb .acc .cand{font-size:16px;padding:4px 10px;border-radius:6px}
@@ -635,12 +636,56 @@ function openEdit(first){
 }
 /* 邮箱注册的用户没有手机号：编辑页可去绑定（复用手机号绑定页） */
 let bindMode='tp';
-$('#ePhoneRow').onclick=()=>{
-  if(user.phone) return;
-  bindMode='edit'; B.reset();
-  $('#bTip').innerHTML='绑定手机号后，可用手机号登录并找回账号。';
-  go('bind');
-};
+/* 编辑页里绑定/更换手机号：底部弹起面板（与绑定邮箱同款）；第三方首登仍走整页「手机号绑定」 */
+let pbRegion=null;
+$('#ePhoneRow').onclick=()=>phoneSheet();
+function phoneSheet(){
+  pbRegion=pbRegion||REGIONS.find(r=>r.id==='ca');
+  let sent=false, left=0, timer=0;
+  mask.className='mask on';
+  mask.innerHTML=`<div class="sheet"><h3>${user.phone?'更换手机号':'绑定手机号'}</h3><div class="efield">
+    <div class="row"><span class="lab">国家/地区</span><button class="region" id="pbReg"></button></div>
+    <div class="pblist" id="pbList" hidden></div>
+    <div class="row" id="pbRow"><span class="dial" id="pbDial"></span><input class="f" id="pbPhone" inputmode="numeric" placeholder="请输入手机号"></div><div class="msg" id="pbMsg"></div>
+    <div class="row" style="margin-top:-18px"><span class="lab">验证码</span><input class="f" id="pbCode" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="getcode" id="pbGet" disabled>获取验证码</button></div><div class="msg" id="pbCMsg"></div>
+  </div><button class="primary" id="pbOk" style="margin:6px auto 16px" disabled>绑定</button><button class="cancel">取消</button></div>`;
+  const ph=$('#pbPhone'),code=$('#pbCode'),get=$('#pbGet'),ok=$('#pbOk');
+  const dial=()=>pbRegion.id==='other'?($('#pbDial input')?.value||'').replace(/\D/g,''):pbRegion.dial;
+  const valid=()=>pbRegion.re.test(ph.value)&&!!dial();
+  const upd=()=>{ph.value=ph.value.replace(/\D/g,'');code.value=code.value.replace(/\D/g,'');if(!left)get.disabled=!valid();ok.disabled=!(valid()&&code.value.length===6);$('#pbCMsg').textContent='';};
+  const drawReg=()=>{
+    $('#pbReg').innerHTML=`${pbRegion.icon}<span>${pbRegion.name}</span><i class="caret"></i>`;
+    $('#pbDial').innerHTML=pbRegion.id==='other'?'+<input placeholder="区号" maxlength="4" inputmode="numeric">':'+'+pbRegion.dial;
+    const di=$('#pbDial input'); if(di) di.oninput=upd;
+    ph.maxLength=pbRegion.len; ph.value=ph.value.slice(0,pbRegion.len); upd();
+  };
+  /* 面板内展开地区列表（不再叠第二层弹窗） */
+  $('#pbReg').onclick=()=>{
+    const l=$('#pbList'); l.hidden=!l.hidden;
+    l.innerHTML=REGIONS.map(r=>`<button class="opt ${r.id===pbRegion.id?'on':''}" data-id="${r.id}">${r.icon}<span>${r.name}</span><span class="code">${r.dial?'+'+r.dial:'手动填写区号'}</span></button>`).join('');
+    l.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{pbRegion=REGIONS.find(x=>x.id===b.dataset.id);l.hidden=true;$('#pbMsg').textContent='';drawReg();});
+  };
+  ph.oninput=()=>{$('#pbMsg').textContent='';$('#pbRow').classList.remove('err');upd();};
+  ph.onblur=()=>{if(ph.value&&!valid()){$('#pbMsg').textContent=pbRegion.err;$('#pbRow').classList.add('err');}};
+  code.oninput=upd;
+  get.onclick=()=>{
+    if(!valid()){ph.onblur();return;}
+    sent=true; SMS.pb=genCode(); left=60; get.disabled=true;
+    (function tick(){if(!get.isConnected)return;get.textContent=left?`重新获取(${left}s)`:'获取验证码';if(!left){get.disabled=!valid();return;}left--;timer=setTimeout(tick,1000);})();
+    toast(`验证码已发送至 +${dial()} ${ph.value}<br><span style="opacity:.7;font-size:12px">（演示：点键盘上方的建议可一键填入）</span>`);
+    code.focus();
+  };
+  ok.onclick=async()=>{
+    if(!sent){$('#pbCMsg').textContent='请先获取验证码';return;}
+    if(code.value==='000000'){$('#pbCMsg').textContent='验证码错误，请重新输入';return;}
+    if(demo.phoneReg==='1'){$('#pbCMsg').textContent='该手机号已被其他账号绑定，请换个号码';return;}
+    clearTimeout(timer); closeMask();
+    loading(true,'绑定中');await wait(700);loading(false);
+    user.phone=`+${dial()} ${mask4(ph.value)}`; renderEdit(); renderMine(); toast('手机号绑定成功',true);
+  };
+  mask.querySelector('.cancel').onclick=()=>{clearTimeout(timer);closeMask();};
+  drawReg();
+}
 function renderEdit(){
   const pic=$('#ePic');
   pic.innerHTML=draft.avatar?avHtml(draft.avatar):'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#b7bcc5" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>';
@@ -746,10 +791,10 @@ function sugg(){
   const id=kbEl.id, v=kbEl.value;
   const chip=(val,html)=>`<button class="sug" data-a="s:${val}">${html}</button>`;
   if(id==='emIn'||id==='mlIn') return DEMO_MAIL.startsWith(v)&&v!==DEMO_MAIL?chip(DEMO_MAIL,DEMO_MAIL):'';
-  if(id==='lPhone'||id==='bPhone'){
-    const t=DEMO_TEL[(id==='lPhone'?L:B).dialCode()]; return t&&t[0].startsWith(v)&&v!==t[0]?chip(t[0],t[1]):'';
+  if(id==='lPhone'||id==='bPhone'||id==='pbPhone'){
+    const t=DEMO_TEL[id==='pbPhone'?pbRegion.dial:(id==='lPhone'?L:B).dialCode()]; return t&&t[0].startsWith(v)&&v!==t[0]?chip(t[0],t[1]):'';
   }
-  const k={lCode:'l',bCode:'b',emCode:'em',mlCode:'ml'}[id], c=k&&SMS[k];
+  const k={lCode:'l',bCode:'b',emCode:'em',mlCode:'ml',pbCode:'pb'}[id], c=k&&SMS[k];
   if(c&&v!==c) return chip(c,`<small>${k==='em'||k==='ml'?'来自邮件':'来自信息'}</small>${c}`);
   return '';
 }
