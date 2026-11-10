@@ -555,7 +555,9 @@ function afterAuth(k){
       signIn({phone:'+1 604****0123',via:t.name,name:t.acct.split(' · ').pop()});
       toast('登录成功',true);
     }else{
-      pendingTp=k; phoneSheet('tp');
+      signIn({phone:null,via:t.name,name:t.acct.split(' · ').pop()});
+      openEdit(true); toast('授权成功',true);
+      setTimeout(()=>phoneSheet('tpEdit'),500);
     }
 }
 /* Sign in with Apple：按 iOS 系统真实样式（悬浮毛玻璃卡片 → 面容 ID → Signing in… → Done） */
@@ -637,7 +639,7 @@ const avHtml=a=>a.startsWith('data:')?`<img src="${a}" alt="">`:a;
 let draft=null, firstEdit=false;
 function openEdit(first){
   firstEdit=first;
-  draft={avatar:user.avatar,name:first?'':user.name,wechat:user.wechat,email:user.email};
+  draft={avatar:user.avatar,name:first&&(user.via==='手机号'||user.via==='邮箱')?'':user.name,wechat:user.wechat,email:user.email};
   $('#eName').value=draft.name;
   renderEdit(); go('edit');
 }
@@ -696,8 +698,13 @@ function phoneSheet(mode){
       loading(true,'绑定中');await wait(700);loading(false);
       finishBind(t,phone); return;
     }
-    if(demo.phoneReg==='1'){$('#pbCMsg').textContent='该手机号已被其他账号绑定，请换个号码';return;}
+    if(demo.phoneReg==='1'&&mode!=='tpEdit'){$('#pbCMsg').textContent='该手机号已被其他账号绑定，请换个号码';return;}
     clearTimeout(timer); closeMask();
+    if(demo.phoneReg==='1'){
+      const via=user.via;
+      const merge=await dialog('该手机号已注册',`${phone} 已有 Johome 账号。是否将${via}关联到该账号？关联后可用两种方式登录同一账号。`,'换个号码','关联');
+      if(!merge){phoneSheet('tpEdit');return;}
+    }
     loading(true,'绑定中');await wait(700);loading(false);
     user.phone=phone; renderEdit(); renderMine(); toast('手机号绑定成功',true);
   };
