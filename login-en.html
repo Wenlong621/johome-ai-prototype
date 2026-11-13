@@ -231,6 +231,7 @@ input[readonly]{cursor:text}
 .dialog p{font-size:13.5px;color:#666;line-height:1.55;padding:0 18px 18px}
 .dialog .btns{display:flex;border-top:1px solid var(--line)}
 .dialog .btns button{flex:1;height:46px;font-size:15px}
+.dialog .btns button:only-child{color:var(--blue);font-weight:600}
 .dialog .btns button+button{border-left:1px solid var(--line);color:var(--blue);font-weight:600}
 .auth{padding:6px 22px 4px}
 .auth .who{display:flex;align-items:center;gap:10px;font-size:14px;color:#555;margin-bottom:14px}
@@ -276,7 +277,7 @@ input[readonly]{cursor:text}
   <span><b>Device</b><span class="seg" data-k="os"><button data-v="ios" class="on">iPhone</button><button data-v="android">Android</button></span></span>
   <span><b>Phone/Email</b><span class="seg" data-k="phoneReg"><button data-v="0" class="on">New</button><button data-v="1">Registered</button></span></span>
   <span><b>Third-party</b><span class="seg" data-k="tpBound"><button data-v="0" class="on">First login</button><button data-v="1">Linked before</button></span></span>
-  <span class="hint">Demo: any 6-digit code works (000000 simulates a wrong code). With Phone/Email = Registered, linking a phone after a first third-party login triggers the "number already has an account" branch.</span>
+  <span class="hint">Demo: any 6-digit code works (000000 simulates a wrong code). With Registered: login goes to an existing account, and linking a phone, email or WeChat on Edit Profile shows "already linked to another account".</span>
 </div>
 
 <div class="phone" id="phone">
@@ -434,7 +435,7 @@ function dialog(title,body,cancelTxt,okTxt){
   return new Promise(res=>{
     if(typeof kbEl!=='undefined'&&kbEl&&kbEl.closest('.mask')){kbEl.blur();kbHide();} mask.style.paddingBottom='';
     mask.className='mask on center';
-    mask.innerHTML=`<div class="dialog"><h4>${title}</h4><p>${body}</p><div class="btns"><button data-r="0">${cancelTxt}</button><button data-r="1">${okTxt}</button></div></div>`;
+    mask.innerHTML=`<div class="dialog"><h4>${title}</h4><p>${body}</p><div class="btns">${cancelTxt?`<button data-r="0">${cancelTxt}</button>`:''}<button data-r="1">${okTxt}</button></div></div>`;
     mask.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{closeMask();res(b.dataset.r==='1');});
   });
 }
@@ -612,13 +613,9 @@ B.submit.onclick=async()=>{
   loading(true,'Linking');await wait(800);loading(false);
   if(B.code.value==='000000'){B.codeErr('Incorrect code. Please try again.');return;}
   const t=TP[pendingTp], phone=`+${B.dialCode()} ${mask4(B.digits())}`;
+  if(demo.phoneReg==='1'){B.codeErr('This phone number is already linked to another account');return;}   // 不做账号合并：验证码通过后只提示已被占用
   if(bindMode==='edit'){
-    if(demo.phoneReg==='1'){B.codeErr('This number is linked to another account. Please use a different one.');return;}
     user.phone=phone; go('edit'); renderEdit(); renderMine(); toast('Phone number linked',true); return;
-  }
-  if(demo.phoneReg==='1'){
-    const merge=await dialog('Number already registered',`${phone} already has a Johome account. Link ${t.name} to it? You'll be able to sign in to the same account either way.`,'Use another number','Link & sign in');
-    if(!merge){B.code.value='';B.phone.focus();B.update();return;}
   }
   finishBind(t,phone);
 };
@@ -708,22 +705,14 @@ function phoneSheet(mode){
     if(!sent){$('#pbCMsg').textContent='Please get a code first';return;}
     if(code.value==='000000'){$('#pbCMsg').textContent='Incorrect code. Please try again.';return;}
     const phone=`+${dial()} ${mask4(ph.value)}`;
+    /* 不做账号合并：验证码通过后，号码已属于别的账号就只提示，面板保留可换号 */
+    if(demo.phoneReg==='1'){$('#pbCMsg').textContent='This phone number is already linked to another account';$('#pbRow').classList.add('err');return;}
     if(tp){
       clearTimeout(timer); closeMask();
-      if(demo.phoneReg==='1'){
-        const merge=await dialog('Number already registered',`${phone} already has a Johome account. Link ${t.name} to it? You'll be able to sign in to the same account either way.`,'Use another number','Link & sign in');
-        if(!merge){phoneSheet('tp');return;}
-      }
       loading(true,'Linking');await wait(700);loading(false);
       finishBind(t,phone); return;
     }
-    if(demo.phoneReg==='1'&&mode!=='tpEdit'){$('#pbCMsg').textContent='This number is linked to another account. Please use a different one.';return;}
     clearTimeout(timer); closeMask();
-    if(demo.phoneReg==='1'){
-      const via=user.via;
-      const merge=await dialog('Number already registered',`${phone} already has a Johome account. Link ${via} to it? You'll be able to sign in to the same account either way.`,'Use another number','Link');
-      if(!merge){phoneSheet('tpEdit');return;}
-    }
     loading(true,'Linking');await wait(700);loading(false);
     user.phone=phone; renderEdit(); renderMine(); toast('Phone number linked',true);
   };
@@ -764,6 +753,7 @@ $('#eWx').onclick=async()=>{
   if(draft.wechat){if(await dialog('Unlink WeChat','You won\'t be able to sign in to this account with WeChat.','Cancel','Unlink')){draft.wechat=null;renderEdit();}return;}
   if(!await dialog('Link WeChat','You\'ll be taken to WeChat to authorize. Once linked, you can sign in with WeChat in one tap.','Cancel','Authorize'))return;
   loading(true,'Opening WeChat');await wait(900);loading(false);
+  if(demo.phoneReg==='1'){await dialog('This WeChat is already linked to another account','Use a different WeChat account, or sign in with this WeChat to reach the account it belongs to.',null,'OK');return;}   // 授权通过后再提示
   draft.wechat='Xiao Lin';renderEdit();toast('WeChat linked',true);
 };
 $('#eMail').onclick=()=>{
@@ -777,7 +767,7 @@ $('#eMail').onclick=()=>{
   const upd=()=>{code.value=code.value.replace(/\D/g,'');ok.disabled=!(valid()&&code.value.length===6);$('#mlMsg').textContent='';};
   inp.oninput=code.oninput=upd;
   $('#mlGet').onclick=()=>{if(!valid()){$('#mlMsg').textContent='Enter a valid email address';return;}sent=true;SMS.ml=genCode();$('#mlGet').disabled=true;$('#mlGet').textContent='Sent';toast('Code sent to your email<br><span style="opacity:.7;font-size:12px">(Demo: tap the suggestion above the keyboard to fill it in)</span>');};
-  ok.onclick=()=>{if(!sent){$('#mlCMsg').textContent='Please get a code first';return;}if(code.value==='000000'){$('#mlCMsg').textContent='Incorrect code. Please try again.';return;}draft.email=inp.value.trim();closeMask();renderEdit();toast('Email linked',true);};
+  ok.onclick=()=>{if(!sent){$('#mlCMsg').textContent='Please get a code first';return;}if(code.value==='000000'){$('#mlCMsg').textContent='Incorrect code. Please try again.';return;}if(demo.phoneReg==='1'){$('#mlCMsg').textContent='This email is already linked to another account';return;}draft.email=inp.value.trim();closeMask();renderEdit();toast('Email linked',true);};
   mask.querySelector('.cancel').onclick=closeMask;
 };
 $('#eSave').onclick=()=>{

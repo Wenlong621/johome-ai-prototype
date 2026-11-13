@@ -231,6 +231,7 @@ input[readonly]{cursor:text}
 .dialog p{font-size:13.5px;color:#666;line-height:1.55;padding:0 18px 18px}
 .dialog .btns{display:flex;border-top:1px solid var(--line)}
 .dialog .btns button{flex:1;height:46px;font-size:15px}
+.dialog .btns button:only-child{color:var(--blue);font-weight:600}
 .dialog .btns button+button{border-left:1px solid var(--line);color:var(--blue);font-weight:600}
 .auth{padding:6px 22px 4px}
 .auth .who{display:flex;align-items:center;gap:10px;font-size:14px;color:#555;margin-bottom:14px}
@@ -258,7 +259,7 @@ input[readonly]{cursor:text}
   <span><b>设备</b><span class="seg" data-k="os"><button data-v="ios" class="on">iPhone</button><button data-v="android">Android</button></span></span>
   <span><b>手机号/邮箱</b><span class="seg" data-k="phoneReg"><button data-v="0" class="on">未注册</button><button data-v="1">已注册</button></span></span>
   <span><b>第三方账号</b><span class="seg" data-k="tpBound"><button data-v="0" class="on">首次登录</button><button data-v="1">已绑定过</button></span></span>
-  <span class="hint">演示：验证码输入任意 6 位数字（000000 模拟验证码错误）。「手机号=已注册」时，第三方首登绑定会触发「该号码已有账号」分支。</span>
+  <span class="hint">演示：验证码输入任意 6 位数字（000000 模拟验证码错误）。选「已注册」时：登录走老用户；在编辑页绑定手机号/邮箱/微信会提示「已关联了其他账号」。</span>
 </div>
 
 <div class="phone" id="phone">
@@ -416,7 +417,7 @@ function dialog(title,body,cancelTxt,okTxt){
   return new Promise(res=>{
     if(typeof kbEl!=='undefined'&&kbEl&&kbEl.closest('.mask')){kbEl.blur();kbHide();} mask.style.paddingBottom='';
     mask.className='mask on center';
-    mask.innerHTML=`<div class="dialog"><h4>${title}</h4><p>${body}</p><div class="btns"><button data-r="0">${cancelTxt}</button><button data-r="1">${okTxt}</button></div></div>`;
+    mask.innerHTML=`<div class="dialog"><h4>${title}</h4><p>${body}</p><div class="btns">${cancelTxt?`<button data-r="0">${cancelTxt}</button>`:''}<button data-r="1">${okTxt}</button></div></div>`;
     mask.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{closeMask();res(b.dataset.r==='1');});
   });
 }
@@ -594,13 +595,9 @@ B.submit.onclick=async()=>{
   loading(true,'绑定中');await wait(800);loading(false);
   if(B.code.value==='000000'){B.codeErr('验证码错误，请重新输入');return;}
   const t=TP[pendingTp], phone=`+${B.dialCode()} ${mask4(B.digits())}`;
+  if(demo.phoneReg==='1'){B.codeErr('该手机号已关联了其他账号');return;}   // 不做账号合并：验证码通过后只提示已被占用
   if(bindMode==='edit'){
-    if(demo.phoneReg==='1'){B.codeErr('该手机号已被其他账号绑定，请换个号码');return;}
     user.phone=phone; go('edit'); renderEdit(); renderMine(); toast('手机号绑定成功',true); return;
-  }
-  if(demo.phoneReg==='1'){
-    const merge=await dialog('该手机号已注册',`${phone} 已有 Johome 账号。是否将${t.name}关联到该账号？关联后可用两种方式登录同一账号。`,'换个号码','关联并登录');
-    if(!merge){B.code.value='';B.phone.focus();B.update();return;}
   }
   finishBind(t,phone);
 };
@@ -690,22 +687,14 @@ function phoneSheet(mode){
     if(!sent){$('#pbCMsg').textContent='请先获取验证码';return;}
     if(code.value==='000000'){$('#pbCMsg').textContent='验证码错误，请重新输入';return;}
     const phone=`+${dial()} ${mask4(ph.value)}`;
+    /* 不做账号合并：验证码通过后，号码已属于别的账号就只提示，面板保留可换号 */
+    if(demo.phoneReg==='1'){$('#pbCMsg').textContent='该手机号已关联了其他账号';$('#pbRow').classList.add('err');return;}
     if(tp){
       clearTimeout(timer); closeMask();
-      if(demo.phoneReg==='1'){
-        const merge=await dialog('该手机号已注册',`${phone} 已有 Johome 账号。是否将${t.name}关联到该账号？关联后可用两种方式登录同一账号。`,'换个号码','关联并登录');
-        if(!merge){phoneSheet('tp');return;}
-      }
       loading(true,'绑定中');await wait(700);loading(false);
       finishBind(t,phone); return;
     }
-    if(demo.phoneReg==='1'&&mode!=='tpEdit'){$('#pbCMsg').textContent='该手机号已被其他账号绑定，请换个号码';return;}
     clearTimeout(timer); closeMask();
-    if(demo.phoneReg==='1'){
-      const via=user.via;
-      const merge=await dialog('该手机号已注册',`${phone} 已有 Johome 账号。是否将${via}关联到该账号？关联后可用两种方式登录同一账号。`,'换个号码','关联');
-      if(!merge){phoneSheet('tpEdit');return;}
-    }
     loading(true,'绑定中');await wait(700);loading(false);
     user.phone=phone; renderEdit(); renderMine(); toast('手机号绑定成功',true);
   };
@@ -746,6 +735,7 @@ $('#eWx').onclick=async()=>{
   if(draft.wechat){if(await dialog('解绑微信','解绑后将不能用微信登录此账号。','取消','解绑')){draft.wechat=null;renderEdit();}return;}
   if(!await dialog('绑定微信','即将跳转微信授权，绑定后可用微信一键登录。','取消','去授权'))return;
   loading(true,'正在跳转微信');await wait(900);loading(false);
+  if(demo.phoneReg==='1'){await dialog('该微信已关联了其他账号','请换一个微信，或用这个微信直接登录它对应的账号。',null,'知道了');return;}   // 授权通过后再提示
   draft.wechat='小林';renderEdit();toast('微信绑定成功',true);
 };
 $('#eMail').onclick=()=>{
@@ -759,7 +749,7 @@ $('#eMail').onclick=()=>{
   const upd=()=>{code.value=code.value.replace(/\D/g,'');ok.disabled=!(valid()&&code.value.length===6);$('#mlMsg').textContent='';};
   inp.oninput=code.oninput=upd;
   $('#mlGet').onclick=()=>{if(!valid()){$('#mlMsg').textContent='请输入正确的邮箱地址';return;}sent=true;SMS.ml=genCode();$('#mlGet').disabled=true;$('#mlGet').textContent='已发送';toast('验证码已发送至邮箱<br><span style="opacity:.7;font-size:12px">（演示：点键盘上方的建议可一键填入）</span>');};
-  ok.onclick=()=>{if(!sent){$('#mlCMsg').textContent='请先获取验证码';return;}if(code.value==='000000'){$('#mlCMsg').textContent='验证码错误，请重新输入';return;}draft.email=inp.value.trim();closeMask();renderEdit();toast('邮箱绑定成功',true);};
+  ok.onclick=()=>{if(!sent){$('#mlCMsg').textContent='请先获取验证码';return;}if(code.value==='000000'){$('#mlCMsg').textContent='验证码错误，请重新输入';return;}if(demo.phoneReg==='1'){$('#mlCMsg').textContent='该邮箱已关联了其他账号';return;}draft.email=inp.value.trim();closeMask();renderEdit();toast('邮箱绑定成功',true);};
   mask.querySelector('.cancel').onclick=closeMask;
 };
 $('#eSave').onclick=()=>{
